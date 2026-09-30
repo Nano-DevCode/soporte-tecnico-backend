@@ -72,7 +72,7 @@ export const getResponse = (data: OrdenTrabajoData): TDocumentDefinitions => {
                 text: 'Formato para Orden de Trabajo de Mantenimiento',
                 margin: [5, 5, 5, 5],
               },
-              { text: 'Código: TecNM-AD-PO-001-04', margin: [5, 5, 5, 5] },
+              { text: 'Código: OT-MNT-001-04', margin: [5, 5, 5, 5] },
             ],
             [
               {},
@@ -464,7 +464,7 @@ export const getResponse = (data: OrdenTrabajoData): TDocumentDefinitions => {
       // ─── PIE DE PÁGINA ───
       {
         columns: [
-          { text: 'TecNM-AD-PO-001-04', fontSize: 9, alignment: 'left' },
+          { text: 'OT-MNT-001-04', fontSize: 9, alignment: 'left' },
           { text: 'Rev. 0', fontSize: 9, alignment: 'right' },
         ],
       },

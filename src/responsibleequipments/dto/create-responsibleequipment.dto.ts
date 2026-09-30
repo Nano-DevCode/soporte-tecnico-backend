@@ -71,7 +71,7 @@ export class CreateResponsibleequipmentDto {
 
   @ApiProperty({
     description: 'Dirección de correo electrónico institucional de contacto',
-    example: 'juan.perez@oaxaca.tecnm.mx',
+    example: 'juan.perez@empresa.com',
   })
   @IsEmail({}, { message: i18nValidationMessage('validation.isEmail') })
   @IsNotEmpty({ message: i18nValidationMessage('validation.isNotEmpty') })

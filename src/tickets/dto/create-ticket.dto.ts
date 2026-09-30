@@ -48,7 +48,7 @@ export class CreateTicketDto {
 
   @ApiProperty({
     description: 'Correo electrónico de contacto del usuario.',
-    example: 'usuario@tecnm.mx',
+    example: 'usuario@empresa.com',
   })
   @IsEmail()
   contact_email: string;

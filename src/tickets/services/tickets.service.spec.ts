@@ -7,6 +7,7 @@ import { DepartmentsService } from '../../departments/departments.service';
 import { I18nService } from 'nestjs-i18n';
 import { Repository, EntityManager } from 'typeorm';
 import { NotFoundException, ForbiddenException, Logger } from '@nestjs/common';
+import { ResponsePdfsService } from '../../response-pdfs/response-pdfs.service';
 import { User } from 'src/users/entities/user.entity';
 import { FilterTicketsDto } from '../dto/filter-tickets.dto';
 import { ValidRole } from 'src/auth/interfaces/valid-roles';
@@ -81,6 +82,10 @@ describe('TicketsService', () => {
     findAll: jest.fn(),
   };
 
+  const mockResponsePdfsService = {
+    pdfRequestBucket: jest.fn(),
+  };
+
   const mockI18nService = {
     t: jest.fn().mockImplementation((key: string) => key),
   };
@@ -101,6 +106,7 @@ describe('TicketsService', () => {
         { provide: IssueTypeService, useValue: mockIssueTypeService },
         { provide: DepartmentsService, useValue: mockDepartmentsService },
         { provide: I18nService, useValue: mockI18nService },
+        { provide: ResponsePdfsService, useValue: mockResponsePdfsService },
       ],
     }).compile();
 
@@ -258,7 +264,7 @@ describe('TicketsService', () => {
       const result = await service.findAllByStatusForSelect(filter);
 
       expect(mockQueryBuilder.where).toHaveBeenCalledWith(
-        'latest_status_sort.code = :status',
+        'latest_status_sort.code IN (:...status)',
         { status: TicketStatus.RECIBIDA },
       );
       expect(result).toEqual(mockData);

@@ -31,7 +31,7 @@ export class UserSimpleResponseDto {
 
   @ApiProperty({
     description: 'Correo electrónico del usuario.',
-    example: 'juan.perez@tecnm.mx',
+    example: 'juan.perez@empresa.com',
   })
   email: string;
 

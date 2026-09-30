@@ -171,12 +171,16 @@ describe('TicketsController', () => {
   describe('createOnBehalf', () => {
     it('debería llamar a CreateTicketService.createOnBehalf', async () => {
       const dto = {} as unknown as CreateTicketOnBehalfDto;
+      const mockUser = { id: 'user-1' } as User;
       const expected = { id: '1' };
       mockCreateTicketService.createOnBehalf.mockResolvedValue(expected);
 
-      const result = await controller.createOnBehalf(dto);
+      const result = await controller.createOnBehalf(dto, mockUser);
       expect(result).toEqual(expected);
-      expect(createTicketService.createOnBehalf).toHaveBeenCalledWith(dto);
+      expect(createTicketService.createOnBehalf).toHaveBeenCalledWith(
+        dto,
+        mockUser,
+      );
     });
   });
 
@@ -289,12 +293,16 @@ describe('TicketsController', () => {
 
   describe('startTicket', () => {
     it('debería llamar a StartTicketService.startTicket', async () => {
+      const mockUser = { id: 'user-1' } as User;
       const expected = { id: 'uuid-1' };
       mockStartTicketService.startTicket.mockResolvedValue(expected);
 
-      const result = await controller.startTicket('uuid-1');
+      const result = await controller.startTicket('uuid-1', mockUser);
       expect(result).toEqual(expected);
-      expect(startTicketService.startTicket).toHaveBeenCalledWith('uuid-1');
+      expect(startTicketService.startTicket).toHaveBeenCalledWith(
+        'uuid-1',
+        mockUser,
+      );
     });
   });
 

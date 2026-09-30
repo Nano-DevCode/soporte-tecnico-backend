@@ -23,7 +23,7 @@
 
 ## Descripción
 
-Este es un proyecto de soporte tecnico para el Instituto Tecnologico de Oaxaca 
+Sistema integral de gestión de soporte técnico, mesa de ayuda, activos de cómputo y seguimiento de tickets. 
 
 ## Descargar dependencias y levantar el entorno de desarrollo
 Ojo se que es obivo pero checa tener docker por que sin eso no se levanta nada

@@ -15,6 +15,8 @@ import { TicketsService } from './tickets.service';
 import { UsersService } from '../../users/users.service';
 import { ResponsePdfsService } from '../../response-pdfs/response-pdfs.service';
 import { FolioCountersService } from 'src/folio-counters/folio-counters.service';
+import { RouteTicketService } from './route-ticket.service';
+import { ValidRole } from 'src/auth/interfaces/valid-roles';
 import { Ticket } from '../entities/ticket.entity';
 import { User } from 'src/users/entities/user.entity';
 import { Staff } from 'src/staff/entities/staff.entity';
@@ -85,6 +87,11 @@ describe('CreateTicketService', () => {
 
   const mockFolioCountersService = {
     generateDepartmentTicketFolio: jest.fn(),
+    generateOTFolio: jest.fn().mockResolvedValue('OT-2026-0001-CC'),
+  };
+
+  const mockRouteTicketService = {
+    routeTicket: jest.fn(),
   };
 
   const mockI18nService = {
@@ -111,6 +118,7 @@ describe('CreateTicketService', () => {
         { provide: UsersService, useValue: mockUsersService },
         { provide: ResponsePdfsService, useValue: mockResponsePdfsService },
         { provide: FolioCountersService, useValue: mockFolioCountersService },
+        { provide: RouteTicketService, useValue: mockRouteTicketService },
         { provide: I18nService, useValue: mockI18nService },
       ],
     }).compile();
@@ -187,6 +195,7 @@ describe('CreateTicketService', () => {
         equipment_location: 'CC',
         priority: 1,
         folio: 'SYS-001',
+        ot_folio: 'OT-2026-0001-CC',
         issue_type: { id: 1 },
         school_period: { id: 'period-1' },
         jefe_depto: { id: 'staff-1' },
@@ -295,9 +304,14 @@ describe('CreateTicketService', () => {
         url: 'http://url.com',
       });
 
-      const result = await service.createOnBehalf(mockDto);
+      const mockCreator = {
+        id: 'creator-1',
+        role: { name: ValidRole.secretaria },
+      } as User;
 
-      expect(result).toEqual(mockTicketCompleted);
+      const result = await service.createOnBehalf(mockDto, mockCreator);
+
+      expect(result).toEqual({ ...mockTicketCompleted, routingFailed: false });
       expect(mockUsersService.findOne).toHaveBeenCalledWith('user-2');
       expect(mockTransactionManager.create).toHaveBeenCalledWith(Ticket, {
         description: 'Test behalf',
@@ -307,6 +321,7 @@ describe('CreateTicketService', () => {
         equipment_location: 'CC2',
         priority: 2,
         folio: 'HR-001',
+        ot_folio: 'OT-2026-0001-CC',
         issue_type: { id: 2 },
         school_period: { id: 'period-1' },
         jefe_depto: { id: 'staff-2' },

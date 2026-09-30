@@ -11,15 +11,15 @@ import { Logger } from '@nestjs/common';
 import { Ticket } from 'src/tickets/entities/ticket.entity';
 import { ApiTags, ApiCookieAuth, ApiOperation } from '@nestjs/swagger';
 
+const allowedOrigins = process.env.ALLOWED_ORIGINS
+  ? process.env.ALLOWED_ORIGINS.split(',').map((o) => o.trim())
+  : ['http://localhost:5173', 'http://localhost:3000'];
+
 @ApiTags('WebSockets')
 @ApiCookieAuth()
 @WebSocketGateway({
   cors: {
-    origin: [
-      'https://soporte.oaxaca.tecnm.mx',
-      'http://10.168.0.108:8001',
-      'http://localhost:5173',
-    ],
+    origin: allowedOrigins,
     credentials: true,
   },
   namespace: 'realtime',

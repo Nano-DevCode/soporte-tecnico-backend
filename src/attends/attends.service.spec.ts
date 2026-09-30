@@ -7,6 +7,7 @@ import { AttendsService } from './attends.service';
 import { Attend } from './entities/attend.entity';
 import { Ticket } from 'src/tickets/entities/ticket.entity';
 import { Staff } from 'src/staff/entities/staff.entity';
+import { User } from 'src/users/entities/user.entity';
 
 describe('AttendsService', () => {
   let service: AttendsService;
@@ -141,12 +142,24 @@ describe('AttendsService', () => {
 
   describe('startAttention', () => {
     it('debería actualizar is_attending a true si ningún técnico está ocupado', async () => {
-      const currentAttends = [{ technician: { id: 'tech-1' } }] as Attend[];
+      const mockUser = { id: 'user-1' } as User;
+      const currentAttends = [
+        {
+          technician: {
+            id: 'tech-1',
+            user: { id: 'user-1' },
+          },
+        },
+      ] as unknown as Attend[];
 
       mockEntityManager.find = jest.fn().mockResolvedValue(currentAttends);
       mockQueryBuilder.getOne.mockResolvedValue(null);
 
-      await service.startAttention('ticket-1');
+      await service.startAttention(
+        'ticket-1',
+        mockUser,
+        mockEntityManager as any,
+      );
 
       expect(mockQueryBuilder.getOne).toHaveBeenCalled();
       expect(mockEntityManager.update).toHaveBeenCalledWith(
@@ -157,7 +170,16 @@ describe('AttendsService', () => {
     });
 
     it('debería lanzar ConflictException si un técnico ya está ocupado en otro ticket', async () => {
-      const currentAttends = [{ technician: { id: 'tech-1' } }] as Attend[];
+      const mockUser = { id: 'user-1' } as User;
+      const currentAttends = [
+        {
+          technician: {
+            id: 'tech-1',
+            name: 'Juan Perez',
+            user: { id: 'user-1' },
+          },
+        },
+      ] as unknown as Attend[];
       const busyAttend = {
         technician: { id: 'tech-1', name: 'Juan Perez' },
       } as Attend;
@@ -165,7 +187,11 @@ describe('AttendsService', () => {
       mockEntityManager.find = jest.fn().mockResolvedValue(currentAttends);
       mockQueryBuilder.getOne.mockResolvedValue(busyAttend);
 
-      const startPromise = service.startAttention('ticket-1');
+      const startPromise = service.startAttention(
+        'ticket-1',
+        mockUser,
+        mockEntityManager as any,
+      );
 
       await expect(startPromise).rejects.toThrow(ConflictException);
       await expect(startPromise).rejects.toThrow(

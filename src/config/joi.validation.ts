@@ -11,6 +11,9 @@ export const JoiValidationSchema = Joi.object({
   PORT: Joi.number().default(3000),
   BASE_URL: Joi.string().default('http://localhost:3000'),
   COOKIE_SECURE: Joi.boolean().default(true),
+  ALLOWED_ORIGINS: Joi.string().default(
+    'http://localhost:5173,http://localhost:3000',
+  ),
 
   // ===============================
   // POSTGRES

@@ -14,6 +14,7 @@ import { ConflictException, Logger } from '@nestjs/common';
 import { Ticket } from '../entities/ticket.entity';
 import { TicketHistory } from 'src/ticket-history/entities/ticket-history.entity';
 import { Status } from 'src/ticket-history/entities';
+import { User } from 'src/users/entities/user.entity';
 
 jest.mock('src/common/machine/TicketStateMachine.machine', () => {
   const original = jest.requireActual<
@@ -99,6 +100,7 @@ describe('StartTicketService', () => {
 
   it('debería iniciar la atención de un ticket exitosamente', async () => {
     const ticketId = 'ticket-1';
+    const mockUser = { id: 'user-1' } as User;
 
     const mockTicket = { id: ticketId, version: 1 } as Ticket;
     const mockCurrentHistory = {
@@ -119,7 +121,7 @@ describe('StartTicketService', () => {
       mockStartedTicket,
     );
 
-    const result = await service.startTicket(ticketId);
+    const result = await service.startTicket(ticketId, mockUser);
 
     expect(mockTicketsService.findOneByIdOrFail).toHaveBeenCalledWith(ticketId);
     expect(mockTicketsService.getCurrentHistory).toHaveBeenCalledWith(
@@ -131,6 +133,7 @@ describe('StartTicketService', () => {
     ).toHaveBeenCalledWith('EN_PROGRESO', mockTransactionManager);
     expect(mockAttendService.startAttention).toHaveBeenCalledWith(
       ticketId,
+      mockUser,
       mockTransactionManager,
     );
     expect(mockTicketHistoryService.createHistory).toHaveBeenCalledWith(
@@ -172,7 +175,9 @@ describe('StartTicketService', () => {
       new OptimisticLockVersionMismatchError('Ticket', 1, 2),
     );
 
-    await expect(service.startTicket(ticketId)).rejects.toThrow(
+    const mockUser = { id: 'user-1' } as User;
+
+    await expect(service.startTicket(ticketId, mockUser)).rejects.toThrow(
       ConflictException,
     );
     expect(mockI18nService.t).toHaveBeenCalledWith(
@@ -182,6 +187,7 @@ describe('StartTicketService', () => {
 
   it('debería propagar otros errores durante la transacción', async () => {
     const ticketId = 'ticket-1';
+    const mockUser = { id: 'user-1' } as User;
 
     const mockTicket = { id: ticketId, version: 1 } as Ticket;
     const mockCurrentHistory = {
@@ -194,6 +200,6 @@ describe('StartTicketService', () => {
     const error = new Error('Database error');
     mockDataSource.transaction.mockRejectedValueOnce(error);
 
-    await expect(service.startTicket(ticketId)).rejects.toThrow(error);
+    await expect(service.startTicket(ticketId, mockUser)).rejects.toThrow(error);
   });
 });

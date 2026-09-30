@@ -5,6 +5,7 @@ import { I18nValidationPipe, I18nValidationExceptionFilter } from 'nestjs-i18n';
 import cookieParser from 'cookie-parser';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { RedisIoAdapter } from './common/adapters/redis-io.adapter';
+import { ConfigService } from '@nestjs/config';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
@@ -42,12 +43,14 @@ async function bootstrap() {
     }),
   );
 
+  const configService = app.get(ConfigService);
+  const allowedOrigins = configService.get<string[]>('allowed_origins') || [
+    'http://localhost:5173',
+    'http://localhost:3000',
+  ];
+
   app.enableCors({
-    origin: [
-      'https://soporte.oaxaca.tecnm.mx',
-      'http://10.168.0.108:8001',
-      'http://localhost:5173',
-    ],
+    origin: allowedOrigins,
     methods: 'GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS',
     credentials: true,
   });

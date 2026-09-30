@@ -55,7 +55,7 @@ export class Responsibleequipment {
 
   @ApiProperty({
     description: 'Correo electrónico institucional único del responsable',
-    example: 'juan.perez@oaxaca.tecnm.mx',
+    example: 'juan.perez@empresa.com',
   })
   @Column('text', { unique: true })
   mail: string;

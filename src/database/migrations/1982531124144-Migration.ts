@@ -54,14 +54,14 @@ export class Migration1982531124144 implements MigrationInterface {
         SELECT id INTO v_dept_id  FROM "department"    WHERE name = 'Departamento de Centro de Cómputo'        LIMIT 1;
         SELECT id INTO v_coord_id FROM "coordination"  WHERE name = 'Sin Coordinación' LIMIT 1;
 
-        IF NOT EXISTS (SELECT 1 FROM "user" WHERE email = 'no-reply@oaxaca.tecnm.mx') THEN
+        IF NOT EXISTS (SELECT 1 FROM "user" WHERE email = 'no-reply@soporte.local') THEN
 
           -- NOTA: La contraseña DEBE guardarse hasheada.
           -- Si el login te falla, verifica que sepas cuál es la contraseña en 
           -- texto plano que generó este hash de bcrypt.
           INSERT INTO "user" ("email", "password", "status", "roleId")
           VALUES (
-            'no-reply@oaxaca.tecnm.mx',
+            'no-reply@soporte.local',
             '$2b$10$BGmNfBi9N7R.RqC/QqoKSe9TJ16p4KeeEzH6tTR9Z69SkfVuGq4Dq',
             true,
             v_role_id
@@ -101,7 +101,7 @@ export class Migration1982531124144 implements MigrationInterface {
     `);
 
     await queryRunner.query(`
-      DELETE FROM "user" WHERE "email" = 'no-reply@oaxaca.tecnm.mx';
+      DELETE FROM "user" WHERE "email" = 'no-reply@soporte.local';
     `);
 
     await queryRunner.query(`

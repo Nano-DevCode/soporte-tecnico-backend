@@ -19,10 +19,10 @@ export const notificationTemplate = (mensaje: string) => {
             <tr>
               <td align="center" style="background-color:#1b3d6e; padding: 35px 20px; border-bottom: 4px solid #3b82f6;">
                 <h1 style="color:#ffffff; margin:0; font-size:22px; font-weight: 700; letter-spacing: 0.5px;">
-                  Instituto Tecnológico de Oaxaca
+                  Centro de Soporte Técnico
                 </h1>
                 <p style="color:#93c5fd; margin:8px 0 0 0; font-size:14px; font-weight: 500; letter-spacing: 1px; text-transform: uppercase;">
-                  Sistema de Soporte Técnico
+                  Mesa de Ayuda
                 </p>
               </td>
             </tr>
@@ -49,8 +49,8 @@ export const notificationTemplate = (mensaje: string) => {
 
             <tr>
               <td align="center" style="background-color:#f8fafc; padding:25px; font-size:12px; color:#64748b; border-top: 1px solid #e2e8f0;">
-                <p style="margin: 0; font-weight: 600;">© ${new Date().getFullYear()} Instituto Tecnológico de Oaxaca</p>
-                <p style="margin: 5px 0 0 0;">Departamento de Centro de Cómputo</p>
+                <p style="margin: 0; font-weight: 600;">© ${new Date().getFullYear()} Mesa de Ayuda y Soporte Técnico</p>
+                <p style="margin: 5px 0 0 0;">Departamento de Tecnologías de la Información</p>
               </td>
             </tr>
 

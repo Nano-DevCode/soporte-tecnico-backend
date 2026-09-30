@@ -102,7 +102,7 @@ describe('AuthController', () => {
         'fake-jwt-token',
         {
           ...expectedCookieOptions,
-          maxAge: 1000 * 60 * 60 * 3, // 3 horas
+          maxAge: 1000 * 60 * 60 * 5, // 5 horas
         },
       );
 
@@ -137,7 +137,7 @@ describe('AuthController', () => {
         'renewed-jwt-token',
         {
           ...expectedCookieOptions,
-          maxAge: 1000 * 60 * 60 * 2, // 2 horas
+          maxAge: 1000 * 60 * 60 * 4, // 4 horas
         },
       );
 

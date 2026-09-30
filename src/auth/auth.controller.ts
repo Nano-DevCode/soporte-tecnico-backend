@@ -16,9 +16,15 @@ import {
 } from '@nestjs/swagger';
 import { ValidRole } from './interfaces/valid-roles';
 
+const isProduction = process.env.NODE_ENV === 'production';
+const isCookieSecure =
+  process.env.COOKIE_SECURE !== undefined
+    ? process.env.COOKIE_SECURE === 'true'
+    : isProduction;
+
 const COOKIE_OPTIONS = {
   httpOnly: true,
-  secure: false,
+  secure: isCookieSecure,
   sameSite: 'lax' as const,
 };
 

@@ -73,7 +73,7 @@ export class Ticket {
   @ApiProperty({
     description:
       'Correo electrónico de contacto del responsable directo del equipo.',
-    example: 'usuario@tecnm.mx',
+    example: 'usuario@empresa.com',
   })
   @Column('text')
   contact_email: string;

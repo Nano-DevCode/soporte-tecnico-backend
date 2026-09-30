@@ -51,14 +51,14 @@ export const getRequest = (data: SolicitudData): TDocumentDefinitions => {
           {
             stack: [
               {
-                text: 'TECNOLÓGICO NACIONAL DE MÉXICO',
+                text: 'DEPARTAMENTO DE SOPORTE TÉCNICO',
                 bold: true,
                 alignment: 'center',
                 fontSize: 10,
                 opacity: 0.5,
               },
               {
-                text: 'Instituto Tecnológico de Oaxaca',
+                text: 'Centro de Cómputo y Telecomunicaciones',
                 bold: true,
                 alignment: 'center',
                 fontSize: 10,

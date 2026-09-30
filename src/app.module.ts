@@ -144,7 +144,7 @@ import { ScheduleModule } from '@nestjs/schedule';
     }),
     ThrottlerModule.forRoot([
       {
-        ttl: 6000,
+        ttl: 60000,
         limit: 100,
       },
     ]),

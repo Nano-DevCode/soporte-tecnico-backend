@@ -25,7 +25,7 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
         defaults: {
           from: `"Soporte Tecnico" <${configService.get<string>('EMAIL_USER')}>`,
         },
-      }),
+      }) as any,
     }),
   ],
 })

@@ -31,7 +31,7 @@ import {
   ApiCookieAuth,
 } from '@nestjs/swagger';
 import { Auth } from 'src/auth/decorators/auth.decorator';
-// import { ValidRole } from 'src/auth/interfaces/valid-roles';
+import { ValidRole } from 'src/auth/interfaces/valid-roles';
 
 @ApiTags('Files')
 @ApiCookieAuth() // Indicamos que todas las rutas protegidas aquí usan cookies
@@ -45,7 +45,12 @@ export class FilesController {
   constructor(private readonly filesService: FilesService) {}
 
   @Post(':bucket')
-  @Auth()
+  @Auth(
+    ValidRole.coordinador,
+    ValidRole.jefecc,
+    ValidRole.superAdmin,
+    ValidRole.tecnico,
+  )
   @UseInterceptors(FileInterceptor('file'))
   @ApiOperation({ summary: 'Subir un archivo a un bucket específico en MinIO' })
   @ApiParam({

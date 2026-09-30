@@ -3,6 +3,9 @@ export const AppConfiguration = () => ({
   port: parseInt(process.env.PORT ?? '3000', 10),
   base_url: process.env.BASE_URL || 'http://localhost:3000',
   cookie_secure: process.env.COOKIE_SECURE || true,
+  allowed_origins: process.env.ALLOWED_ORIGINS
+    ? process.env.ALLOWED_ORIGINS.split(',').map((o) => o.trim())
+    : ['http://localhost:5173', 'http://localhost:3000'],
 
   // ===============================
   // POSTGRES
