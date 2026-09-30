@@ -1,0 +1,12 @@
+{
+  "users": {
+    "passwordChangeSubject": "Password Change - Technical Support",
+    "recuperatePasswordSubject": "Password Recovery - Technical Support",
+    "passwordUpdated": "Password updated successfully",
+    "instructionsSent": "Instructions sent successfully"
+  },
+
+  "auth": {
+    "logout": "Logout successfully"
+  }
+}

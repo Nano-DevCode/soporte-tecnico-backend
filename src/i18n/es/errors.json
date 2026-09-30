@@ -1,0 +1,292 @@
+{
+  "internalServerError": "Error inesperado, revise los registros del servidor",
+  "auth": {
+    "invalidCredentials": "Credentials are not valid",
+    "userNotFound": "Usuario no encontrado",
+    "userNeedValidRole": "User {name} need a valid role",
+    "tokendNotValid": "Token no valido",
+    "userNotActive": "El usuario no tiene acceso a la aplicación"
+  },
+  "itAssets": {
+    "notFound": "No se encontró el activo",
+    "notFoundWithId": "El activo con ID {id} no existe",
+    "inventoryAlreadyExists": "El número de inventario ya está vinculado a otro activo",
+    "serialNumberAlreadyExists": "El número de serie ya está vinculado a otro activo",
+    "modelNotFound": "El modelo no existe",
+    "statusNotFound": "El estado no existe",
+    "typeNotFound": "El tipo no existe",
+    "invoiceNotFound": "La factura no existe",
+    "brands": {
+      "nameAlreadyExists": "El nombre ya le pertenece a otra marca"
+    },
+    "invoices": {
+      "internalIdAlreadyExists": "El vouche ya existe"
+    },
+    "models": {
+      "nameAlreadyExists": "Este modelo ya está registrado para la marca seleccionada",
+      "brandNotFound": "La marca proporcionada no existe"
+    },
+    "movements": {
+      "notFoundWithId": "El movimiento con ID {id} no fue encontrado"
+    },
+    "movementsIn": {
+      "assetNotFound": "El activo de TI especificado no existe",
+      "alreadyInInventory": "El activo ya se encuentra en inventario (no está en uso)."
+    },
+    "movementsOut": {
+      "assetNotFound": "El activo de TI especificado no existe",
+      "alreadyInUse": "El activo ya se encuentra en uso o asignado (no está disponible en inventario).",
+      "staffNotFound": "El usuario asignado no existe",
+      "ticketNotFound": "El ticket especificado no existe",
+      "invalidStatusForMovement":"Este activo no podrá salir porque no está en un Estado conveniente."
+    },
+    "types": {
+      "nameAlreadyExists": "Ya existe un tipo de activo registrado con el nombre de {name}"
+    }
+  },
+  
+  "tools": {
+    "notFound": "No se encontró la herramienta",
+    "notFoundWithId": "La herramienta con ID {id} no existe",
+    "inventoryAlreadyExists": "El número de inventario ya está vinculado a otra herramienta",
+    "serialNumberAlreadyExists": "El número de serie ya está vinculado a otra herramienta",
+    "modelNotFound": "El modelo no existe",
+    "statusNotFound": "El estado no existe",
+    "typeNotFound": "El tipo no existe",
+    "invoiceNotFound": "La factura no existe",
+    "brands": {
+      "nameAlreadyExists": "El nombre ya le pertenece a otra marca"
+    },
+    "invoices": {
+      "internalIdAlreadyExists": "El voucher ya existe"
+    },
+    "models": {
+      "nameAlreadyExists": "Este modelo ya está registrado para la marca seleccionada",
+      "brandNotFound": "La marca proporcionada no existe"
+    },
+    "movements": {
+      "notFoundWithId": "El movimiento con ID {id} no fue encontrado"
+    },
+    "movementsIn": {
+      "toolNotFound": "La herramienta especificada no existe",
+      "alreadyInInventory": "La herramienta ya se encuentra en inventario (no está en uso)."
+    },
+    "movementsOut": {
+      "toolNotFound": "La herramienta especificada no existe",
+      "alreadyInUse": "La herramienta ya se encuentra en uso o asignada (no está disponible en inventario).",
+      "staffNotFound": "El usuario asignado no existe",
+      "ticketNotFound": "El ticket especificado no existe",
+      "invalidStatusForMovement":"Esta herramienta no podrá salir porque no está en un Estado inconveniente"
+    },
+    "types": {
+      "nameAlreadyExists": "Ya existe un tipo de herramienta registrado con el nombre de {name}"
+    }
+  },
+  "roleNotFound": "Ya existe registrada esta herramienta.",
+  "roles": {
+    "roleNotFound": "El rol con id {id} no existe",
+    "coordinatorNotFound": "No existen cordinadores"
+  },
+  "department": {
+    "acronymAlreadyInUse": "Ese acrónimo ya le pertenece a otro departamento",
+    "nameAlreadyInUse": "Ese nombre ya le pertenece a otro departamento",
+    "departmentNotFound": "El departamento con id {id} no existe"
+  },
+  "users": {
+    "userNotFound": "El usuario con id {id} no existe",
+    "toolAlreadyExists": "Ya existe registrada esta herramienta.",
+    "emailAlreadyInUse": "El correo ya le pertenece a otro usuario",
+    "rfcAlreadyInUse": "El RFC ya le pertenece a otro usuario",
+    "telegramAlreadyInUse": "El ID de Telegram ya le pertenece a otro usuario",
+    "emailNotRegistered": "El correo {email} no está registrado en el sistema."
+  },
+  "brands": {
+    "brandNotFound": "La marca con id {id} no existe",
+    "brandAlreadyExists": "Ya existe una marca registrada con ese nombre.",
+    "requirementAlreadyExists": "El número de requerimiento '{num}' ya se encuentra registrado para el producto: '{consumable}'."
+  },
+  "models": {
+    "modelNotFound": "El modelo con id {id} no existe",
+    "modelAlreadyExists": "Este modelo ya está registrado para la marca seleccionada."
+  },
+  "responsibles": {
+    "responsibleNotFound": "El responsable con id {id} no existe",
+    "employeeNumberAlreadyInUse": "Ese número de empleado ya le pertenece a otro responsable",
+    "emailAlreadyInUse": "Ese correo electrónico ya le pertenece a otro responsable"
+  },
+  "equipments": {
+    "equipmentNotFound": "El equipo con id {id} no existe",
+    "inventoryNumberAlreadyExists": "El número de inventario {num} ya se encuentra registrado en el sistema.",
+    "serialNumberAlreadyExists":"El número de serie ya está vinculado a otro equipo ",
+    "typeEquipmentNotFound": "El tipo de equipo especificado no es válido."
+  },
+  "computerEquipmentTypes": {
+    "typeNotFound": "El tipo de equipo de cómputo con id {id} no existe",
+    "typeAlreadyExists": "Un tipo de equipo de cómputo con este nombre ya está registrado."
+  },
+  "processors": {
+    "processorNotFound": "El procesador con id {id} no existe",
+    "processorAlreadyExists": "Un procesador con esta marca y modelo ya está registrado."
+  },
+  "equipmentTypes": {
+    "typeNotFound": "El tipo de equipo con id {id} no existe",
+    "typeAlreadyExists": "Un tipo de equipo con este nombre ya está registrado."
+  },
+  "operatingSystems": {
+    "osNotFound": "El sistema operativo con id {id} no existe",
+    "osAlreadyExists": "Un sistema operativo con este nombre ya está registrado."
+  },
+  "storageTypes": {
+    "storageNotFound": "El tipo de almacenamiento con id {id} no existe",
+    "storageAlreadyExists": "Un tipo de almacenamiento con este nombre ya está registrado."
+  },
+  "printerFunctions": {
+    "pfnotFound": "La función de impresora con ID {id} no fue encontrada",
+    "pfalreadyExists": "La función de impresora \"{name}\" ya existe en el sistema",
+    "pfalreadyExistsDuplicate": "Ya existe otra función de impresora registrada con ese mismo nombre"
+  },
+  "printingTypes": {
+    "ptNotFound": "El tipo de impresión con id {id} no existe",
+    "ptAlreadyExists": "El tipo de impresión \"{name}\" ya existe en el sistema.",
+    "ptAlreadyExistsDuplicate": "Ya existe otro tipo de impresión registrado con ese mismo nombre"
+  },
+  "typeNetworks": {
+    "tnNotFound": "El tipo de red con id {id} no existe",
+    "tnAlreadyExists": "El tipo de red \"{name}\" ya existe en el sistema.",
+    "tnAlreadyExistsDuplicate": "Ya existe otro tipo de red registrado con ese mismo nombre"
+  },
+  "consumables": {
+    "typeNotFound": "El tipo de consumible seleccionado no existe en el catálogo.",
+    "ubicationNotFound": "La ubicación física seleccionada no existe en el sistema.",
+    "unitNotFound": "La unidad de medida seleccionada es inválida.",
+    "descriptionExists": "Ya existe un consumible registrado con esa misma descripción. ",
+    "missingNumberUses": "El número de usos es requerido cuando el consumible se maneja bajo una unidad Fraccionaria.",
+    "invalidNumberUses": "El número de usos debe ser un número entero estrictamente mayor a cero.",
+    "consumableNotFound": "El consumible con el ID '{{id}}' no fue encontrado.",
+    "cannotModifyActiveConsumable": "No se pueden alterar los parámetros estructurales (unidad de medida o número de usos) de un consumible que ya cuenta con stock o movimientos históricos.",
+    "consumableAlreadyExists": "Conflicto de unicidad: El código de artículo o descripción ya se encuentra ocupado."
+  },
+  "unitMeasurement": {
+    "notFound": "La unidad de medida con el ID proporcionado no existe en el sistema.",
+    "alreadyExists": "La unidad de medida con el nombre '{name}' ya se encuentra registrada."
+  },
+  "typeconsumables": {
+    "notFound": "El tipo de consumible con el ID proporcionado no existe en el sistema.",
+    "alreadyExists": "El tipo de consumible con el nombre '{name}' ya se encuentra registrada."
+  },
+  "movementAplications": {
+    "alreadyExists": "Esta aplicación de movimiento ya se encuentra registrada en el sistema.",
+    "acronymAlreadyExists": "Este acrónimo ya se encuentra asignado a otra aplicación de movimiento.",
+    "notFound": "La aplicación de movimiento con el ID {id} no fue encontrada."
+  },
+  "batchesproducts": {
+    "batchNotFound": "El lote de producto con el id {id} no existe",
+    "requirementAlreadyExists": "El número de requerimiento o factura ya se encuentra registrado con otros productos, favor de verificarlo. ",
+    "foreignKeyViolation": "No se puede procesar el lote porque un recurso relacionado no fue encontrado."
+  },
+  "movementTypes": {
+    "notFound": "EL tipo de movimiento con el ID proporcionado no existe en el sistema.",
+    "alreadyExists": "El tipo de movimeinto con el nombre '{name}' ya se encuentra registrada."
+  },
+  "consumableMovements": {
+    "requiredTicket": "El ID del ticket es estrictamente requerido cuando la aplicación es para soporte de mantenimiento.",
+    "ticketNotFound": "El ticket con el ID {{id}} no existe en el sistema.",
+    "requiredObservations": "Las observaciones son obligatorias para este tipo de aplicación de movimiento de almacén.",
+    "insufficientStock": "Insuficiente stock para el producto '{product}' para acompletar la logistica de salida. Requerido: {requested}, Disponible: {available}.",
+    "movementNotFound": "No se encontraron movimientos de almacén asociados al código de control '{{code}}'.",
+    "foreignKeyViolation": "La operación no pudo completarse porque una entidad relacionada (Consumible, Aplicación o Tipo) no existe.",
+    "emptyCart": "La bolsa de consumibles no puede estar vacía."
+  },
+  "departament_consumable": {
+    "acronymAlreadyInUse": "Este acrónimo ya pertenece a otro departamento de consumibles.",
+    "nameAlreadyInUse": "Este nombre de Departamento ya esta registrado, verificalo.",
+    "departmentNotFound": "El departamento de consumibles con el id {id} no existe."
+  },
+  "brands_consumable": {
+    "brandNotFound": "La marca con id {id} no existe",
+    "brandAlreadyExists": "Ya existe una marca registrada con ese nombre.",
+    "requirementAlreadyExists": "El número de requerimiento '{num}' ya se encuentra registrado para el producto: '{consumable}'."
+  },
+  "consumableUbications": {
+    "ubicationNotFound": "La ubicación con el ID '{{id}}' no existe en el sistema.",
+    "ubicationAlreadyExists": "Ya existe una ubicación de consumibles registrada con ese nombre.",
+    "foreignKeyViolation": "No se puede eliminar la ubicación porque está asignada a uno o más consumibles activos."
+  },
+
+  "school_periods": {
+    "not_found": "El periodo escolar con ID '{id}' no fue encontrado.",
+    "invalid_dates": "La fecha de fin debe ser posterior a la fecha de inicio del periodo escolar.",
+    "already_active": "El periodo '{name}' está actualmente activo. Por favor, desactívelo antes de activar uno nuevo.",
+    "no_active_period": "No se encontró ningún periodo escolar activo por el momento.",
+    "name_already_exists": "Ya existe un periodo escolar con ese nombre. Por favor, cambie de tipo de periodo o año.",
+    "cannot_update_name_with_tickets": "No es posible modificar el tipo de periodo o el año de inicio porque este periodo ya tiene tickets asignados."
+  },
+
+  "issue_types": {
+    "not_found": "El tipo de incidencia con ID '{id}' no existe."
+  },
+
+  "ticket_machine": {
+    "invalid_state": "Estado actual inválido: '{state}'",
+    "invalid_transition": "Acción denegada. No se puede [{event}] una solicitud que está en estado [{state}]."
+  },
+
+  "status": {
+    "not_found": "Critical Error: El estado con código '{code}' no existe en la base de datos."
+  },
+
+  "folio_counters": {
+    "cannot_reduce": "No puedes reducir el contador. El próximo folio natural es el {next_natural}.",
+    "already_configured": "El próximo folio ya está configurado para ser el {requested}.",
+    "no_department": "Tu usuario no tiene un departamento asignado.",
+    "missing_folio_data": "Faltan datos requeridos (ID, acrónimo o periodo) para generar el folio. Verifique la configuración del departamento."
+  },
+
+  "tickets": {
+    "not_found": "No se encontró una solicitud con el ID '{id}'.",
+    "pdf_generation_failed": "El ticket no pudo ser creado porque el servicio de documentos no está disponible en este momento. Intente más tarde.",
+    "version_mismatch": "El ticket fue modificado por otro usuario mientras usted lo tenía abierto. Por favor, recargue la página.",
+    "no_planning_profile": "El usuario actual no tiene un perfil de staff/Planeación asignado.",
+    "no_department_boss_profile": "El usuario actual no tiene un perfil de staff/Jefe de Departamento asignado.",
+    "ticket_no_boss_assigned": "Este ticket no tiene un Jefe de Departamento asignado originalmente.",
+    "only_creator_can_close": "Solo el Jefe de Departamento que creó el ticket puede cerrarlo.",
+    "missing_rfc": "No se puede cerrar el ticket. Su perfil no tiene un RFC registrado, el cual es obligatorio para la firma digital.",
+    "already_routed": "El ticket ya ha sido canalizado a este coordinador.",
+    "technician_already_busy": "No se puede iniciar la atención porque el técnico {name} ya tiene otro ticket en progreso.",
+    "forbidden": "No tienes los permisos necesarios para ver los detalles del ticket.",
+    "no_active_attends": "El ticket no tiene técnicos asignados actualmente.",
+    "not_assigned_to_user": "No tienes permiso para iniciar este ticket porque no estás asignado a él.",
+    "no_response_associated": "La solicitud no tiene una respuesta asociada para generar el documento."
+  },
+
+  "survey": {
+    "already_submitted": "Este ticket ya ha sido calificado.",
+    "missing_mandatory_question": "Falta responder la pregunta obligatoria: '{question}'.",
+    "requires_numeric_rating": "La pregunta '{question}' requiere una puntuación numérica.",
+    "question_not_found": "La pregunta con ID '{id}' no fue encontrada."
+  },
+
+  "signatures": {
+    "jefe_cc_already_signed": "El Jefe del CC ya firmó el documento.",
+    "requires_jefe_cc_signature": "Se requiere la firma del Jefe del CC antes de que el Departamento pueda firmar.",
+    "requires_both_signatures_for_planning": "Se requiere la firma del Jefe de Departamento y Jefe de CC antes de enviar a Planeación.",
+    "missing_ticket_data": "No se pueden generar firmas sin los datos completos del ticket (folio, internal_folio).",
+    "missing_response_data": "Faltan datos de relaciones en la respuesta (maintenance_type, service_type) para firmar."
+  },
+
+  "technical_reports": {
+    "not_found": "No se encontró el reporte técnico con el ID '{id}'."
+  },
+
+  "rejection_reports": {
+    "not_found": "No se encontró un reporte de rechazo para el ticket con ID '{id}'."
+  },
+
+  "manager": {
+    "duplicate": "Ya existe un responsable del centro de cómputo registrado con esta información.",
+    "not_found_id": "No se encontró ningún responsable del centro de cómputo con el ID: {id}.",
+    "already_active": "No se puede activar. Ya existe un responsable activo actualmente: {name}. Debe desactivarlo primero.",
+    "no_active_found": "No se encontró ningún responsable del centro de cómputo activo en este momento.",
+    "department_inactive": "El departamento '{departmentName}' se encuentra inactivo y no puede generar tickets."
+  }
+}

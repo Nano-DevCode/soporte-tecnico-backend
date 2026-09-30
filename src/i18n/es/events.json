@@ -1,0 +1,11 @@
+{
+  "users": {
+    "passwordChangeSubject": "Cambio de Contraseña - Soporte Técnico",
+    "recuperatePasswordSubject": "Recuperación de Contraseña - Soporte Técnico",
+    "passwordUpdated": "Contraseña actualizada con éxito",
+    "instructionsSent": "Instrucciones enviadas con éxito"
+  },
+  "auth": {
+    "logout": "Cierre de Sesión Exitoso"
+  }
+}

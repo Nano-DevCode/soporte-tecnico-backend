@@ -1,0 +1,9 @@
+export { FinishTicketService } from './finish-ticket.service';
+export { PauseTicketService } from './pause-ticket.service';
+export { InterveneTicketService } from './intervene-ticket.service';
+export { EditTicketService } from './edit-ticket.service';
+export { StartTicketService } from './start-ticket.service';
+export { RouteTicketService } from './route-ticket.service';
+export { AssignTicketService } from './assign-ticket.service';
+export { CreateTicketService } from './create-ticket.service';
+export { TicketsService } from './tickets.service';

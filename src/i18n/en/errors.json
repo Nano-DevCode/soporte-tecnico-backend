@@ -1,0 +1,252 @@
+{
+  "internalServerError": "Unexpected error, check the server logs",
+  "auth": {
+    "invalidCredentials": "Credentials are not valid",
+    "userNotFound": "User not found",
+    "userNeedValidRole": "User {name} needs a valid role",
+    "tokendNotValid": "Invalid token",
+    "userNotActive": "The user does not have access to the application"
+  },
+  "itAssets": {
+    "notFound": "Asset not found",
+    "notFoundWithId": "The asset with ID {id} does not exist",
+    "inventoryAlreadyExists": "The inventory number is already linked to another asset",
+    "serialNumberAlreadyExists": "The serial number is already linked to another asset",
+    "modelNotFound": "The model does not exist",
+    "statusNotFound": "The status does not exist",
+    "typeNotFound": "The type does not exist",
+    "invoiceNotFound": "The invoice does not exist",
+    "brands": {
+      "nameAlreadyExists": "The name already belongs to another brand"
+    },
+    "invoices": {
+      "internalIdAlreadyExists": "The voucher already exists"
+    },
+    "models": {
+      "nameAlreadyExists": "This model is already registered for the selected brand",
+      "brandNotFound": "The provided brand does not exist"
+    },
+    "movements": {
+      "notFoundWithId": "The movement with ID {id} was not found"
+    },
+    "movementsIn": {
+      "assetNotFound": "The specified IT asset does not exist",
+      "alreadyInInventory": "The asset is already in inventory (not in use)."
+    },
+    "movementsOut": {
+      "assetNotFound": "The specified IT asset does not exist",
+      "alreadyInUse": "The asset is already in use or assigned (not available in inventory).",
+      "staffNotFound": "The assigned user does not exist",
+      "ticketNotFound": "The specified ticket does not exist"
+    },
+    "types": {
+      "nameAlreadyExists": "An asset type registered with the name {name} already exists"
+    }
+  },
+  "tools": {
+    "toolNotFound": "The tool with id {id} does not exist",
+    "toolAlreadyExists": "This tool is already registered"
+  },
+  "roleNotFound": "This tool is already registered.",
+  "roles": {
+    "roleNotFound": "The role with id {id} does not exist",
+    "coordinatorNotFound": "No coordinators found"
+  },
+  "department": {
+    "acronymAlreadyInUse": "This acronym already belongs to another department",
+    "nameAlreadyInUse": "This name already belongs to another department",
+    "departmentNotFound": "The department with id {id} does not exist"
+  },
+  "users": {
+    "userNotFound": "The user with id {id} does not exist",
+    "toolAlreadyExists": "This tool is already registered",
+    "emailAlreadyInUse": "The email already belongs to another user",
+    "rfcAlreadyInUse": "The RFC already belongs to another user",
+    "telegramAlreadyInUse": "The Telegram ID already belongs to another user",
+    "emailNotRegistered": "The email {email} is not registered in the system"
+  },
+  "brands": {
+    "brandNotFound": "The brand with id {id} does not exist",
+    "brandAlreadyExists": "A brand with this name is already registered.",
+    "requirementAlreadyExists": "El número de requerimiento '{num}' ya se encuentra registrado para el producto: '{consumable}'."
+  },
+  "models": {
+    "modelNotFound": "The model with id {id} does not exist",
+    "modelAlreadyExists": "This model is already registered for the selected brand."
+  },
+  "responsibles": {
+    "responsibleNotFound": "The responsible with id {id} does not exist",
+    "employeeNumberAlreadyInUse": "This employee number already belongs to another responsible",
+    "emailAlreadyInUse": "This email already belongs to another responsible"
+  },
+  "equipments": {
+    "equipmentNotFound": "The equipment with id {id} does not exist",
+    "inventoryNumberAlreadyExists": "The inventory number {num} is already registered in the system.",
+    "typeEquipmentNotFound": "The specified equipment type is invalid."
+  },
+  "computerEquipmentTypes": {
+    "typeNotFound": "The computer equipment type with id {id} does not exist",
+    "typeAlreadyExists": "A computer equipment type with this name is already registered."
+  },
+  "processors": {
+    "processorNotFound": "The processor with id {id} does not exist",
+    "processorAlreadyExists": "A processor with this brand and model is already registered."
+  },
+  "equipmentTypes": {
+    "typeNotFound": "The equipment type with id {id} does not exist",
+    "typeAlreadyExists": "An equipment type with this name is already registered."
+  },
+  "operatingSystems": {
+    "osNotFound": "The operating system with id {id} does not exist",
+    "osAlreadyExists": "An operating system with this name is already registered."
+  },
+  "storageTypes": {
+    "storageNotFound": "The storage type with id {id} does not exist",
+    "storageAlreadyExists": "A storage type with this name is already registered."
+  },
+  "printerFunctions": {
+    "pfnotFound": "The printer function with ID {id} was not found",
+    "pfalreadyExists": "The printer function \"{name}\" already exists in the system",
+    "pfalreadyExistsDuplicate": "Another printer function is already registered with that same name"
+  },
+  "printingTypes": {
+    "ptNotFound": "The printing type with id {id} does not exist",
+    "ptAlreadyExists": "The printing type \"{name}\" already exists in the system.",
+    "ptAlreadyExistsDuplicate": "Another printing type is already registered with that same name"
+  },
+  "typeNetworks": {
+    "tnNotFound": "The network type with id {id} does not exist",
+    "tnAlreadyExists": "The network type \"{name}\" already exists in the system.",
+    "tnAlreadyExistsDuplicate": "Another network type is already registered with that same name"
+  },
+  "consumables": {
+    "typeNotFound": "The selected type of consumable does not exist in the catalog.",
+    "ubicationNotFound": "The selected physical location does not exist in the system.",
+    "unitNotFound": "The selected unit of measurement is invalid.",
+    "descriptionExists": "A consumable item with that exact description already exists.",
+    "missingNumberUses": "The number of uses is required when the consumable is managed under a Fractional unit.",
+    "invalidNumberUses": "The number of uses must be an integer strictly greater than zero.",
+    "consumableNotFound": "Consumable with ID '{{id}}' was not found.",
+    "cannotModifyActiveConsumable": "Structural parameters (unit of measurement or number of uses) cannot be altered for a consumable that already has active stock or historical movements.",
+    "consumableAlreadyExists": "Uniqueness conflict: The item code or description is already taken."
+  },
+  "unitMeasurement": {
+    "notFound": "The unit of measurement with the provided ID does not exist in the system.",
+    "alreadyExists": "The unit of measurement with the name of '{name}' is already registered."
+  },
+  "typeconsumables": {
+    "notFound": "The type of the consumable with the provided ID does not exist in the system.",
+    "alreadyExists": "The type of the consumable with the name of '{name}' is already registered."
+  },
+  "movementAplications": {
+    "alreadyExists": "This movement application name is already registered in the system.",
+    "acronymAlreadyExists": "This acronym is already assigned to another movement application.",
+    "notFound": "Movement application with ID {id} was not found."
+  },
+  "batchesproducts": {
+    "batchNotFound": "The product batch with id {id} does not exist",
+    "requirementAlreadyExists": "The requirement number is already registered with other products, please check for duplicates.",
+    "foreignKeyViolation": "Cannot process the batch because a related resource was not found."
+  },
+  "movementTypes": {
+    "alreadyExists": "The type of the movement is already registered in the system.",
+    "notFound": "The type of the movement with ID {id} was not found."
+  },
+  "consumableMovements": {
+    "requiredTicket": "The ticket ID is strictly required when the application is for maintenance support.",
+    "ticketNotFound": "The ticket with ID {{id}} does not exist in the system.",
+    "requiredObservations": "Observations are required for this type of warehouse movement application.",
+    "insufficientStock": "Insufficient stock for product '{product}' to complete the logistics operation. Requested: {requested}, Available: {available}.",
+    "movementNotFound": "No warehouse movements were found associated with the control code '{{code}}'.",
+    "foreignKeyViolation": "The operation could not be completed because a related entity (Consumable, Application, or Type) does not exist."
+  },
+  "departament_consumable": {
+    "acronymAlreadyInUse": "This acronym already belongs to another consumable department",
+    "nameAlreadyInUse": "This name already belongs to another consumable department",
+    "departmentNotFound": "The consumable department with id {id} does not exist"
+  },
+  "brands_consumable": {
+    "brandNotFound": "The brand with id {id} does not exist",
+    "brandAlreadyExists": "A brand with this name is already registered.",
+    "requirementAlreadyExists": "El número de requerimiento '{num}' ya se encuentra registrado para el producto: '{consumable}'."
+  },
+  "consumableUbications": {
+    "ubicationNotFound": "The location with ID '{{id}}' does not exist in the system.",
+    "ubicationAlreadyExists": "A consumable location registered with that name already exists.",
+    "foreignKeyViolation": "The location cannot be deleted because it is assigned to one or more active consumables."
+  },
+
+  "errors": {
+    "duplicate": "Ya existe un registro con este RFC.",
+    "not_found_id": "El Jefe de Centro de Cómputo con ID '{id}' no fue encontrado.",
+    "already_active": "El Jefe de Centro de Cómputo '{name}' está actualmente activo. Por favor, desactívelo antes de activar uno nuevo.",
+    "no_active_found": "No se encontró ningún Jefe de Centro de Cómputo activo por el momento."
+  },
+
+  "school_periods": {
+    "not_found": "The school period with ID '{id}' was not found.",
+    "invalid_dates": "The end date must be after the school period start date.",
+    "already_active": "The period '{name}' is currently active. Please deactivate it before activating a new one.",
+    "no_active_period": "No active school period found at the moment.",
+    "name_already_exists": "A school period with that name already exists. Please change the period type or year.",
+    "cannot_update_name_with_tickets": "It is not possible to modify the period type or start year because this period already has tickets assigned."
+  },
+  "issue_types": {
+    "not_found": "The issue type with ID '{id}' does not exist."
+  },
+  "ticket_machine": {
+    "invalid_state": "Current state is invalid: '{state}'",
+    "invalid_transition": "Action denied. Cannot [{event}] a request that is in the [{state}] state."
+  },
+  "status": {
+    "not_found": "Critical Error: The status with code '{code}' does not exist in the database."
+  },
+  "folio_counters": {
+    "cannot_reduce": "You cannot reduce the counter. The next natural folio is {next_natural}.",
+    "already_configured": "The next folio is already configured to be {requested}.",
+    "no_department": "Your user does not have an assigned department.",
+    "missing_folio_data": "Required data (ID, acronym, or period) to generate the folio is missing. Verify department configuration."
+  },
+  "tickets": {
+    "not_found": "Request with ID '{id}' was not found.",
+    "pdf_generation_failed": "The ticket could not be created because the document service is currently unavailable. Please try again later.",
+    "version_mismatch": "The ticket was modified by another user while you had it open. Please reload the page.",
+    "no_planning_profile": "The current user does not have an assigned Staff/Planning profile.",
+    "no_department_boss_profile": "The current user does not have an assigned Staff/Department Head profile.",
+    "ticket_no_boss_assigned": "This ticket does not have an originally assigned Department Head.",
+    "only_creator_can_close": "Only the Department Head who created the ticket can close it.",
+    "missing_rfc": "Cannot close the ticket. Your profile does not have a registered RFC, which is mandatory for digital signatures.",
+    "already_routed": "The ticket has already been routed to this coordinator.",
+    "technician_already_busy": "Cannot start service because technician {name} already has another ticket in progress.",
+    "forbidden": "You do not have the required permissions to view the details of ticket.",
+    "no_active_attends": "The ticket has no technicians currently assigned.",
+    "not_assigned_to_user": "You do not have permission to start this ticket because you are not assigned to it.",
+    "no_response_associated": "The request does not have an associated response to generate the document."
+  },
+  "survey": {
+    "already_submitted": "This ticket has already been rated.",
+    "missing_mandatory_question": "Mandatory question missing: '{question}'.",
+    "requires_numeric_rating": "The question '{question}' requires a numeric rating.",
+    "question_not_found": "The question with ID '{id}' was not found."
+  },
+  "signatures": {
+    "jefe_cc_already_signed": "The CC Head has already signed the document.",
+    "requires_jefe_cc_signature": "CC Head signature is required before the Department can sign.",
+    "requires_both_signatures_for_planning": "Both the Department Head and CC Head signatures are required before sending to Planning.",
+    "missing_ticket_data": "Cannot generate signatures without complete ticket data (folio, internal_folio).",
+    "missing_response_data": "Relationship data in the response (maintenance_type, service_type) is missing for signing."
+  },
+  "technical_reports": {
+    "not_found": "Technical report with ID '{id}' was not found."
+  },
+  "rejection_reports": {
+    "not_found": "No rejection report found for the ticket with ID '{id}'."
+  },
+
+  "manager": {
+    "duplicate": "A computing center manager with this information already exists.",
+    "not_found_id": "No computing center manager was found with ID: {id}.",
+    "already_active": "Cannot activate. There is already an active manager: {name}. You must deactivate them first.",
+    "no_active_found": "No active computing center manager was found at this time."
+  }
+}

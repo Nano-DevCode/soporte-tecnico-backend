@@ -1,0 +1,21 @@
+# Dependencias y compilados (Excelente, ya los tenías)
+node_modules
+dist
+
+# Control de versiones e infraestructura (Excelente, ya los tenías)
+.git
+.gitignore
+Dockerfile
+docker-compose.yml
+
+.env
+.env.*
+
+postgres_data
+redis_data
+minio_data
+
+# Logs y reportes de pruebas (Reducen el peso del contexto de Docker)
+npm-debug.log
+pnpm-debug.log
+coverage

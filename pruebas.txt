@@ -1,0 +1,125 @@
+
+docker compose logs -f backend
+
+/backend-ticketera
+ ├── /database            # Scripts SQL y archivos relacionados con TypeORM
+ ├── /nginx               # Configuración del proxy reverso Nginx
+ ├── /test                # Pruebas automatizadas (Unitarias y E2E)
+ └── /src                 # Código fuente principal de la API
+      ├── /common         # Recursos compartidos (Decoradores, Filtros, Interceptores, Pipes)
+      ├── /config         # Variables globales y de inicialización
+      ├── /i18n           # Diccionarios de traducción (Inglés/Español) para respuestas de la API
+      ├── /telegram-bot   # Lógica y procesador del Bot de Telegram
+      ├── /gmail-bot      # Lógica y plantillas para el envío de correos
+      └── /tickets        # (Ejemplo de Módulo de Negocio)
+
+Plaintext
+/SoporteTecnico
+ ├── /public              # Archivos estáticos
+ │    └── /locales        # Archivos JSON de internacionalización (i18next - en/es)
+ └── /src                 # Código fuente de React
+      ├── /api            # Configuración de los clientes HTTP (Axios)
+      ├── /assets         # Imágenes, íconos y estilos globales
+      ├── /components     # Componentes visuales genéricos y de UI compartidos
+      ├── /config         # Configuraciones globales de entorno
+      ├── /layout         # Componentes estructurales (Menús laterales, Cabeceras)
+      ├── /lib            # Funciones utilitarias generales y helpers
+      └── /tickets        # (Ejemplo de Módulo de Interfaz)
+
+
+
+# ================= CONFIGURACIÓN DEL SERVIDOR =================
+DB_SYNCHRONIZE=false 
+PORT=3000
+BASE_URL=http://localhost:3000/api
+
+# ================= BASE DE DATOS (POSTGRESQL) =================
+DB_HOST_POSTGRES=localhost # (En Docker será 'db')
+DB_PORT=5432
+DB_USER=postgres
+DB_USERNAME=postgres
+DB_PASSWORD="<PASSWORD>"
+DB_NAME=SoporteTecnicoDB
+
+# ================= CACHÉ (REDIS) =================
+DB_HOST_REDIS=localhost # (En Docker será 'redis')
+REDIS_PORT=6379
+REDIS_PASSWORD="<PASSWORD>"
+
+# ================= ARCHIVOS MULTIMEDIA (MINIO) =================
+MINIO_ENDPOINT=http://localhost:9000 # (En Docker será http://minio:9000)
+MINIO_REGION=us-east-1
+MINIO_ROOT_USER="<USUARIO_ADMIN>"
+MINIO_ROOT_PASSWORD="<PASSWORD>"
+
+# ================= SERVICIOS EXTERNOS =================
+TELEGRAM_TOKEN="<TOKEN_DEL_BOT_DE_TELEGRAM>"
+EMAIL_USER="<CORREO_DEL_SISTEMA@gmail.com>"
+EMAIL_TOKEN="<CONTRASEÑA_DE_APLICACION_GMAIL>"
+
+# ================= SEGURIDAD Y ENCRIPTACIÓN =================
+# Generar tokens largos y complejos (puede usar herramientas como easykit.org)
+JWT_SECRET="<CLAVE_SECRETA_PARA_SESIONES>"
+SIGNATURE_SECRET_KEY="<CLAVE_SECRETA_PARA_FIRMAS>"
+
+
+# URL pública a la que accederán los usuarios desde internet
+VITE_API_URL_EXTERNAL=https://
+
+# URL para conexión directa en la red interna
+VITE_API_URL_INTERNAL=http://
+
+# URL exclusiva para cuando un programador está haciendo pruebas en su propia computadora
+VITE_API_URL_LOCAL=http://localhost:3000/api
+
+# Apaga los mensajes de diagnóstico en la consola del navegador. 
+# En producción DEBE ser false por seguridad y rendimiento.
+VITE_ENABLE_LOGS=false
+
+
+
+-- Instala la extensión para remover acentos
+CREATE EXTENSION IF NOT EXISTS unaccent;
+
+-- Crea una función personalizada y estricta para que PostgreSQL 
+-- pueda usar índices rápidos al buscar texto sin acentos
+CREATE OR REPLACE FUNCTION unaccent_immutable(text)
+RETURNS text AS $$
+    SELECT public.unaccent('public.unaccent', $1);
+$$ LANGUAGE sql IMMUTABLE STRICT;
+
+
+docker compose ps
+
+docker compose logs backend
+
+curl http://10.168.0.108:8081/api
+
+
+# El parámetro -d o --detach es la clave para que corra en segundo plano
+docker compose up -d 
+
+
+docker compose down 
+
+docker compose stop
+
+docker compose start
+
+docker compose restart backend
+
+docker compose restart
+
+git pull
+
+docker compose build --no-cache
+
+docker stats
+
+docker compose logs -f --tail=100 backend
+
+docker exec -it redis_server redis-cli flushall
+
+docker system prune -f
+
+docker exec -it <nombre_contenedor> <comando>
