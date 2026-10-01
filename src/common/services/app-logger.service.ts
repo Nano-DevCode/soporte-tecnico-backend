@@ -59,7 +59,11 @@ export class AppLoggerService extends ConsoleLogger {
       );
       return;
     }
-    super.error(this.formatStructuredMessage('error', message, context), stack, context);
+    super.error(
+      this.formatStructuredMessage('error', message, context),
+      stack,
+      context,
+    );
   }
 
   override warn(message: any, context?: string): void {
@@ -81,7 +85,10 @@ export class AppLoggerService extends ConsoleLogger {
       );
       return;
     }
-    super.debug(this.formatStructuredMessage('debug', message, context), context);
+    super.debug(
+      this.formatStructuredMessage('debug', message, context),
+      context,
+    );
   }
 
   override verbose(message: any, context?: string): void {
@@ -92,6 +99,9 @@ export class AppLoggerService extends ConsoleLogger {
       );
       return;
     }
-    super.verbose(this.formatStructuredMessage('verbose', message, context), context);
+    super.verbose(
+      this.formatStructuredMessage('verbose', message, context),
+      context,
+    );
   }
 }

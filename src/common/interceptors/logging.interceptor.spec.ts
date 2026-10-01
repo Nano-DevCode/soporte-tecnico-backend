@@ -65,16 +65,11 @@ describe('LoggingInterceptor', () => {
       handle: jest.fn().mockReturnValue(of({ data: 'tickets' })),
     } as unknown as CallHandler;
 
-    await requestContextStorage.run(
-      { requestId: 'test-req-id' },
-      async () => {
-        const result = await lastValueFrom(
-          interceptor.intercept(context, next),
-        );
-        expect(result).toEqual({ data: 'tickets' });
-        expect(RequestContext.getUserId()).toBe('user-uuid-123');
-      },
-    );
+    await requestContextStorage.run({ requestId: 'test-req-id' }, async () => {
+      const result = await lastValueFrom(interceptor.intercept(context, next));
+      expect(result).toEqual({ data: 'tickets' });
+      expect(RequestContext.getUserId()).toBe('user-uuid-123');
+    });
   });
 
   it('debería capturar errores, registrar el código de error y propagar la excepción', async () => {

@@ -200,6 +200,8 @@ describe('StartTicketService', () => {
     const error = new Error('Database error');
     mockDataSource.transaction.mockRejectedValueOnce(error);
 
-    await expect(service.startTicket(ticketId, mockUser)).rejects.toThrow(error);
+    await expect(service.startTicket(ticketId, mockUser)).rejects.toThrow(
+      error,
+    );
   });
 });

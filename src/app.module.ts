@@ -103,6 +103,7 @@ import { FeatureFlagsModule } from './feature-flags/feature-flags.module';
 import { FeatureFlagsSeedModule } from './feature-flags-seed/feature-flags-seed.module';
 import { NotificationsModule } from './notifications/notifications.module';
 import { ScheduleModule } from '@nestjs/schedule';
+import { SlaModule } from './sla/sla.module';
 
 @Module({
   imports: [
@@ -281,6 +282,7 @@ import { ScheduleModule } from '@nestjs/schedule';
     FeatureFlagsModule,
     FeatureFlagsSeedModule,
     NotificationsModule,
+    SlaModule,
   ],
   controllers: [],
   providers: [

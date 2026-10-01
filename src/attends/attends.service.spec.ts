@@ -155,11 +155,7 @@ describe('AttendsService', () => {
       mockEntityManager.find = jest.fn().mockResolvedValue(currentAttends);
       mockQueryBuilder.getOne.mockResolvedValue(null);
 
-      await service.startAttention(
-        'ticket-1',
-        mockUser,
-        mockEntityManager as any,
-      );
+      await service.startAttention('ticket-1', mockUser, mockEntityManager);
 
       expect(mockQueryBuilder.getOne).toHaveBeenCalled();
       expect(mockEntityManager.update).toHaveBeenCalledWith(
@@ -190,7 +186,7 @@ describe('AttendsService', () => {
       const startPromise = service.startAttention(
         'ticket-1',
         mockUser,
-        mockEntityManager as any,
+        mockEntityManager,
       );
 
       await expect(startPromise).rejects.toThrow(ConflictException);

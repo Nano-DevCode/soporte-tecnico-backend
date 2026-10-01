@@ -11,21 +11,22 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
     MailerModule.forRootAsync({
       imports: [ConfigModule],
       inject: [ConfigService],
-      useFactory: (configService: ConfigService) => ({
-        transport: {
-          host: 'smtp.gmail.com',
-          port: 465,
-          pool: true,
-          secure: true,
-          auth: {
-            user: configService.get<string>('EMAIL_USER'),
-            pass: configService.get<string>('EMAIL_TOKEN'),
+      useFactory: (configService: ConfigService) =>
+        ({
+          transport: {
+            host: 'smtp.gmail.com',
+            port: 465,
+            pool: true,
+            secure: true,
+            auth: {
+              user: configService.get<string>('EMAIL_USER'),
+              pass: configService.get<string>('EMAIL_TOKEN'),
+            },
           },
-        },
-        defaults: {
-          from: `"Soporte Tecnico" <${configService.get<string>('EMAIL_USER')}>`,
-        },
-      }) as any,
+          defaults: {
+            from: `"Soporte Tecnico" <${configService.get<string>('EMAIL_USER')}>`,
+          },
+        }) as any,
     }),
   ],
 })

@@ -8,8 +8,12 @@ describe('AppLoggerService', () => {
 
   beforeEach(() => {
     logger = new AppLoggerService();
-    stdoutSpy = jest.spyOn(process.stdout, 'write').mockImplementation(() => true);
-    stderrSpy = jest.spyOn(process.stderr, 'write').mockImplementation(() => true);
+    stdoutSpy = jest
+      .spyOn(process.stdout, 'write')
+      .mockImplementation(() => true);
+    stderrSpy = jest
+      .spyOn(process.stderr, 'write')
+      .mockImplementation(() => true);
   });
 
   afterEach(() => {
@@ -54,12 +58,9 @@ describe('AppLoggerService', () => {
     process.env.NODE_ENV = 'production';
 
     try {
-      requestContextStorage.run(
-        { requestId: 'test-error-req' },
-        () => {
-          logger.error('Error fatal', 'Stack trace example', 'ErrorContext');
-        },
-      );
+      requestContextStorage.run({ requestId: 'test-error-req' }, () => {
+        logger.error('Error fatal', 'Stack trace example', 'ErrorContext');
+      });
 
       expect(stderrSpy).toHaveBeenCalledTimes(1);
       const output = JSON.parse(stderrSpy.mock.calls[0][0]);
