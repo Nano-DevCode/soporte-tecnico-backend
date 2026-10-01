@@ -62,7 +62,6 @@ export class WsJwtGuard implements CanActivate {
           this.i18n.t('errors.auth.userNotActive'),
         );
 
-      // eslint-disable-next-line @typescript-eslint/no-unused-vars
       const { password: _, ...rest } = user;
       client.data['user'] = rest;
 

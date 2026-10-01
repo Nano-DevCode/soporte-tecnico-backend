@@ -151,7 +151,6 @@ export class RefreshTokenService {
     // Generar nuevo par rotado
     const newTokens = await this.generateTokens(user);
 
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const { password: _, ...userData } = user;
 
     return {

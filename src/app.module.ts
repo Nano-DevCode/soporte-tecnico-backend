@@ -107,7 +107,6 @@ import { SlaModule } from './sla/sla.module';
 import { CacheModule } from './cache/cache.module';
 import { AuditModule } from './audit/audit.module';
 
-
 @Module({
   imports: [
     ConfigModule.forRoot({
@@ -289,7 +288,6 @@ import { AuditModule } from './audit/audit.module';
     CacheModule,
     AuditModule,
   ],
-
 
   controllers: [],
   providers: [

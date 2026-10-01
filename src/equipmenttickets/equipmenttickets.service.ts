@@ -4,7 +4,7 @@ import { UpdateEquipmentticketDto } from './dto/update-equipmentticket.dto';
 
 @Injectable()
 export class EquipmentticketsService {
-  create(createEquipmentticketDto: CreateEquipmentticketDto) {
+  create(_createEquipmentticketDto: CreateEquipmentticketDto) {
     return 'This action adds a new equipmentticket';
   }
 
@@ -16,7 +16,7 @@ export class EquipmentticketsService {
     return `This action returns a #${id} equipmentticket`;
   }
 
-  update(id: number, updateEquipmentticketDto: UpdateEquipmentticketDto) {
+  update(id: number, _updateEquipmentticketDto: UpdateEquipmentticketDto) {
     return `This action updates a #${id} equipmentticket`;
   }
 

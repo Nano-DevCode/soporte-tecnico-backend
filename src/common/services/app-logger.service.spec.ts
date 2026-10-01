@@ -38,7 +38,7 @@ describe('AppLoggerService', () => {
       );
 
       expect(stdoutSpy).toHaveBeenCalledTimes(1);
-      const output = JSON.parse(stdoutSpy.mock.calls[0][0]);
+      const output = JSON.parse(String(stdoutSpy.mock.calls[0][0]));
 
       expect(output).toMatchObject({
         level: 'info',
@@ -63,7 +63,7 @@ describe('AppLoggerService', () => {
       });
 
       expect(stderrSpy).toHaveBeenCalledTimes(1);
-      const output = JSON.parse(stderrSpy.mock.calls[0][0]);
+      const output = JSON.parse(String(stderrSpy.mock.calls[0][0]));
 
       expect(output).toMatchObject({
         level: 'error',

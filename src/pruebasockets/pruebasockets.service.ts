@@ -4,7 +4,7 @@ import { UpdatePruebasocketDto } from './dto/update-pruebasocket.dto';
 
 @Injectable()
 export class PruebasocketsService {
-  create(createPruebasocketDto: CreatePruebasocketDto) {
+  create(_createPruebasocketDto: CreatePruebasocketDto) {
     return 'This action adds a new pruebasocket';
   }
 
@@ -16,7 +16,7 @@ export class PruebasocketsService {
     return `This action returns a #${id} pruebasocket`;
   }
 
-  update(id: number, updatePruebasocketDto: UpdatePruebasocketDto) {
+  update(id: number, _updatePruebasocketDto: UpdatePruebasocketDto) {
     return `This action updates a #${id} pruebasocket`;
   }
 
