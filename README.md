@@ -24,7 +24,7 @@
 - [7. Infraestructura y Despliegue en Producción](#7-infraestructura-y-despliegue-en-producción)
 - [8. Puesta en Marcha Local](#8-puesta-en-marcha-local)
 - [9. Variables de Entorno](#9-variables-de-entorno)
-- [10. Autor y Contacto](#10-autor-y-contacto)
+- [10. Propiedad Intelectual, Institución y Colaboradores](#10-propiedad-intelectual-institución-y-colaboradores)
 
 ---
 
@@ -300,9 +300,27 @@ Configuradas mediante `ConfigModule` y validadas al arrancar mediante esquema es
 
 ---
 
-## 10. Autor y Contacto
+## 10. Propiedad Intelectual, Institución y Colaboradores
 
-**Alex / Nano-DevCode**
-- **GitHub:** [@Nano-DevCode](https://github.com/Nano-DevCode)
-- **Email:** `mayka708.ms@gmail.com`
-- **Rol:** Backend Engineer / Tech Lead
+### 🏛️ Titularidad y Derechos de Propiedad
+Este software, su arquitectura y su código fuente son **propiedad intelectual compartida de sus autores desarrolladores y del Instituto Tecnológico de Oaxaca (ITO) / Tecnológico Nacional de México (TecNM)**. 
+
+El proyecto fue concebido y desarrollado para la modernización de los procesos de soporte técnico, infraestructura de redes y gestión de activos del Centro de Cómputo. Queda prohibida su reproducción, comercialización o distribución no autorizada sin el consentimiento expreso de los titulares de los derechos.
+
+---
+
+### 👥 Equipo Desarrollador y Colaboradores
+
+| Desarrollador / Colaborador | Rol en el Proyecto | Perfil GitHub | Correo Institucional / Contacto |
+| :--- | :--- | :--- | :--- |
+| **Manuel (Nano-DevCode)** | Tech Lead / Arquitecto de Software & Backend Engineer | [@Nano-DevCode](https://github.com/Nano-DevCode) | `mayka708.ms@gmail.com` / `21160787@itoaxaca.edu.mx` |
+| **Alex (AlexDro360)** | Backend Developer / Full Stack Engineer | [@AlexDro360](https://github.com/AlexDro360) | `21160666@itoaxaca.edu.mx` |
+| **Jazmín Martínez (JazminMartinezC)** | Backend Developer / Core Contributor | [@JazminMartinezC](https://github.com/JazminMartinezC) | `21160705@itoaxaca.edu.mx` |
+
+---
+
+### 🏫 Institución Titular
+**Instituto Tecnológico de Oaxaca (ITO)**  
+*Tecnológico Nacional de México (TecNM)*  
+Departamento de Centro de Cómputo e Informática  
+Oaxaca de Juárez, Oaxaca, México.
