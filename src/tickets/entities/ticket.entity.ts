@@ -23,7 +23,7 @@ import { PauseReport } from 'src/pause-reports/entities/pause-report.entity';
 import { Attend } from 'src/attends/entities/attend.entity';
 import { Staff } from 'src/users/entities/staff.entity';
 import { TechnicalReport } from 'src/technical-reports/entities/technical-report.entity';
-import { ItAssetsMovementsOut } from 'src/it-assets-movements-out/entities/it-assets-movements-out.entity';
+import { ItAssetsMovementsOut } from 'src/it-assets/movements/entities/it-assets-movements-out.entity';
 import { ConsumableMovement } from 'src/consumable-movements/entities/consumable-movement.entity';
 import { ToolsMovementsOut } from 'src/tools-movements-out/entities/tools-movements-out.entity';
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';

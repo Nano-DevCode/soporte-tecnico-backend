@@ -13,9 +13,9 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { ItAsset } from '../entities/it-asset.entity';
 import { DataSource, Repository } from 'typeorm';
 import { ItAssetsModel } from 'src/it-assets/models/entities/it-assets-model.entity';
-import { ItAssetsStatus } from 'src/it-assets-status/entities/it-assets-status.entity';
-import { ItAssetsType } from 'src/it-assets-type/entities/it-assets-type.entity';
-import { ItAssetsInvoice } from 'src/it-assets-invoices/entities/it-assets-invoice.entity';
+import { ItAssetsStatus } from 'src/it-assets/status/entities/it-assets-status.entity';
+import { ItAssetsType } from 'src/it-assets/types/entities/it-assets-type.entity';
+import { ItAssetsInvoice } from 'src/it-assets/invoices/entities/it-assets-invoice.entity';
 import { I18nService } from 'nestjs-i18n';
 import { FilterItAssetBrandDto } from '../dto/filter-it-asset.dto';
 import { DatabaseError } from 'src/interfaces/DatabaseError';
@@ -23,7 +23,7 @@ import { FilesService, MulterFile } from 'src/files/files.service';
 import {
   ItAssetsMovement,
   MovementType,
-} from 'src/it-assets-movements/entities/it-assets-movement.entity';
+} from 'src/it-assets/movements/entities/it-assets-movement.entity';
 import { ChangeStatusItAssetDto } from '../dto/change-status-it-asset.dto';
 
 @Injectable()

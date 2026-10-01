@@ -66,12 +66,10 @@ import { HealthModule } from './health/health.module';
 import { ItAssetsModule } from './it-assets/it-assets.module';
 import { ItAssetsBrandsModule } from './it-assets/brands/it-assets-brands.module';
 import { ItAssetsModelsModule } from './it-assets/models/it-assets-models.module';
-import { ItAssetsStatusModule } from './it-assets-status/it-assets-status.module';
-import { ItAssetsTypesModule } from './it-assets-type/it-assets-types.module';
-import { ItAssetsInvoicesModule } from './it-assets-invoices/it-assets-invoices.module';
-import { ItAssetsMovementsModule } from './it-assets-movements/it-assets-movements.module';
-import { ItAssetsMovementsOutModule } from './it-assets-movements-out/it-assets-movements-out.module';
-import { ItAssetsMovementsInModule } from './it-assets-movements-in/it-assets-movements-in.module';
+import { ItAssetsStatusModule } from './it-assets/status/it-assets-status.module';
+import { ItAssetsTypesModule } from './it-assets/types/it-assets-types.module';
+import { ItAssetsInvoicesModule } from './it-assets/invoices/it-assets-invoices.module';
+import { ItAssetsMovementsModule } from './it-assets/movements/it-assets-movements.module';
 import { ConsumablesModule } from './consumables/consumables.module';
 import { TypeconsumablesModule } from './typeconsumables/typeconsumables.module';
 import { UnitMeasurementModule } from './unit-measurement/unit-measurement.module';
@@ -245,8 +243,6 @@ import { AuditModule } from './audit/audit.module';
     ItAssetsTypesModule,
     ItAssetsInvoicesModule,
     ItAssetsMovementsModule,
-    ItAssetsMovementsOutModule,
-    ItAssetsMovementsInModule,
     ConsumablesModule,
     TypeconsumablesModule,
     UnitMeasurementModule,

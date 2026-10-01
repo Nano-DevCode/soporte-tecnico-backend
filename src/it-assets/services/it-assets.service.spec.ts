@@ -16,7 +16,7 @@ import { CreateItAssetDto } from '../dto/create-it-asset.dto';
 import { UpdateItAssetDto } from '../dto/update-it-asset.dto';
 import { FilterItAssetBrandDto } from '../dto/filter-it-asset.dto';
 import { ChangeStatusItAssetDto } from '../dto/change-status-it-asset.dto';
-import { MovementType } from 'src/it-assets-movements/entities/it-assets-movement.entity';
+import { MovementType } from 'src/it-assets/movements/entities/it-assets-movement.entity';
 
 describe('ItAssetsService', () => {
   let service: ItAssetsService;
@@ -439,3 +439,4 @@ describe('ItAssetsService', () => {
     });
   });
 });
+

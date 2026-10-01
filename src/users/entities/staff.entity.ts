@@ -2,7 +2,7 @@ import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import { Attend } from 'src/attends/entities/attend.entity';
 import { Coordination } from 'src/coordinations/entities/coordination.entity';
 import { Department } from 'src/departments/entities/department.entity';
-import { ItAssetsMovementsOut } from 'src/it-assets-movements-out/entities/it-assets-movements-out.entity';
+import { ItAssetsMovementsOut } from 'src/it-assets/movements/entities/it-assets-movements-out.entity';
 import { Ticket } from 'src/tickets/entities/ticket.entity';
 import { User } from 'src/users/entities/user.entity';
 import {

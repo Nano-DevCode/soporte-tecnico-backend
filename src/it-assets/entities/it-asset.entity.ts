@@ -1,9 +1,9 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
-import { ItAssetsInvoice } from 'src/it-assets-invoices/entities/it-assets-invoice.entity';
+import { ItAssetsInvoice } from 'src/it-assets/invoices/entities/it-assets-invoice.entity';
 import { ItAssetsModel } from 'src/it-assets/models/entities/it-assets-model.entity';
-import { ItAssetsMovement } from 'src/it-assets-movements/entities/it-assets-movement.entity';
-import { ItAssetsStatus } from 'src/it-assets-status/entities/it-assets-status.entity';
-import { ItAssetsType } from 'src/it-assets-type/entities/it-assets-type.entity';
+import { ItAssetsMovement } from 'src/it-assets/movements/entities/it-assets-movement.entity';
+import { ItAssetsStatus } from 'src/it-assets/status/entities/it-assets-status.entity';
+import { ItAssetsType } from 'src/it-assets/types/entities/it-assets-type.entity';
 import {
   PrimaryGeneratedColumn,
   Column,
