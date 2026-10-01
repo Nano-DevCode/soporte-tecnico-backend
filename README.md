@@ -24,7 +24,8 @@
 - [7. Infraestructura y Despliegue en Producción](#7-infraestructura-y-despliegue-en-producción)
 - [8. Puesta en Marcha Local](#8-puesta-en-marcha-local)
 - [9. Variables de Entorno](#9-variables-de-entorno)
-- [10. Propiedad Intelectual, Institución y Colaboradores](#10-propiedad-intelectual-institución-y-colaboradores)
+- [10. Equipo de Desarrollo y Colaboradores](#10--equipo-de-desarrollo-y-colaboradores)
+- [11. Derechos de Autor y Licencia](#11--derechos-de-autor-y-licencia)
 
 ---
 
@@ -300,27 +301,27 @@ Configuradas mediante `ConfigModule` y validadas al arrancar mediante esquema es
 
 ---
 
-## 10. Propiedad Intelectual, Institución y Colaboradores
+## 10. 👥 Equipo de Desarrollo y Colaboradores
 
-### 🏛️ Titularidad y Derechos de Propiedad
-Este software, su arquitectura y su código fuente son **propiedad intelectual compartida de sus autores desarrolladores y del Instituto Tecnológico de Oaxaca (ITO) / Tecnológico Nacional de México (TecNM)**. 
+El diseño, arquitectura, desarrollo técnico e implementación de este sistema fue realizado por el siguiente equipo:
 
-El proyecto fue concebido y desarrollado para la modernización de los procesos de soporte técnico, infraestructura de redes y gestión de activos del Centro de Cómputo. Queda prohibida su reproducción, comercialización o distribución no autorizada sin el consentimiento expreso de los titulares de los derechos.
-
----
-
-### 👥 Equipo Desarrollador y Colaboradores
-
-| Desarrollador / Colaborador | Rol en el Proyecto | Perfil GitHub | Correo Institucional / Contacto |
-| :--- | :--- | :--- | :--- |
-| **Manuel (Nano-DevCode)** | Tech Lead / Arquitecto de Software & Backend Engineer | [@Nano-DevCode](https://github.com/Nano-DevCode) | `mayka708.ms@gmail.com` / `21160787@itoaxaca.edu.mx` |
-| **Alex (AlexDro360)** | Backend Developer / Full Stack Engineer | [@AlexDro360](https://github.com/AlexDro360) | `21160666@itoaxaca.edu.mx` |
-| **Jazmín Martínez (JazminMartinezC)** | Backend Developer / Core Contributor | [@JazminMartinezC](https://github.com/JazminMartinezC) | `21160705@itoaxaca.edu.mx` |
+| Desarrollador / Colaborador | Perfil & Contacto | Aportes Principales en Git |
+| :--- | :--- | :--- |
+| **Nano-DevCode** | [GitHub](https://github.com/Nano-DevCode)<br>📧 `mayka708.ms@gmail.com`<br>🎓 `21160787@itoaxaca.edu.mx` | **Lead Backend Developer & Arquitectura de Software**<br>• Arquitectura Core NestJS 11 / TypeScript 5.7+ / Clean Architecture<br>• Módulos de SLA, Auditoría, Cache Redis 8, WebSocket Adapter y Throttler<br>• Refactorización modular SRP, pipeline de pruebas unitarias (705+ tests en Jest) y contenedorización Distroless<br>*(152 commits registrados)* |
+| **AlexDro360** | [GitHub](https://github.com/AlexDro360)<br>📧 `21160666@itoaxaca.edu.mx` | **Core Contributor & Backend Developer**<br>• Ciclo de vida y gestión de tickets, reportes de soporte y periodos escolares<br>• Integración de Telegram Bot, procesamiento asíncrono de Gmail y webhooks<br>• Módulos de catálogos, equipos de cómputo y flujos operativos<br>*(108 commits registrados)* |
+| **JazminMartinezC** | [GitHub](https://github.com/JazminMartinezC)<br>📧 `21160705@itoaxaca.edu.mx` | **Core Contributor & Backend Developer**<br>• Módulos de activos TI (marcas, modelos, tipos, estados, facturas y movimientos)<br>• Control de consumibles, lotes de productos y pañol de herramientas<br>• Definición de DTOs, validaciones `class-validator` y esquemas Swagger<br>*(69 commits registrados)* |
 
 ---
 
-### 🏫 Institución Titular
-**Instituto Tecnológico de Oaxaca (ITO)**  
-*Tecnológico Nacional de México (TecNM)*  
-Departamento de Centro de Cómputo e Informática  
-Oaxaca de Juárez, Oaxaca, México.
+## 11. 📄 Derechos de Autor y Licencia
+
+**Copyright © 2024–2026 Equipo de Desarrollo & Instituto Tecnológico de Oaxaca (ITO). Todos los derechos reservados.**
+
+> [!IMPORTANT]
+> ### Aviso de Titularidad de Derechos y Uso Institucional:
+> Nuestro equipo de desarrollo es el titular y propietario exclusivo de la totalidad de los derechos de autor, derechos patrimoniales y propiedad intelectual derivados de esta plataforma, su código fuente, arquitectura, módulos, diseño de interfaz y esquemas de datos.
+> 
+> Este sistema fue diseñado, desarrollado e implementado como una solución integral de Service Desk, Mesa de Ayuda e ITSM para el **Instituto Tecnológico de Oaxaca (ITO) / Tecnológico Nacional de México (TecNM)**.
+
+### Condiciones de Uso y Restricciones:
+Queda estrictamente prohibida la copia, reproducción, distribución, comercialización, modificación no autorizada o sublicenciamiento total o parcial de este software sin la previa autorización explícita y por escrito de los titulares de los derechos de autor. Todos los derechos reservados.
