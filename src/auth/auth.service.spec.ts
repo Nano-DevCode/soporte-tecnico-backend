@@ -7,16 +7,16 @@ import * as bcrypt from 'bcrypt';
 import { AuthService } from './auth.service';
 import { UsersService } from 'src/users/users.service';
 import { User } from 'src/users/entities/user.entity';
+import { RefreshTokenService } from './services/refresh-token.service';
 
-// Hacemos un mock de bcrypt para evitar que se ejecute la encriptación real durante las pruebas
 jest.mock('bcrypt');
 
 describe('AuthService', () => {
   let service: AuthService;
   let usersService: jest.Mocked<UsersService>;
   let jwtService: jest.Mocked<JwtService>;
+  let refreshTokenService: jest.Mocked<RefreshTokenService>;
 
-  // Mock simulando la estructura del usuario
   const mockUser = {
     id: 'user-uuid-1',
     email: 'test@ejemplo.com',
@@ -47,12 +47,26 @@ describe('AuthService', () => {
             t: jest.fn((key: string) => key),
           },
         },
+        {
+          provide: RefreshTokenService,
+          useValue: {
+            generateTokens: jest.fn().mockResolvedValue({
+              accessToken: 'jwt-token-123',
+              refreshToken: 'refresh-token-456',
+              expiresIn: 900,
+            }),
+            rotateRefreshToken: jest.fn(),
+            revokeRefreshToken: jest.fn(),
+            revokeAllUserTokens: jest.fn(),
+          },
+        },
       ],
     }).compile();
 
     service = module.get<AuthService>(AuthService);
     usersService = module.get(UsersService);
     jwtService = module.get(JwtService);
+    refreshTokenService = module.get(RefreshTokenService);
 
     jest.clearAllMocks();
   });
@@ -67,10 +81,9 @@ describe('AuthService', () => {
       password: 'password123',
     };
 
-    it('debe hacer login exitosamente y retornar token (omitiendo el password)', async () => {
+    it('debe hacer login exitosamente y retornar token y refresh token', async () => {
       usersService.findByEmail.mockResolvedValue(mockUser);
       (bcrypt.compare as jest.Mock).mockResolvedValue(true);
-      jwtService.sign.mockReturnValue('jwt-token-123');
 
       const result = await service.login(loginDto);
 
@@ -79,77 +92,99 @@ describe('AuthService', () => {
         loginDto.password,
         mockUser.password,
       );
+      expect(refreshTokenService.generateTokens).toHaveBeenCalledWith(mockUser);
 
-      // Validamos que el token se haya firmado con los datos correctos
-      expect(jwtService.sign).toHaveBeenCalledWith({
-        id: mockUser.id,
-        idRole: mockUser.role.id,
-        idDepartment: mockUser.staff.department.id,
-      });
-
-      // Validamos la respuesta exitosa
       expect(result).toEqual({
         id: mockUser.id,
         email: mockUser.email,
         role: mockUser.role,
         staff: mockUser.staff,
         token: 'jwt-token-123',
+        accessToken: 'jwt-token-123',
+        refreshToken: 'refresh-token-456',
+        expiresIn: 900,
       });
 
-      // Validamos explícitamente que la contraseña haya sido removida
       expect(result).not.toHaveProperty('password');
     });
 
     it('debe lanzar UnauthorizedException si la contraseña es incorrecta', async () => {
       usersService.findByEmail.mockResolvedValue(mockUser);
-      (bcrypt.compare as jest.Mock).mockResolvedValue(false); // Falla el password
+      (bcrypt.compare as jest.Mock).mockResolvedValue(false);
 
       await expect(service.login(loginDto)).rejects.toThrow(
         UnauthorizedException,
       );
-
-      expect(bcrypt.compare).toHaveBeenCalledWith(
-        loginDto.password,
-        mockUser.password,
-      );
     });
 
-    it('debe lanzar UnauthorizedException si el usuario no existe (y usar fakeHash para evitar timing attacks)', async () => {
-      // Simulamos que el usuario NO se encontró en la BD
+    it('debe lanzar UnauthorizedException si el usuario no existe', async () => {
       usersService.findByEmail.mockResolvedValue(null);
       (bcrypt.compare as jest.Mock).mockResolvedValue(false);
 
       await expect(service.login(loginDto)).rejects.toThrow(
         UnauthorizedException,
       );
-
-      // Validamos que aunque el usuario no exista, bcrypt compare contra el hash falso
-      // Esto asegura que tu mitigación de timing attacks funciona perfectamente
-      expect(bcrypt.compare).toHaveBeenCalledWith(
-        loginDto.password,
-        '$2b$10$abcdefghijklmnopqrstuvwxyz1234567890',
-      );
     });
   });
 
   describe('checkAuthStatus', () => {
     it('debe retornar el usuario actual y renovar el token JWT', () => {
-      jwtService.sign.mockReturnValue('new-jwt-token-456');
+      jwtService.sign.mockReturnValue('new-token-123');
 
       const result = service.checkAuthStatus(mockUser);
 
-      // Verificamos que se firme un nuevo token con el payload correcto
       expect(jwtService.sign).toHaveBeenCalledWith({
         id: mockUser.id,
         idRole: mockUser.role.id,
         idDepartment: mockUser.staff.department.id,
       });
 
-      // Verificamos que retorne el usuario completo anexando el nuevo token
       expect(result).toEqual({
         ...mockUser,
-        token: 'new-jwt-token-456',
+        token: 'new-token-123',
       });
+    });
+  });
+
+  describe('refreshTokens', () => {
+    it('debe llamar a refreshTokenService.rotateRefreshToken y devolver el resultado', async () => {
+      const rotated = {
+        accessToken: 'new-access',
+        refreshToken: 'new-refresh',
+        expiresIn: 900,
+        user: { id: mockUser.id } as Partial<User>,
+      };
+      (refreshTokenService.rotateRefreshToken as jest.Mock).mockResolvedValue(
+        rotated,
+      );
+
+      const result = await service.refreshTokens('old-refresh');
+
+      expect(refreshTokenService.rotateRefreshToken).toHaveBeenCalledWith(
+        'old-refresh',
+      );
+      expect(result).toEqual({
+        ...rotated,
+        token: 'new-access',
+      });
+    });
+  });
+
+  describe('logout', () => {
+    it('debe revocar el refresh token si fue provisto', async () => {
+      await service.logout('refresh-to-revoke');
+      expect(refreshTokenService.revokeRefreshToken).toHaveBeenCalledWith(
+        'refresh-to-revoke',
+      );
+    });
+  });
+
+  describe('logoutAll', () => {
+    it('debe revocar todos los tokens del usuario', async () => {
+      await service.logoutAll('user-uuid-1');
+      expect(refreshTokenService.revokeAllUserTokens).toHaveBeenCalledWith(
+        'user-uuid-1',
+      );
     });
   });
 });

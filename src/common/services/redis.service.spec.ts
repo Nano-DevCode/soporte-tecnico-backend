@@ -1,0 +1,136 @@
+import { Test, TestingModule } from '@nestjs/testing';
+import { ConfigService } from '@nestjs/config';
+import { RedisService } from './redis.service';
+
+describe('RedisService', () => {
+  let service: RedisService;
+  let mockConfigService: any;
+
+  beforeEach(async () => {
+    mockConfigService = {
+      get: jest.fn((key: string) => {
+        if (key === 'DB_HOST_REDIS') return 'localhost';
+        if (key === 'REDIS_PORT') return 6379;
+        if (key === 'REDIS_PASSWORD') return 'testpass';
+        return null;
+      }),
+    };
+
+    const module: TestingModule = await Test.createTestingModule({
+      providers: [
+        RedisService,
+        {
+          provide: ConfigService,
+          useValue: mockConfigService,
+        },
+      ],
+    }).compile();
+
+    service = module.get<RedisService>(RedisService);
+  });
+
+  afterEach(async () => {
+    await service.onModuleDestroy();
+  });
+
+  it('should be defined', () => {
+    expect(service).toBeDefined();
+  });
+
+  describe('degraded / disconnected mode', () => {
+    it('get should return null gracefully if disconnected', async () => {
+      const result = await service.get('any-key');
+      expect(result).toBeNull();
+    });
+
+    it('set should not throw if disconnected', async () => {
+      await expect(service.set('key', 'val', 60)).resolves.not.toThrow();
+    });
+
+    it('del should return 0 if disconnected', async () => {
+      const result = await service.del('key');
+      expect(result).toBe(0);
+    });
+
+    it('smembers should return empty array if disconnected', async () => {
+      const result = await service.smembers('set-key');
+      expect(result).toEqual([]);
+    });
+
+    it('sadd should return 0 if disconnected', async () => {
+      const result = await service.sadd('set-key', 'item');
+      expect(result).toBe(0);
+    });
+
+    it('srem should return 0 if disconnected', async () => {
+      const result = await service.srem('set-key', 'item');
+      expect(result).toBe(0);
+    });
+
+    it('expire should return false if disconnected', async () => {
+      const result = await service.expire('key', 10);
+      expect(result).toBe(false);
+    });
+  });
+
+  describe('when connected with mock client', () => {
+    let mockClient: any;
+
+    beforeEach(() => {
+      mockClient = {
+        get: jest.fn().mockResolvedValue('stored-value'),
+        set: jest.fn().mockResolvedValue('OK'),
+        del: jest.fn().mockResolvedValue(1),
+        sadd: jest.fn().mockResolvedValue(1),
+        smembers: jest.fn().mockResolvedValue(['token1', 'token2']),
+        srem: jest.fn().mockResolvedValue(1),
+        expire: jest.fn().mockResolvedValue(1),
+        quit: jest.fn().mockResolvedValue('OK'),
+        disconnect: jest.fn(),
+      };
+
+      (service as any).client = mockClient;
+      (service as any).isConnected = true;
+    });
+
+    it('should call client.get and return value', async () => {
+      const result = await service.get('test-key');
+      expect(mockClient.get).toHaveBeenCalledWith('test-key');
+      expect(result).toBe('stored-value');
+    });
+
+    it('should call client.set with TTL', async () => {
+      await service.set('test-key', 'value', 300);
+      expect(mockClient.set).toHaveBeenCalledWith(
+        'test-key',
+        'value',
+        'EX',
+        300,
+      );
+    });
+
+    it('should call client.del and return deleted count', async () => {
+      const result = await service.del('k1', 'k2');
+      expect(mockClient.del).toHaveBeenCalledWith('k1', 'k2');
+      expect(result).toBe(1);
+    });
+
+    it('should call client.smembers and return set items', async () => {
+      const result = await service.smembers('user:tokens');
+      expect(mockClient.smembers).toHaveBeenCalledWith('user:tokens');
+      expect(result).toEqual(['token1', 'token2']);
+    });
+
+    it('should call client.srem and return removed count', async () => {
+      const result = await service.srem('user:tokens', 'token1');
+      expect(mockClient.srem).toHaveBeenCalledWith('user:tokens', 'token1');
+      expect(result).toBe(1);
+    });
+
+    it('should call client.expire and return true', async () => {
+      const result = await service.expire('test-key', 60);
+      expect(mockClient.expire).toHaveBeenCalledWith('test-key', 60);
+      expect(result).toBe(true);
+    });
+  });
+});

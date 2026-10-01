@@ -30,8 +30,8 @@ export class DbexceptionFilter implements ExceptionFilter {
     const dbError = exception as PostgresError;
     const code = dbError.code;
 
-    let message: string = 'Error de validación en la base de datos.';
-    let statusCode: number = HttpStatus.BAD_REQUEST;
+    let message: string;
+    let statusCode: number;
 
     switch (code) {
       case '23505':

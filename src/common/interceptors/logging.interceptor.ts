@@ -44,19 +44,20 @@ export class LoggingInterceptor implements NestInterceptor {
           `${method} ${path} ${statusCode} +${duration}ms [user: ${userId}] [reqId: ${requestId}]`,
         );
       }),
-      catchError((error) => {
+      catchError((error: unknown) => {
         const duration = Date.now() - startTime;
         const statusCode =
           error instanceof HttpException ? error.getStatus() : 500;
         const userId = RequestContext.getUserId() || req.user?.id || 'anon';
-        const message = error.message || 'Internal server error';
+        const err = error instanceof Error ? error : new Error(String(error));
+        const message = err.message || 'Internal server error';
 
         this.logger.error(
           `${method} ${path} ${statusCode} +${duration}ms - Error: ${message} [user: ${userId}] [reqId: ${requestId}]`,
-          error.stack,
+          err.stack,
         );
 
-        return throwError(() => error);
+        return throwError(() => error as Error);
       }),
     );
   }

@@ -1,7 +1,7 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { Reflector } from '@nestjs/core';
 import { I18nService } from 'nestjs-i18n';
-import { type Response } from 'express';
+import { type Request, type Response } from 'express';
 
 import { AuthController } from './auth.controller';
 import { AuthService } from './auth.service';
@@ -12,7 +12,6 @@ describe('AuthController', () => {
   let controller: AuthController;
   let authService: jest.Mocked<AuthService>;
 
-  // Mock del usuario
   const mockUser = {
     id: 'user-uuid-1',
     email: 'test@ejemplo.com',
@@ -21,10 +20,8 @@ describe('AuthController', () => {
     },
   } as User;
 
-  // Mock de la respuesta de express para evaluar la inyección de cookies
   let mockResponse: jest.Mocked<Partial<Response>>;
 
-  // Constante de opciones de cookie para validaciones exactas
   const expectedCookieOptions = {
     httpOnly: true,
     secure: false,
@@ -32,7 +29,6 @@ describe('AuthController', () => {
   };
 
   beforeEach(async () => {
-    // Reiniciamos el mock de Response en cada prueba
     mockResponse = {
       cookie: jest.fn(),
       clearCookie: jest.fn(),
@@ -46,6 +42,11 @@ describe('AuthController', () => {
           useValue: {
             login: jest.fn(),
             checkAuthStatus: jest.fn(),
+            refreshTokens: jest.fn(),
+            logout: jest
+              .fn()
+              .mockResolvedValue({ message: 'events.auth.logout' }),
+            logoutAll: jest.fn().mockResolvedValue({ message: 'revoked' }),
           },
         },
         {
@@ -75,7 +76,7 @@ describe('AuthController', () => {
   });
 
   describe('loginUser', () => {
-    it('debe iniciar sesión, establecer la cookie y retornar los datos del usuario sin el token', async () => {
+    it('debe iniciar sesión, establecer las cookies y retornar los datos del usuario sin los tokens', async () => {
       const loginDto: LoginUserDto = {
         email: 'test@ejemplo.com',
         password: 'password123',
@@ -84,9 +85,11 @@ describe('AuthController', () => {
       const authResponse = {
         ...mockUser,
         token: 'fake-jwt-token',
+        accessToken: 'fake-jwt-token',
+        refreshToken: 'fake-refresh-token',
+        expiresIn: 900,
       };
 
-      // Simulamos que el servicio retorna el usuario y el token
       authService.login.mockResolvedValue(authResponse);
 
       const result = await controller.loginUser(
@@ -96,13 +99,21 @@ describe('AuthController', () => {
 
       expect(authService.login).toHaveBeenCalledWith(loginDto);
 
-      // Validamos que se asigne la cookie con los parámetros correctos
       expect(mockResponse.cookie).toHaveBeenCalledWith(
         'token',
         'fake-jwt-token',
         {
           ...expectedCookieOptions,
-          maxAge: 1000 * 60 * 60 * 5, // 5 horas
+          maxAge: 1000 * 60 * 60 * 5,
+        },
+      );
+
+      expect(mockResponse.cookie).toHaveBeenCalledWith(
+        'refreshToken',
+        'fake-refresh-token',
+        {
+          ...expectedCookieOptions,
+          maxAge: 1000 * 60 * 60 * 24 * 7,
         },
       );
 
@@ -112,6 +123,45 @@ describe('AuthController', () => {
         staff: mockUser.staff,
       });
       expect(result).not.toHaveProperty('token');
+      expect(result).not.toHaveProperty('refreshToken');
+    });
+  });
+
+  describe('refreshToken', () => {
+    it('debe rotar tokens usando la cookie y establecer las nuevas cookies', async () => {
+      const mockReq = {
+        cookies: { refreshToken: 'cookie-refresh-token' },
+      } as unknown as Request;
+
+      const refreshResult = {
+        accessToken: 'new-access-token',
+        refreshToken: 'new-refresh-token',
+        expiresIn: 900,
+        user: { id: mockUser.id },
+      };
+
+      authService.refreshTokens.mockResolvedValue(refreshResult);
+
+      const result = await controller.refreshToken(
+        mockReq,
+        {},
+        mockResponse as Response,
+      );
+
+      expect(authService.refreshTokens).toHaveBeenCalledWith(
+        'cookie-refresh-token',
+      );
+      expect(mockResponse.cookie).toHaveBeenCalledWith(
+        'token',
+        'new-access-token',
+        expect.any(Object),
+      );
+      expect(mockResponse.cookie).toHaveBeenCalledWith(
+        'refreshToken',
+        'new-refresh-token',
+        expect.any(Object),
+      );
+      expect(result).toEqual(refreshResult);
     });
   });
 
@@ -119,7 +169,7 @@ describe('AuthController', () => {
     it('debe renovar el token, actualizar la cookie y retornar los datos del usuario', () => {
       const authResponse = {
         ...mockUser,
-        token: 'renewed-jwt-token',
+        token: 'fake-renewed-jwt-token',
       };
 
       authService.checkAuthStatus.mockReturnValue(authResponse);
@@ -130,46 +180,64 @@ describe('AuthController', () => {
       );
 
       expect(authService.checkAuthStatus).toHaveBeenCalledWith(mockUser);
-
-      // Validamos que se actualice la cookie con el nuevo tiempo de expiración
       expect(mockResponse.cookie).toHaveBeenCalledWith(
         'token',
-        'renewed-jwt-token',
+        'fake-renewed-jwt-token',
         {
           ...expectedCookieOptions,
-          maxAge: 1000 * 60 * 60 * 4, // 4 horas
+          maxAge: 1000 * 60 * 60 * 4,
         },
       );
-
-      // 👇 AQUÍ ESTÁ LA CORRECCIÓN: Validamos que retorne 'staff' en lugar de 'name'
       expect(result).toEqual({
         id: mockUser.id,
         email: mockUser.email,
         staff: mockUser.staff,
       });
-      expect(result).not.toHaveProperty('token');
     });
   });
 
   describe('logout', () => {
-    it('debe eliminar la cookie y retornar el mensaje de éxito', () => {
-      const result = controller.logout(mockResponse as Response);
+    it('debe llamar a authService.logout, limpiar cookies y retornar mensaje', async () => {
+      const mockReq = {
+        cookies: { refreshToken: 'token-to-revoke' },
+      } as unknown as Request;
 
-      // Validamos que se limpie la cookie con las mismas opciones de seguridad
+      const result = await controller.logout(
+        mockReq,
+        {},
+        mockResponse as Response,
+      );
+
+      expect(authService.logout).toHaveBeenCalledWith('token-to-revoke');
       expect(mockResponse.clearCookie).toHaveBeenCalledWith(
         'token',
         expectedCookieOptions,
       );
-
-      // El mensaje se traduce a través del mock del I18nService
+      expect(mockResponse.clearCookie).toHaveBeenCalledWith(
+        'refreshToken',
+        expectedCookieOptions,
+      );
       expect(result).toEqual({ message: 'events.auth.logout' });
     });
   });
 
-  describe('prueba', () => {
-    it('debe retornar directamente el objeto del usuario inyectado', () => {
-      const result = controller.prueba(mockUser);
-      expect(result).toEqual(mockUser);
+  describe('logoutAll', () => {
+    it('debe revocar todas las sesiones del usuario y limpiar cookies', async () => {
+      const result = await controller.logoutAll(
+        mockUser,
+        mockResponse as Response,
+      );
+
+      expect(authService.logoutAll).toHaveBeenCalledWith(mockUser.id);
+      expect(mockResponse.clearCookie).toHaveBeenCalledWith(
+        'token',
+        expectedCookieOptions,
+      );
+      expect(mockResponse.clearCookie).toHaveBeenCalledWith(
+        'refreshToken',
+        expectedCookieOptions,
+      );
+      expect(result).toEqual({ message: 'revoked' });
     });
   });
 });

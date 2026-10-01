@@ -6,6 +6,7 @@ import { JwtPayload } from './interfaces/jwt-payload.interface';
 import { JwtService } from '@nestjs/jwt';
 import { User } from 'src/users/entities/user.entity';
 import { I18nService } from 'nestjs-i18n';
+import { RefreshTokenService } from './services/refresh-token.service';
 
 @Injectable()
 export class AuthService {
@@ -13,6 +14,7 @@ export class AuthService {
     private readonly usersService: UsersService,
     private readonly jwtModule: JwtService,
     private readonly i18n: I18nService,
+    private readonly refreshTokenService: RefreshTokenService,
   ) {}
 
   async login(loginUserDto: LoginUserDto) {
@@ -32,13 +34,14 @@ export class AuthService {
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const { password: pd, ...rest } = user;
 
+    const tokens = await this.refreshTokenService.generateTokens(user);
+
     return {
       ...rest,
-      token: this.getJwtToken({
-        id: user.id,
-        idRole: user.role.id,
-        idDepartment: user.staff.department.id,
-      }),
+      token: tokens.accessToken,
+      accessToken: tokens.accessToken,
+      refreshToken: tokens.refreshToken,
+      expiresIn: tokens.expiresIn,
     };
   }
 
@@ -50,6 +53,32 @@ export class AuthService {
         idRole: user.role.id,
         idDepartment: user.staff.department.id,
       }),
+    };
+  }
+
+  async refreshTokens(refreshToken: string) {
+    const result =
+      await this.refreshTokenService.rotateRefreshToken(refreshToken);
+    return {
+      ...result,
+      token: result.accessToken,
+    };
+  }
+
+  async logout(refreshToken?: string) {
+    if (refreshToken) {
+      await this.refreshTokenService.revokeRefreshToken(refreshToken);
+    }
+    return {
+      message:
+        this.i18n.t('events.auth.logout') || 'Sesión cerrada exitosamente.',
+    };
+  }
+
+  async logoutAll(userId: string) {
+    await this.refreshTokenService.revokeAllUserTokens(userId);
+    return {
+      message: 'Todas las sesiones activas han sido revocadas exitosamente.',
     };
   }
 

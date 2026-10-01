@@ -7,15 +7,24 @@ import { PassportModule } from '@nestjs/passport';
 import { JwtModule, JwtModuleOptions } from '@nestjs/jwt';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { StringValue } from 'ms';
+import { CommonModule } from 'src/common/common.module';
+import { RefreshTokenService } from './services/refresh-token.service';
 import { WsUserRoleGuard } from './guards/ws-user-role.guard';
 import { WsJwtGuard } from './strategies/ws-jwt.strategy';
 
 @Module({
   controllers: [AuthController],
-  providers: [AuthService, JwtStrategy, WsJwtGuard, WsUserRoleGuard],
+  providers: [
+    AuthService,
+    JwtStrategy,
+    WsJwtGuard,
+    WsUserRoleGuard,
+    RefreshTokenService,
+  ],
   imports: [
     UsersModule,
     ConfigModule,
+    CommonModule,
     PassportModule.register({
       defaultStrategy: 'jwt',
     }),
@@ -40,6 +49,7 @@ import { WsJwtGuard } from './strategies/ws-jwt.strategy';
     JwtModule,
     WsJwtGuard,
     WsUserRoleGuard,
+    RefreshTokenService,
   ],
 })
 export class AuthModule {}
