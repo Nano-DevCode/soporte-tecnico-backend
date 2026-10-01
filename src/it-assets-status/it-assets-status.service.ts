@@ -59,7 +59,7 @@ export class ItAssetsStatusService {
     }
   }
 
-  private handleDBExeptions(error: any): never {
+  private handleDBExeptions(error: unknown): never {
     const dbError = error as DatabaseError;
     if (dbError.code === '23503') {
       throw new BadRequestException(dbError.detail);

@@ -104,7 +104,7 @@ export class GeneralWebsocketGateway
     this.server?.to(Array.from(targetRooms)).emit('ticket_updated', ticket.id);
   }
 
-  emitToUser(userId: string, event: string, payload: any) {
+  emitToUser<T = unknown>(userId: string, event: string, payload: T) {
     this.server?.to(`user_${userId}`).emit(event, payload);
   }
 }

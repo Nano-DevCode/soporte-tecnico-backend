@@ -7,7 +7,7 @@ import { Ticket } from 'src/tickets/entities/ticket.entity';
 
 describe('SlaTicketListener', () => {
   let listener: SlaTicketListener;
-  let mockTicketSlaRepository: any;
+  let mockTicketSlaRepository: Record<string, jest.Mock>;
 
   beforeEach(async () => {
     mockTicketSlaRepository = {

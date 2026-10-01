@@ -5,7 +5,7 @@ import { RequestContext } from '../context/request-context';
 export class AppLoggerService extends ConsoleLogger {
   private formatStructuredMessage(
     level: string,
-    message: any,
+    message: unknown,
     context?: string,
     stack?: string,
   ): string {
@@ -17,7 +17,10 @@ export class AppLoggerService extends ConsoleLogger {
         timestamp: new Date().toISOString(),
         level,
         context: context || this.context || 'Application',
-        message: typeof message === 'object' ? message : String(message),
+        message:
+          typeof message === 'object' && message !== null
+            ? message
+            : String(message),
       };
 
       if (requestId) {
@@ -37,10 +40,14 @@ export class AppLoggerService extends ConsoleLogger {
     }
 
     const prefix = requestId ? `[${requestId.slice(0, 8)}] ` : '';
-    return `${prefix}${typeof message === 'object' ? JSON.stringify(message) : message}`;
+    const formattedMsg =
+      typeof message === 'object' && message !== null
+        ? JSON.stringify(message)
+        : String(message);
+    return `${prefix}${formattedMsg}`;
   }
 
-  override log(message: any, context?: string): void {
+  override log(message: unknown, context?: string): void {
     const isProduction = process.env.NODE_ENV === 'production';
     if (isProduction) {
       process.stdout.write(
@@ -51,7 +58,7 @@ export class AppLoggerService extends ConsoleLogger {
     super.log(this.formatStructuredMessage('info', message, context), context);
   }
 
-  override error(message: any, stack?: string, context?: string): void {
+  override error(message: unknown, stack?: string, context?: string): void {
     const isProduction = process.env.NODE_ENV === 'production';
     if (isProduction) {
       process.stderr.write(
@@ -66,7 +73,7 @@ export class AppLoggerService extends ConsoleLogger {
     );
   }
 
-  override warn(message: any, context?: string): void {
+  override warn(message: unknown, context?: string): void {
     const isProduction = process.env.NODE_ENV === 'production';
     if (isProduction) {
       process.stdout.write(
@@ -77,7 +84,7 @@ export class AppLoggerService extends ConsoleLogger {
     super.warn(this.formatStructuredMessage('warn', message, context), context);
   }
 
-  override debug(message: any, context?: string): void {
+  override debug(message: unknown, context?: string): void {
     const isProduction = process.env.NODE_ENV === 'production';
     if (isProduction) {
       process.stdout.write(
@@ -91,7 +98,7 @@ export class AppLoggerService extends ConsoleLogger {
     );
   }
 
-  override verbose(message: any, context?: string): void {
+  override verbose(message: unknown, context?: string): void {
     const isProduction = process.env.NODE_ENV === 'production';
     if (isProduction) {
       process.stdout.write(

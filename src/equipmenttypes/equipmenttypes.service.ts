@@ -203,7 +203,7 @@ export class EquipmenttypesService {
   }
 
   // --- HELPERS ---
-  private validateId(id: any) {
+  private validateId(id: unknown) {
     if (id === null || id === undefined || isNaN(Number(id))) {
       throw new BadRequestException(
         this.i18n.t('validation.isMatches', { args: { property: 'id' } }),
@@ -215,10 +215,10 @@ export class EquipmenttypesService {
     return str ? str.trim().replace(/\s+/g, ' ') : '';
   }
 
-  private handleDBExceptions(error: any): never {
+  private handleDBExceptions(error: unknown): never {
     const errorCode =
       error instanceof Object && 'code' in error
-        ? String((error as Record<string, any>).code)
+        ? String((error as Record<string, unknown>).code)
         : null;
 
     if (errorCode === '23505') {

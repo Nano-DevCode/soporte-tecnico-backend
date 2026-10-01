@@ -4,8 +4,12 @@ describe('AuditSanitizerUtil', () => {
   it('should return null for non-object values', () => {
     expect(sanitizeAuditData(null)).toBeNull();
     expect(sanitizeAuditData(undefined)).toBeNull();
-    expect(sanitizeAuditData('string' as any)).toBeNull();
-    expect(sanitizeAuditData(123 as any)).toBeNull();
+    expect(
+      sanitizeAuditData('string' as unknown as Record<string, unknown>),
+    ).toBeNull();
+    expect(
+      sanitizeAuditData(123 as unknown as Record<string, unknown>),
+    ).toBeNull();
   });
 
   it('should redact sensitive fields regardless of case', () => {
@@ -53,11 +57,19 @@ describe('AuditSanitizerUtil', () => {
   });
 
   it('should handle circular references gracefully', () => {
-    const a: any = { id: 'a-1', name: 'Entity A' };
-    const b: any = { id: 'b-1', entityA: a };
+    interface CircularEntity {
+      id: string;
+      name?: string;
+      entityA?: CircularEntity;
+      entityB?: CircularEntity;
+    }
+    const a: CircularEntity = { id: 'a-1', name: 'Entity A' };
+    const b: CircularEntity = { id: 'b-1', entityA: a };
     a.entityB = b;
 
-    const sanitized = sanitizeAuditData(a);
+    const sanitized = sanitizeAuditData(
+      a as unknown as Record<string, unknown>,
+    );
     expect(sanitized?.name).toBe('Entity A');
     expect(sanitized?.entityB).toBeDefined();
   });

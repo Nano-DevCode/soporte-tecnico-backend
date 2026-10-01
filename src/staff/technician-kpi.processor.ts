@@ -28,7 +28,9 @@ export class TechnicianKpiProcessor {
   ) {}
 
   @Process('calculate-all-kpis')
-  async handleProcess(job: Job): Promise<any> {
+  async handleProcess(
+    job: Job,
+  ): Promise<{ success: boolean; processed: number }> {
     this.logger.log(`Procesando trabajo: ${job.name} (ID: ${job.id})`);
 
     try {

@@ -10,10 +10,10 @@ import { CreateDepartmentDto } from './dto/create-department.dto';
 
 describe('DepartmentsService (Reactive Cache & Events)', () => {
   let service: DepartmentsService;
-  let mockDepartmentRepo: any;
-  let mockCacheService: any;
-  let mockEventEmitter: any;
-  let mockI18nService: any;
+  let mockDepartmentRepo: Record<string, jest.Mock>;
+  let mockCacheService: Record<string, jest.Mock>;
+  let mockEventEmitter: Record<string, jest.Mock>;
+  let mockI18nService: Record<string, jest.Mock>;
 
   beforeEach(async () => {
     mockDepartmentRepo = {

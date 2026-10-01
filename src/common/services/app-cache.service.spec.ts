@@ -119,14 +119,14 @@ describe('AppCacheService', () => {
     it('should return null and delete expired in-memory items', async () => {
       // Forzar expiración simulando timestamp pasado
       await service.set('expired:key', 'old', 1);
-      const entry = (service as any).memoryCache.get('expired:key');
+      const entry = service['memoryCache'].get('expired:key');
       if (entry) {
         entry.expiresAt = Date.now() - 1000;
       }
 
       const result = await service.get('expired:key');
       expect(result).toBeNull();
-      expect((service as any).memoryCache.has('expired:key')).toBe(false);
+      expect(service['memoryCache'].has('expired:key')).toBe(false);
     });
   });
 
@@ -171,7 +171,7 @@ describe('AppCacheService', () => {
       await service.del('key:1');
 
       expect(mockRedisService.del).toHaveBeenCalledWith('key:1');
-      expect((service as any).memoryCache.has('key:1')).toBe(false);
+      expect(service['memoryCache'].has('key:1')).toBe(false);
     });
 
     it('should delete keys by pattern in Redis and in-memory map', async () => {
@@ -185,9 +185,9 @@ describe('AppCacheService', () => {
       expect(mockRedisService.delByPattern).toHaveBeenCalledWith('dashboard:*');
       expect(deletedCount).toBe(3);
 
-      expect((service as any).memoryCache.has('dashboard:1')).toBe(false);
-      expect((service as any).memoryCache.has('dashboard:2')).toBe(false);
-      expect((service as any).memoryCache.has('catalog:1')).toBe(true);
+      expect(service['memoryCache'].has('dashboard:1')).toBe(false);
+      expect(service['memoryCache'].has('dashboard:2')).toBe(false);
+      expect(service['memoryCache'].has('catalog:1')).toBe(true);
     });
   });
 
@@ -212,7 +212,7 @@ describe('AppCacheService', () => {
       await service.clearAll();
 
       expect(mockRedisService.delByPattern).toHaveBeenCalledWith('*');
-      expect((service as any).memoryCache.size).toBe(0);
+      expect(service['memoryCache'].size).toBe(0);
 
       const stats = service.getStats();
       expect(stats.hits).toBe(0);

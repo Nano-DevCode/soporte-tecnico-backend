@@ -29,15 +29,17 @@ describe('ConsumableMovementsService - registerOutput', () => {
       find: jest.fn(),
       save: jest
         .fn()
-        .mockImplementation((_entity: any, obj: Record<string, unknown>) =>
+        .mockImplementation((_entity: unknown, obj: Record<string, unknown>) =>
           Promise.resolve(obj),
         ),
       create: jest
         .fn()
-        .mockImplementation((_entity: any, obj: Record<string, unknown>) => ({
-          id: 'movement-uuid-1',
-          ...obj,
-        })),
+        .mockImplementation(
+          (_entity: unknown, obj: Record<string, unknown>) => ({
+            id: 'movement-uuid-1',
+            ...obj,
+          }),
+        ),
       createQueryBuilder: jest.fn().mockReturnValue({
         select: jest.fn().mockReturnThis(),
         getRawOne: jest.fn().mockResolvedValue({ maxId: 5 }),
@@ -322,12 +324,12 @@ describe('ConsumableMovementsService - registerOutput', () => {
 //         find: jest.fn(),
 //         save: jest
 //           .fn()
-//           .mockImplementation((_entity: any, obj: Record<string, unknown>) =>
+//           .mockImplementation((_entity: unknown, obj: Record<string, unknown>) =>
 //             Promise.resolve(obj),
 //           ),
 //         create: jest
 //           .fn()
-//           .mockImplementation((_entity: any, obj: Record<string, unknown>) => ({
+//           .mockImplementation((_entity: unknown, obj: Record<string, unknown>) => ({
 //             id: 'movement-uuid-1',
 //             ...obj,
 //           })),

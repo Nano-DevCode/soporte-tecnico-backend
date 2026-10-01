@@ -65,7 +65,7 @@ export class ItAssetsTypesService {
     }
   }
 
-  private handleDBExeptions(error: any): never {
+  private handleDBExeptions(error: unknown): never {
     const dbError = error as DatabaseError;
     if (dbError.code === '23505') {
       if (dbError.detail?.includes('(name)=')) {

@@ -37,7 +37,7 @@ export class RoleSeedService {
     // 2. Eliminamos deleteAllRoles() para evitar errores de llave foránea con usuarios existentes
 
     const roles = seed_role;
-    const insertPromise: Promise<any>[] = [];
+    const insertPromise: Promise<unknown>[] = [];
 
     roles.forEach((role) => {
       insertPromise.push(this.rolesService.create(role));

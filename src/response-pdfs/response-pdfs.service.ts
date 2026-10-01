@@ -8,9 +8,12 @@ import { formatDatePretty } from 'src/users/util/dateTransformToString';
 import { TicketStatus } from 'src/common/machine/TicketStateMachine.machine';
 
 interface PdfStream {
-  on(event: 'data', listener: (chunk: any) => void): this;
+  on(
+    event: 'data',
+    listener: (chunk: Buffer | Uint8Array | string) => void,
+  ): this;
   on(event: 'end', listener: () => void): this;
-  on(event: 'error', listener: (error: any) => void): this;
+  on(event: 'error', listener: (error: Error) => void): this;
   end(): void;
 }
 

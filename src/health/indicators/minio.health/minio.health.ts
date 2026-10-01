@@ -25,9 +25,9 @@ export class MinioHealthIndicator extends HealthIndicator {
         ),
       },
       forcePathStyle: true,
-      // Silenciamos las reglas estrictas de any solo para esta configuración de timeout
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-      requestHandler: { requestTimeout: 3000 } as any,
+      requestHandler: {
+        requestTimeout: 3000,
+      },
     });
 
     try {

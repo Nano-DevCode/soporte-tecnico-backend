@@ -38,7 +38,9 @@ export class AuditSubscriber implements EntitySubscriberInterface {
     return 'unknown';
   }
 
-  async afterInsert(event: InsertEvent<any>): Promise<void> {
+  async afterInsert(
+    event: InsertEvent<Record<string, unknown>>,
+  ): Promise<void> {
     const entityName = event.metadata.name;
     const entity = event.entity
       ? (event.entity as Record<string, unknown>)
@@ -77,7 +79,9 @@ export class AuditSubscriber implements EntitySubscriberInterface {
     }
   }
 
-  async afterUpdate(event: UpdateEvent<any>): Promise<void> {
+  async afterUpdate(
+    event: UpdateEvent<Record<string, unknown>>,
+  ): Promise<void> {
     const entityName = event.metadata.name;
     const newEntity = event.entity
       ? (event.entity as Record<string, unknown>)
@@ -143,7 +147,9 @@ export class AuditSubscriber implements EntitySubscriberInterface {
     }
   }
 
-  async beforeRemove(event: RemoveEvent<any>): Promise<void> {
+  async beforeRemove(
+    event: RemoveEvent<Record<string, unknown>>,
+  ): Promise<void> {
     const entityName = event.metadata.name;
     if (this.isIgnored(entityName)) {
       return;

@@ -12,12 +12,12 @@ import { TicketStatus } from 'src/common/machine/TicketStateMachine.machine';
 
 describe('SlaMonitorService', () => {
   let service: SlaMonitorService;
-  let mockTicketRepository: any;
-  let mockTicketSlaRepository: any;
-  let mockTelegramBotService: any;
-  let mockNotificationsService: any;
-  let mockWebsocketGateway: any;
-  let mockEventEmitter: any;
+  let mockTicketRepository: Record<string, jest.Mock>;
+  let mockTicketSlaRepository: Record<string, jest.Mock>;
+  let mockTelegramBotService: Record<string, jest.Mock>;
+  let mockNotificationsService: Record<string, jest.Mock>;
+  let mockWebsocketGateway: Record<string, jest.Mock>;
+  let mockEventEmitter: Record<string, jest.Mock>;
 
   const createMockTicket = (
     id: string,
@@ -124,8 +124,8 @@ describe('SlaMonitorService', () => {
     service = module.get<SlaMonitorService>(SlaMonitorService);
   });
 
-  const setupQueryBuilderMock = (tickets: any[]) => {
-    const qb: any = {
+  const setupQueryBuilderMock = (tickets: unknown[]) => {
+    const qb: Record<string, jest.Mock> = {
       leftJoinAndSelect: jest.fn().mockReturnThis(),
       where: jest.fn().mockReturnThis(),
       getMany: jest.fn().mockResolvedValue(tickets),

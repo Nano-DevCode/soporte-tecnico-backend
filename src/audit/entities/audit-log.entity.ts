@@ -52,10 +52,10 @@ export class AuditLog {
   requestId: string | null;
 
   @Column({ type: 'jsonb', nullable: true })
-  previousValues: Record<string, any> | null;
+  previousValues: Record<string, unknown> | null;
 
   @Column({ type: 'jsonb', nullable: true })
-  newValues: Record<string, any> | null;
+  newValues: Record<string, unknown> | null;
 
   @Column({ type: 'jsonb', nullable: true })
   changedFields: string[] | null;

@@ -59,7 +59,7 @@ export class DepartmentsService {
   async findAllFilter(filterDto: FilterDepartmentDto) {
     const cacheKey = this.cacheService.generateKey(
       'catalog:departments:filter',
-      filterDto as Record<string, any>,
+      filterDto as unknown as Record<string, unknown>,
     );
     return this.cacheService.wrap(
       cacheKey,

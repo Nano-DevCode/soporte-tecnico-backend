@@ -10,11 +10,11 @@ import { User } from 'src/users/entities/user.entity';
 
 describe('RefreshTokenService', () => {
   let service: RefreshTokenService;
-  let mockJwtService: any;
-  let mockConfigService: any;
-  let mockRedisService: any;
-  let mockUsersService: any;
-  let mockI18nService: any;
+  let mockJwtService: Record<string, jest.Mock>;
+  let mockConfigService: Record<string, jest.Mock>;
+  let mockRedisService: Record<string, jest.Mock | boolean>;
+  let mockUsersService: Record<string, jest.Mock>;
+  let mockI18nService: Record<string, jest.Mock>;
 
   const mockUser = {
     id: 'user-uuid-1',

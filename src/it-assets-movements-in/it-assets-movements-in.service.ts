@@ -90,7 +90,7 @@ export class ItAssetsMovementsInService {
     }
   }
 
-  private handleDBExeptions(error: any): never {
+  private handleDBExeptions(error: unknown): never {
     const dbError = error as DatabaseError;
     if (error instanceof HttpException) {
       throw error;

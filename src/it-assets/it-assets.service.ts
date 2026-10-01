@@ -293,7 +293,7 @@ export class ItAssetsService {
     return this.itAssetRepository.save(asset);
   }
 
-  private handleDBExeptions(error: any): never {
+  private handleDBExeptions(error: unknown): never {
     if (error instanceof HttpException) {
       throw error;
     }

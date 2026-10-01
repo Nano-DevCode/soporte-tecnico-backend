@@ -227,7 +227,7 @@ export class SchoolPeriodsService {
     return activePeriod;
   }
 
-  private handleDBErrors(dbeError: any): never {
+  private handleDBErrors(dbeError: unknown): never {
     const error = dbeError as DatabaseError;
 
     if (error.code === '23505') {

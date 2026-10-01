@@ -391,7 +391,18 @@ export class ConsumableMovementsService {
         observations: string | null;
         total_quantity: number;
         total_cost: number;
-        subItems: any[];
+        subItems: Array<{
+          id: string;
+          quantity_consumable: number;
+          movement_cost: number;
+          observations: string | null;
+          batch: {
+            id?: string;
+            num_requirement?: string;
+            cost_unit?: number;
+          };
+          consumable: unknown;
+        }>;
       }
     > = {};
 

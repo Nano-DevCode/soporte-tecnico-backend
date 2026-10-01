@@ -4,7 +4,7 @@ import { RedisService } from './redis.service';
 
 describe('RedisService', () => {
   let service: RedisService;
-  let mockConfigService: any;
+  let mockConfigService: Record<string, jest.Mock>;
 
   beforeEach(async () => {
     mockConfigService = {
@@ -84,7 +84,7 @@ describe('RedisService', () => {
   });
 
   describe('when connected with mock client', () => {
-    let mockClient: any;
+    let mockClient: Record<string, jest.Mock>;
 
     beforeEach(() => {
       mockClient = {
@@ -100,8 +100,8 @@ describe('RedisService', () => {
         disconnect: jest.fn(),
       };
 
-      (service as any).client = mockClient;
-      (service as any).isConnected = true;
+      service['client'] = mockClient as unknown as import('ioredis').Redis;
+      service['isConnected'] = true;
     });
 
     it('should call client.get and return value', async () => {

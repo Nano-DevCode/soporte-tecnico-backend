@@ -81,7 +81,7 @@ export class DashboardService {
   ): Promise<number> {
     const cacheKey = this.cacheService.generateKey(
       'dashboard:availability',
-      filters as Record<string, any>,
+      filters as unknown as Record<string, unknown>,
     );
     return this.cacheService.wrap(
       cacheKey,
@@ -222,7 +222,7 @@ export class DashboardService {
   }> {
     const cacheKey = this.cacheService.generateKey(
       'dashboard:mttr',
-      filters as Record<string, any>,
+      filters as unknown as Record<string, unknown>,
     );
     return this.cacheService.wrap(
       cacheKey,
@@ -361,7 +361,7 @@ export class DashboardService {
   ): Promise<{ month: string; count: number }[]> {
     const cacheKey = this.cacheService.generateKey(
       'dashboard:interruptions',
-      filters as Record<string, any>,
+      filters as unknown as Record<string, unknown>,
     );
     return this.cacheService.wrap(
       cacheKey,
@@ -460,7 +460,7 @@ export class DashboardService {
   ): Promise<{ priority: number; avg_hours: number }[]> {
     const cacheKey = this.cacheService.generateKey(
       'dashboard:res_priority',
-      filters as Record<string, any>,
+      filters as unknown as Record<string, unknown>,
     );
     return this.cacheService.wrap(
       cacheKey,
@@ -548,7 +548,7 @@ export class DashboardService {
   }> {
     const cacheKey = this.cacheService.generateKey(
       'dashboard:first_level',
-      filters as Record<string, any>,
+      filters as unknown as Record<string, unknown>,
     );
     return this.cacheService.wrap(
       cacheKey,
@@ -633,7 +633,7 @@ export class DashboardService {
   ): Promise<{ percentage: number; totalResolved: number; slaMet: number }> {
     const cacheKey = this.cacheService.generateKey(
       'dashboard:sla_compliance',
-      filters as Record<string, any>,
+      filters as unknown as Record<string, unknown>,
     );
     return this.cacheService.wrap(
       cacheKey,
@@ -728,7 +728,7 @@ export class DashboardService {
   }> {
     const cacheKey = this.cacheService.generateKey(
       'dashboard:maintenance',
-      filters as Record<string, any>,
+      filters as unknown as Record<string, unknown>,
     );
     return this.cacheService.wrap(
       cacheKey,
@@ -795,7 +795,7 @@ export class DashboardService {
   ): Promise<{ averageCost: number; totalCost: number; totalTickets: number }> {
     const cacheKey = this.cacheService.generateKey(
       'dashboard:cost_incident',
-      filters as Record<string, any>,
+      filters as unknown as Record<string, unknown>,
     );
     return this.cacheService.wrap(
       cacheKey,
@@ -905,7 +905,7 @@ export class DashboardService {
   ): Promise<{ status: string; code: string; count: number }[]> {
     const cacheKey = this.cacheService.generateKey(
       'dashboard:status',
-      filters as Record<string, any>,
+      filters as unknown as Record<string, unknown>,
     );
     return this.cacheService.wrap(
       cacheKey,
@@ -1001,7 +1001,7 @@ export class DashboardService {
   }> {
     const cacheKey = this.cacheService.generateKey(
       'dashboard:satisfaction',
-      filters as Record<string, any>,
+      filters as unknown as Record<string, unknown>,
     );
     return this.cacheService.wrap(
       cacheKey,
@@ -1208,7 +1208,7 @@ export class DashboardService {
   ): Promise<{ departmentName: string; count: number }[]> {
     const cacheKey = this.cacheService.generateKey(
       'dashboard:by_department',
-      filters as Record<string, any>,
+      filters as unknown as Record<string, unknown>,
     );
     return this.cacheService.wrap(
       cacheKey,
@@ -1244,7 +1244,7 @@ export class DashboardService {
   ): Promise<{ issueTypeName: string; count: number }[]> {
     const cacheKey = this.cacheService.generateKey(
       'dashboard:by_issue_type',
-      filters as Record<string, any>,
+      filters as unknown as Record<string, unknown>,
     );
     return this.cacheService.wrap(
       cacheKey,

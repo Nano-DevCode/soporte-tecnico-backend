@@ -6,7 +6,7 @@ import { SlaStatus } from './entities/ticket-sla.entity';
 
 describe('SlaController', () => {
   let controller: SlaController;
-  let mockSlaMonitorService: any;
+  let mockSlaMonitorService: Record<string, jest.Mock>;
 
   const mockI18nService = {
     t: jest.fn().mockImplementation((key: string) => key),

@@ -308,7 +308,7 @@ export class ToolsService {
     return this.toolsRepository.save(tool);
   }
 
-  private handleDBExeptions(error: any): never {
+  private handleDBExeptions(error: unknown): never {
     if (error instanceof HttpException) {
       throw error;
     }

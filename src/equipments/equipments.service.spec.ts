@@ -123,7 +123,7 @@ describe('EquipmentsService', () => {
           ),
         save: jest
           .fn()
-          .mockImplementation((entity: any) =>
+          .mockImplementation((entity: Record<string, unknown>) =>
             Promise.resolve({ id: MOCK_EQUIPMENT_ID, ...entity }),
           ),
         preload: jest.fn(),

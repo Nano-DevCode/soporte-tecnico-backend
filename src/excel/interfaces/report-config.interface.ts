@@ -52,6 +52,6 @@ export interface SurveyReportConfig {
   title: string;
   sheetName?: string;
   columns: SurveyReportColumn[];
-  data: Record<string, any>[];
+  data: Record<string, unknown>[];
   overallAverage?: number;
 }

@@ -326,8 +326,8 @@ export class EquipmentsService {
     }
 
     if (status !== undefined && status !== null && status !== '') {
-      const isTrue = (status as any) === true || status === 'true';
-      const isFalse = (status as any) === false || status === 'false';
+      const isTrue = String(status) === 'true';
+      const isFalse = String(status) === 'false';
 
       if (isTrue || isFalse) {
         queryBuilder.andWhere('equipment.status = :status', {
@@ -631,10 +631,10 @@ export class EquipmentsService {
     }
   }
 
-  private handleDBExceptions(error: any): never {
+  private handleDBExceptions(error: unknown): never {
     const errorCode =
       error instanceof Object && 'code' in error
-        ? String((error as Record<string, any>).code)
+        ? String((error as Record<string, unknown>).code)
         : null;
 
     if (errorCode === '23505') {

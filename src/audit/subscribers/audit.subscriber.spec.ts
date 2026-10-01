@@ -5,9 +5,9 @@ import { RequestContext } from 'src/common/context/request-context';
 
 describe('AuditSubscriber', () => {
   let subscriber: AuditSubscriber;
-  let mockDataSource: any;
-  let mockAuditRepo: any;
-  let mockManager: any;
+  let mockDataSource: { subscribers: unknown[] };
+  let mockAuditRepo: Record<string, jest.Mock>;
+  let mockManager: Record<string, jest.Mock>;
 
   beforeEach(() => {
     mockAuditRepo = {
@@ -26,7 +26,7 @@ describe('AuditSubscriber', () => {
       subscribers: [],
     };
 
-    subscriber = new AuditSubscriber(mockDataSource as DataSource);
+    subscriber = new AuditSubscriber(mockDataSource as unknown as DataSource);
   });
 
   it('should register itself into dataSource subscribers', () => {
@@ -39,7 +39,7 @@ describe('AuditSubscriber', () => {
         metadata: { name: 'AuditLog' },
         entity: { id: 'audit-1' },
         manager: mockManager,
-      } as unknown as InsertEvent<any>;
+      } as unknown as InsertEvent<Record<string, unknown>>;
 
       await subscriber.afterInsert(event);
       expect(mockAuditRepo.create).not.toHaveBeenCalled();
@@ -58,7 +58,7 @@ describe('AuditSubscriber', () => {
         metadata: { name: 'Ticket' },
         entity: { id: 't-1', title: 'Network Issue', password: 'secret' },
         manager: mockManager,
-      } as unknown as InsertEvent<any>;
+      } as unknown as InsertEvent<Record<string, unknown>>;
 
       await subscriber.afterInsert(event);
 
@@ -93,7 +93,7 @@ describe('AuditSubscriber', () => {
         databaseEntity: { id: 'dept-1', name: 'Old Dept', status: true },
         entity: { id: 'dept-1', name: 'New Dept', status: true },
         manager: mockManager,
-      } as unknown as UpdateEvent<any>;
+      } as unknown as UpdateEvent<Record<string, unknown>>;
 
       await subscriber.afterUpdate(event);
 
@@ -117,7 +117,7 @@ describe('AuditSubscriber', () => {
         databaseEntity: { id: 'dept-1', name: 'Same Dept' },
         entity: { id: 'dept-1', name: 'Same Dept' },
         manager: mockManager,
-      } as unknown as UpdateEvent<any>;
+      } as unknown as UpdateEvent<Record<string, unknown>>;
 
       await subscriber.afterUpdate(event);
       expect(mockAuditRepo.create).not.toHaveBeenCalled();
@@ -134,7 +134,7 @@ describe('AuditSubscriber', () => {
         metadata: { name: 'Ticket' },
         entity: { id: 't-99', folio: 'FOL-001' },
         manager: mockManager,
-      } as unknown as RemoveEvent<any>;
+      } as unknown as RemoveEvent<Record<string, unknown>>;
 
       await subscriber.beforeRemove(event);
 

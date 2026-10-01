@@ -6,7 +6,7 @@ import { AuditAction, AuditLog } from './entities/audit-log.entity';
 
 describe('AuditService', () => {
   let service: AuditService;
-  let mockAuditRepo: any;
+  let mockAuditRepo: Record<string, jest.Mock>;
 
   beforeEach(async () => {
     mockAuditRepo = {

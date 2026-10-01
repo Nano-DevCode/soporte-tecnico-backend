@@ -3,14 +3,14 @@ import { Logger } from '@nestjs/common';
 import type { Job } from 'bull';
 import { InjectBot } from 'nestjs-telegraf';
 import { TelegramNotificationOptions } from 'src/telegram-bot/telegram-bot.service';
-import { Telegraf, TelegramError } from 'telegraf';
+import { Context, Telegraf, TelegramError } from 'telegraf';
 
 @Processor('telegram-queue')
 export class TelegramProcessorService {
   private readonly logger = new Logger('TelegramProcessorService');
 
   // Inyectamos el Bot AQUÍ, ya no en el servicio
-  constructor(@InjectBot() private readonly bot: Telegraf<any>) {}
+  constructor(@InjectBot() private readonly bot: Telegraf<Context>) {}
 
   @OnGlobalQueueFailed()
   onGlobalJobFailed(jobId: string, err: Error) {

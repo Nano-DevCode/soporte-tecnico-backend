@@ -19,7 +19,7 @@ interface MemoryCacheEntry<T> {
 @Injectable()
 export class AppCacheService {
   private readonly logger = new Logger(AppCacheService.name);
-  private readonly memoryCache = new Map<string, MemoryCacheEntry<any>>();
+  private readonly memoryCache = new Map<string, MemoryCacheEntry<unknown>>();
   private hits = 0;
   private misses = 0;
 
@@ -28,7 +28,7 @@ export class AppCacheService {
   /**
    * Genera una clave de caché determinista a partir de un prefijo y parámetros arbitrarios.
    */
-  generateKey(prefix: string, params?: Record<string, any>): string {
+  generateKey(prefix: string, params?: Record<string, unknown>): string {
     if (!params || Object.keys(params).length === 0) {
       return prefix;
     }

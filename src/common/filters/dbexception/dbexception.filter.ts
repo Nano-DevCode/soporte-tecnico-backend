@@ -15,7 +15,7 @@ interface PostgresError extends Error {
   table?: string;
   constraint?: string;
   query?: string;
-  parameters?: any[];
+  parameters?: unknown[];
 }
 
 @Catch(QueryFailedError)

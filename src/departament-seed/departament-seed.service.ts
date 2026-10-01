@@ -27,7 +27,7 @@ export class DepartamentSeedService {
 
   private async createDepartaments(existingDepartments: Department[]) {
     const departaments = seed_departament;
-    const insertPromise: Promise<any>[] = [];
+    const insertPromise: Promise<unknown>[] = [];
 
     departaments.forEach((departament) => {
       // Verificamos si el departamento (ej. 'Dirección') ya existe en la BD

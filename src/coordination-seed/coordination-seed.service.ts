@@ -33,7 +33,7 @@ export class CoordinationSeedService {
 
   private async coordinationSeed() {
     const coordinations = coordination_seed;
-    const insertPromise: Promise<any>[] = [];
+    const insertPromise: Promise<unknown>[] = [];
 
     coordinations.forEach((coordination) => {
       insertPromise.push(this.coordinationsService.create(coordination));

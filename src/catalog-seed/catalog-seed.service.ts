@@ -29,7 +29,7 @@ export class CatalogSeedService {
     await this.ticketHistoryService.deleteAllStatus();
     await this.typeDocumentService.deleteAllTypeDocuments();
 
-    const promises: any[] = [];
+    const promises: Promise<unknown>[] = [];
     SEED_DATA.issueTypes.forEach((isueType) => {
       promises.push(this.issueTypeService.create(isueType));
     });

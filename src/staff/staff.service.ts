@@ -575,7 +575,7 @@ export class StaffService {
     };
   }
 
-  private handleDBExeptions(error: any) {
+  private handleDBExeptions(error: unknown) {
     const dbError = error as DatabaseError;
     if (dbError.code === '23505') {
       throw new BadRequestException(dbError.detail);

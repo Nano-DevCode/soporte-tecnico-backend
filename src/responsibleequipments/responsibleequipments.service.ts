@@ -165,15 +165,15 @@ export class ResponsibleequipmentsService {
     return str ? str.trim().replace(/\s+/g, ' ') : '';
   }
 
-  private handleDBExceptions(error: any): never {
+  private handleDBExceptions(error: unknown): never {
     const errorCode =
       error instanceof Object && 'code' in error
-        ? String((error as Record<string, any>).code)
+        ? String((error as Record<string, unknown>).code)
         : null;
 
     const errorDetail =
       error instanceof Object && 'detail' in error
-        ? String((error as Record<string, any>).detail)
+        ? String((error as Record<string, unknown>).detail)
         : '';
 
     if (errorCode === '23505') {
