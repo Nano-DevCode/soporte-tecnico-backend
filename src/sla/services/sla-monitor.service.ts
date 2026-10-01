@@ -6,7 +6,7 @@ import { EventEmitter2 } from '@nestjs/event-emitter';
 import { Ticket } from 'src/tickets/entities/ticket.entity';
 import { SlaStatus, TicketSla } from '../entities/ticket-sla.entity';
 import { SlaCalculatorService } from './sla-calculator.service';
-import { TelegramBotService } from 'src/telegram-bot/telegram-bot.service';
+import { TelegramService } from 'src/telegram/services/telegram.service';
 import { NotificationsService } from 'src/notifications/notifications.service';
 import { GeneralWebsocketGateway } from 'src/general-websocket/general-websocket.gateway';
 import { TicketStatus } from 'src/common/machine/TicketStateMachine.machine';
@@ -38,7 +38,7 @@ export class SlaMonitorService {
     @InjectRepository(TicketSla)
     private readonly ticketSlaRepository: Repository<TicketSla>,
     private readonly slaCalculator: SlaCalculatorService,
-    private readonly telegramBotService: TelegramBotService,
+    private readonly telegramBotService: TelegramService,
     private readonly notificationsService: NotificationsService,
     private readonly websocketGateway: GeneralWebsocketGateway,
     private readonly eventEmitter: EventEmitter2,

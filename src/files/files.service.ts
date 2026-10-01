@@ -80,10 +80,29 @@ export class FilesService {
     file: MulterFile,
     bucketName: AllowedBucket,
     customName?: string,
-  ) {
+  ): Promise<{ fileName: string; url: string; bucket: AllowedBucket }> {
+    if (file.size > this.maxFileSize) {
+      throw new BadRequestException('El archivo debe de ser menor a 5MB');
+    }
+    return this.uploadBuffer(
+      file.buffer,
+      file.originalname,
+      file.mimetype,
+      bucketName,
+      customName,
+    );
+  }
+
+  async uploadBuffer(
+    buffer: Buffer,
+    originalname: string,
+    mimetype: string,
+    bucketName: AllowedBucket,
+    customName?: string,
+  ): Promise<{ fileName: string; url: string; bucket: AllowedBucket }> {
     const typeDetector = await this.getFileTypeDetector();
 
-    await this.validateFile(file, typeDetector);
+    await this.validateBuffer(buffer, typeDetector);
 
     // --- LÓGICA DE REEMPLAZO ---
     // Si envías un customName (UUID), borramos cualquier versión vieja primero
@@ -91,13 +110,13 @@ export class FilesService {
       await this.deleteOldVersions(bucketName, customName);
     }
 
-    let fileBuffer = file.buffer;
-    let fileExtension = extname(file.originalname).toLowerCase();
-    let finalMimeType = file.mimetype;
+    let fileBuffer = buffer;
+    let fileExtension = extname(originalname).toLowerCase();
+    let finalMimeType = mimetype;
 
     // Solo sanitizamos si es imagen y forzamos a webp
-    if (this.isImage(file.mimetype)) {
-      fileBuffer = await this.sanitizeImage(file.buffer);
+    if (this.isImage(mimetype)) {
+      fileBuffer = await this.sanitizeImage(buffer);
       fileExtension = '.webp';
       finalMimeType = 'image/webp';
     }
@@ -109,10 +128,8 @@ export class FilesService {
       bucketName,
       fileName,
       fileBuffer,
-      this.isImage(file.mimetype)
-        ? finalMimeType
-        : detectedType?.mime || file.mimetype,
-      file.originalname,
+      this.isImage(mimetype) ? finalMimeType : detectedType?.mime || mimetype,
+      originalname,
     );
 
     return { fileName, url, bucket: bucketName };
@@ -174,17 +191,23 @@ export class FilesService {
     }
   }
 
+  private async validateBuffer(
+    buffer: Buffer,
+    fileTypeDetector: FileTypeDetector,
+  ): Promise<void> {
+    if (buffer.length > this.maxFileSize)
+      throw new BadRequestException('El archivo debe de ser menor a 5MB');
+    const detectedType = await fileTypeDetector(buffer);
+    if (!detectedType || !this.allowedMimeTypes.includes(detectedType.mime))
+      throw new BadRequestException('Tipo incorrecto');
+    if (!this.isImage(detectedType.mime)) this.scanForMalwareSignatures(buffer);
+  }
+
   private async validateFile(
     file: MulterFile,
     fileTypeDetector: FileTypeDetector,
   ): Promise<void> {
-    if (file.size > this.maxFileSize)
-      throw new BadRequestException('El archivo debe de ser menor a 5MB');
-    const detectedType = await fileTypeDetector(file.buffer);
-    if (!detectedType || !this.allowedMimeTypes.includes(detectedType.mime))
-      throw new BadRequestException('Tipo incorrecto');
-    if (!this.isImage(detectedType.mime))
-      this.scanForMalwareSignatures(file.buffer);
+    return this.validateBuffer(file.buffer, fileTypeDetector);
   }
 
   private isImage(mime: string) {

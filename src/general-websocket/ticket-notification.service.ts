@@ -1,7 +1,7 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { OnEvent, EventEmitter2 } from '@nestjs/event-emitter';
-import { GmailBotService } from 'src/gmail-bot/gmail-bot.service';
-import { TelegramBotService } from 'src/telegram-bot/telegram-bot.service';
+import { GmailService } from 'src/gmail/services/gmail.service';
+import { TelegramService } from 'src/telegram/services/telegram.service';
 import { Ticket } from 'src/tickets/entities/ticket.entity';
 import { StaffService } from 'src/users/services/staff.service';
 
@@ -10,8 +10,8 @@ export class TicketNotificationService {
   private readonly logger = new Logger(TicketNotificationService.name);
 
   constructor(
-    private readonly gmailBotService: GmailBotService,
-    private readonly telegramBotService: TelegramBotService,
+    private readonly gmailBotService: GmailService,
+    private readonly telegramBotService: TelegramService,
     private readonly staffService: StaffService,
     private readonly eventEmitter: EventEmitter2,
   ) {}

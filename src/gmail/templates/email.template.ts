@@ -1,4 +1,4 @@
-export const notificationTemplate = (mensaje: string) => {
+export const notificationTemplate = (mensaje: string): string => {
   return `
   <!DOCTYPE html>
   <html lang="es">

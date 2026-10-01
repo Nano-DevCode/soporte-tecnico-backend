@@ -1,25 +1,29 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { getBotToken } from 'nestjs-telegraf';
 import { TelegramError } from 'telegraf';
-import { TelegramProcessorService } from './telegram-processor.service';
+import { TelegramProcessor } from './telegram.processor';
+import { TelegramJobData } from '../interfaces/telegram-job.interface';
+import type { Job } from 'bull';
 
-describe('TelegramProcessorService', () => {
-  let processor: TelegramProcessorService;
+describe('TelegramProcessor', () => {
+  let processor: TelegramProcessor;
   let bot: { telegram: { sendMessage: jest.Mock } };
 
-  // Mock básico de un Job de Bull
-  const mockJob = {
-    id: 'job-123',
-    data: {
-      chatId: '123456789',
-      message: 'Mensaje de prueba',
-      options: {
-        parse_mode: 'HTML',
+  const mockJobData: TelegramJobData = {
+    chatId: '123456789',
+    message: 'Mensaje de prueba',
+    options: {
+      reply_markup: {
+        inline_keyboard: [[{ text: 'Ver Ticket', url: 'https://test.com' }]],
       },
     },
-  } as unknown as Parameters<TelegramProcessorService['handleNotification']>[0];
+  };
 
-  // Función de ayuda para simular un TelegramError real
+  const mockJob = {
+    id: 'job-123',
+    data: mockJobData,
+  } as unknown as Job<TelegramJobData>;
+
   const createTelegramError = (code: number, description: string) => {
     return new TelegramError({
       error_code: code,
@@ -30,8 +34,7 @@ describe('TelegramProcessorService', () => {
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [
-        TelegramProcessorService,
-        // 👇 Inyectamos el mock del Bot de Telegraf
+        TelegramProcessor,
         {
           provide: getBotToken(),
           useValue: {
@@ -43,10 +46,9 @@ describe('TelegramProcessorService', () => {
       ],
     }).compile();
 
-    processor = module.get<TelegramProcessorService>(TelegramProcessorService);
+    processor = module.get<TelegramProcessor>(TelegramProcessor);
     bot = module.get(getBotToken());
 
-    // Silenciamos los logs del logger nativo de Nest para esta instancia
     jest.spyOn(processor['logger'], 'error').mockImplementation(() => {});
     jest.spyOn(processor['logger'], 'warn').mockImplementation(() => {});
     jest.spyOn(processor['logger'], 'debug').mockImplementation(() => {});
@@ -58,9 +60,6 @@ describe('TelegramProcessorService', () => {
     expect(processor).toBeDefined();
   });
 
-  /* ========================================================================
-     EVENTOS GLOBALES
-  ======================================================================== */
   describe('onGlobalJobFailed', () => {
     it('debe registrar el error global correctamente', () => {
       const error = new Error('Error de prueba');
@@ -72,9 +71,6 @@ describe('TelegramProcessorService', () => {
     });
   });
 
-  /* ========================================================================
-     PROCESAMIENTO DE NOTIFICACIONES (handleNotification)
-  ======================================================================== */
   describe('handleNotification', () => {
     it('debe enviar el mensaje exitosamente y retornar { success: true }', async () => {
       bot.telegram.sendMessage.mockResolvedValue(true);
@@ -86,13 +82,13 @@ describe('TelegramProcessorService', () => {
         'Mensaje de prueba',
         {
           parse_mode: 'HTML',
+          ...mockJobData.options,
         },
       );
       expect(result).toEqual({ success: true });
     });
 
-    // 1. Pruebas de Errores controlados de Telegram (No deben lanzar throw)
-    describe('Errores controlados de Telegram', () => {
+    describe('Errores controlados terminales de Telegram (No deben reintentar)', () => {
       it('debe manejar error 409 (Conflicto) y retornar success: false sin lanzar throw', async () => {
         const error409 = createTelegramError(
           409,
@@ -125,9 +121,26 @@ describe('TelegramProcessorService', () => {
         );
         expect(result).toEqual({ success: false, reason: 'User blocked bot' });
       });
+
+      it('debe manejar error 400 (Bad Request: chat not found) como error terminal sin lanzar throw', async () => {
+        const error400 = createTelegramError(
+          400,
+          'Bad Request: chat not found',
+        );
+        bot.telegram.sendMessage.mockRejectedValue(error400);
+
+        const result = await processor.handleNotification(mockJob);
+
+        expect(processor['logger'].warn).toHaveBeenCalledWith(
+          'Petición inválida a Telegram [400] para 123456789: Bad Request: chat not found',
+        );
+        expect(result).toEqual({
+          success: false,
+          reason: 'Bad Request: chat not found',
+        });
+      });
     });
 
-    // 2. Pruebas de errores que SÍ deben lanzar throw (para que Bull reintente)
     describe('Errores que provocan reintento (Throws)', () => {
       it('debe lanzar throw para error 429 (Too Many Requests) para obligar a Bull a reintentar', async () => {
         const error429 = createTelegramError(
@@ -141,7 +154,7 @@ describe('TelegramProcessorService', () => {
         );
       });
 
-      it('debe lanzar throw para un Error genérico (ej. caída de internet)', async () => {
+      it('debe lanzar throw para un Error genérico de red', async () => {
         const genericError = new Error('Network timeout');
         bot.telegram.sendMessage.mockRejectedValue(genericError);
 
@@ -155,11 +168,10 @@ describe('TelegramProcessorService', () => {
         );
       });
 
-      it('debe envolver y lanzar throw para un error desconocido (no es instancia de Error)', async () => {
+      it('debe envolver y lanzar throw para un error desconocido', async () => {
         const unknownErrorString = 'Un error super raro en string';
         bot.telegram.sendMessage.mockRejectedValue(unknownErrorString);
 
-        // Validamos que el procesador capture este error extraño y lo convierta en un Error real
         await expect(processor.handleNotification(mockJob)).rejects.toThrow(
           'Unknown error',
         );

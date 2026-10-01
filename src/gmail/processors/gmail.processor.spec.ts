@@ -1,20 +1,14 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { MailerService } from '@nestjs-modules/mailer';
 import type { Job } from 'bull';
-import { GmailProcessorService } from './gmail-processor.service';
-import { notificationTemplate } from './template/email.template';
+import { GmailProcessor } from './gmail.processor';
+import { notificationTemplate } from '../templates/email.template';
+import { MailError } from '../interfaces/email-job.interface';
 
-describe('GmailProcessorService', () => {
-  let processor: GmailProcessorService;
+describe('GmailProcessor', () => {
+  let processor: GmailProcessor;
   let mailerService: jest.Mocked<MailerService>;
 
-  // Definimos la interfaz localmente para construir los errores simulados
-  interface MailError extends Error {
-    code?: string | number;
-    responseCode?: number;
-  }
-
-  // Mock básico de un Job de Bull para correos
   const mockJobData = {
     destinatario: 'destinatario.test@ejemplo.com',
     asunto: 'Notificación del Sistema',
@@ -29,8 +23,7 @@ describe('GmailProcessorService', () => {
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [
-        GmailProcessorService,
-        // 👇 Inyectamos el mock del MailerService
+        GmailProcessor,
         {
           provide: MailerService,
           useValue: {
@@ -40,10 +33,9 @@ describe('GmailProcessorService', () => {
       ],
     }).compile();
 
-    processor = module.get<GmailProcessorService>(GmailProcessorService);
+    processor = module.get<GmailProcessor>(GmailProcessor);
     mailerService = module.get(MailerService);
 
-    // Silenciamos los logs del logger nativo de Nest para esta instancia
     jest.spyOn(processor['logger'], 'error').mockImplementation(() => {});
     jest.spyOn(processor['logger'], 'warn').mockImplementation(() => {});
     jest.spyOn(processor['logger'], 'log').mockImplementation(() => {});
@@ -55,9 +47,6 @@ describe('GmailProcessorService', () => {
     expect(processor).toBeDefined();
   });
 
-  /* ========================================================================
-     EVENTOS DE COLA (OnQueueCompleted / OnQueueFailed)
-  ======================================================================== */
   describe('Eventos de Cola', () => {
     it('debe registrar el éxito cuando un trabajo se completa (onCompleted)', () => {
       processor.onCompleted(mockJob);
@@ -77,16 +66,12 @@ describe('GmailProcessorService', () => {
     });
   });
 
-  /* ========================================================================
-     PROCESAMIENTO DE ENVÍO (handleEnvio)
-  ======================================================================== */
   describe('handleEnvio', () => {
     it('debe enviar el correo exitosamente y retornar { success: true }', async () => {
       mailerService.sendMail.mockResolvedValue(true);
 
       const result = await processor.handleEnvio(mockJob);
 
-      // Verificamos que se llame al servicio de correo con los datos correctos y el HTML compilado
       expect(mailerService.sendMail).toHaveBeenCalledWith({
         to: mockJobData.destinatario,
         subject: mockJobData.asunto,
@@ -96,47 +81,56 @@ describe('GmailProcessorService', () => {
       expect(result).toEqual({ success: true });
     });
 
-    // Pruebas de errores específicos de SMTP
-    describe('Manejo de errores SMTP', () => {
-      it('debe advertir sobre fallo de autenticación (EAUTH / 535) y re-lanzar error', async () => {
+    describe('Manejo de errores SMTP terminales vs reintentables', () => {
+      it('debe tratar fallo de autenticación (EAUTH / 535) como error terminal sin lanzar excepción', async () => {
         const authError = new Error('Invalid login') as MailError;
         authError.code = 'EAUTH';
 
         mailerService.sendMail.mockRejectedValue(authError);
 
-        await expect(processor.handleEnvio(mockJob)).rejects.toThrow(
-          'Invalid login',
-        );
+        const result = await processor.handleEnvio(mockJob);
 
         expect(processor['logger'].warn).toHaveBeenCalledWith(
           'Fallo de autenticación: Verifica la contraseña de aplicación.',
         );
-        expect(processor['logger'].error).toHaveBeenCalledWith(
-          'Error de SMTP/Gmail [EAUTH]: Invalid login',
-        );
+        expect(result).toEqual({
+          success: false,
+          reason: 'Authentication failure (EAUTH/535)',
+        });
       });
 
-      it('debe advertir sobre destinatario inválido (EENVELOPE / 550) y re-lanzar error', async () => {
+      it('debe tratar destinatario inválido (EENVELOPE / 550) como error terminal sin lanzar excepción', async () => {
         const envelopeError = new Error('Mailbox unavailable') as MailError;
         envelopeError.responseCode = 550;
 
         mailerService.sendMail.mockRejectedValue(envelopeError);
 
-        await expect(processor.handleEnvio(mockJob)).rejects.toThrow(
-          'Mailbox unavailable',
-        );
+        const result = await processor.handleEnvio(mockJob);
 
         expect(processor['logger'].warn).toHaveBeenCalledWith(
-          'El destinatario destinatario.test@ejemplo.com no es válido.',
+          `El destinatario ${mockJobData.destinatario} no es válido.`,
+        );
+        expect(result).toEqual({
+          success: false,
+          reason: `Invalid recipient (EENVELOPE/550): ${mockJobData.destinatario}`,
+        });
+      });
+
+      it('debe relanzar errores SMTP transitorios para que Bull reintente', async () => {
+        const transientError = new Error('Service unavailable') as MailError;
+        transientError.code = 'ETIMEDOUT';
+
+        mailerService.sendMail.mockRejectedValue(transientError);
+
+        await expect(processor.handleEnvio(mockJob)).rejects.toThrow(
+          'Service unavailable',
         );
       });
     });
 
-    // Pruebas de errores generales
     describe('Manejo de errores generales', () => {
-      it('debe capturar un Error genérico (ej. Timeout) y re-lanzarlo', async () => {
+      it('debe capturar un Error genérico y re-lanzarlo para reintento', async () => {
         const genericError = new Error('Connection timeout');
-
         mailerService.sendMail.mockRejectedValue(genericError);
 
         await expect(processor.handleEnvio(mockJob)).rejects.toThrow(
@@ -149,9 +143,8 @@ describe('GmailProcessorService', () => {
         );
       });
 
-      it('debe manejar un error de tipo desconocido y lanzar un Error genérico', async () => {
+      it('debe manejar un error no tipado como Error genérico y re-lanzarlo', async () => {
         const unknownErrorString = 'Error interno del servidor de correos';
-
         mailerService.sendMail.mockRejectedValue(unknownErrorString);
 
         await expect(processor.handleEnvio(mockJob)).rejects.toThrow(

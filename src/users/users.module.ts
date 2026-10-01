@@ -10,7 +10,7 @@ import { User } from './entities/user.entity';
 import { Staff } from './entities/staff.entity';
 import { TechnicianKpi } from './entities/technician-kpi.entity';
 
-import { GmailBotModule } from 'src/gmail-bot/gmail-bot.module';
+import { GmailModule } from 'src/gmail/gmail.module';
 import { AuthModule } from 'src/auth/auth.module';
 import { CoordinationsModule } from 'src/coordinations/coordinations.module';
 import { RolesModule } from 'src/auth/roles/roles.module';
@@ -42,7 +42,7 @@ import { UserSeedService } from './seed/user-seed.service';
     BullModule.registerQueue({
       name: 'kpi-queue',
     }),
-    GmailBotModule,
+    GmailModule,
     forwardRef(() => AuthModule),
     CoordinationsModule,
     RolesModule,

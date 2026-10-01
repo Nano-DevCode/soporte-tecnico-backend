@@ -145,6 +145,32 @@ describe('FilesService', () => {
       expect(mockS3Send).toHaveBeenCalledTimes(3);
     });
 
+    it('debe subir un buffer directamente sin requerir objeto MulterFile', async () => {
+      jest
+        .spyOn(
+          service as unknown as { getFileTypeDetector: () => Promise<unknown> },
+          'getFileTypeDetector',
+        )
+        .mockResolvedValue(
+          jest.fn().mockResolvedValue({ ext: 'pdf', mime: 'application/pdf' }),
+        );
+
+      mockS3Send.mockResolvedValue({});
+
+      const buffer = Buffer.from('fake-pdf-bytes');
+      const result = await service.uploadBuffer(
+        buffer,
+        'reporte.pdf',
+        'application/pdf',
+        'pdfs-response',
+        'custom-id',
+      );
+
+      expect(result.fileName).toBe('custom-id.pdf');
+      expect(result.bucket).toBe('pdfs-response');
+      expect(mockS3Send).toHaveBeenCalled();
+    });
+
     it('debe lanzar BadRequestException si el archivo excede 5MB', async () => {
       const bigFile = { ...mockFile, size: 6 * 1024 * 1024 }; // 6MB
       await expect(service.uploadFile(bigFile, 'tools-images')).rejects.toThrow(

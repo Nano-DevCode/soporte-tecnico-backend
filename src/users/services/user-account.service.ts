@@ -12,7 +12,7 @@ import * as bcrypt from 'bcrypt';
 import { I18nService } from 'nestjs-i18n';
 
 import { User } from '../entities/user.entity';
-import { GmailBotService } from 'src/gmail-bot/gmail-bot.service';
+import { GmailService } from 'src/gmail/services/gmail.service';
 import { generateTempPassword } from '../util/generateTempPassword.util';
 import { notificationChangedPasswordContent } from '../templates/notification-changed-password';
 import { notificationRecuperatePasswordTemplate } from '../templates/notification-recuperate-password.template';
@@ -34,7 +34,7 @@ export class UserAccountService {
   constructor(
     @InjectRepository(User)
     private readonly usersRepository: Repository<User>,
-    private readonly gmailBotService: GmailBotService,
+    private readonly gmailBotService: GmailService,
     private readonly i18n: I18nService,
   ) {}
 

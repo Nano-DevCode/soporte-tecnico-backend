@@ -7,7 +7,7 @@ import * as bcrypt from 'bcrypt';
 
 import { UserAccountService } from './user-account.service';
 import { User } from '../entities/user.entity';
-import { GmailBotService } from 'src/gmail-bot/gmail-bot.service';
+import { GmailService } from 'src/gmail/services/gmail.service';
 import { ChangeUserStatusDto } from '../dto/account/change-status.dto';
 import { ChangePasswordUserDto } from '../dto/account/change-password-user.dto';
 import { RecuperatePasswordUserDto } from '../dto/account/recuperate-password-user.dto';
@@ -17,7 +17,7 @@ jest.mock('bcrypt');
 describe('UserAccountService', () => {
   let service: UserAccountService;
   let usersRepository: jest.Mocked<Repository<User>>;
-  let gmailBotService: jest.Mocked<GmailBotService>;
+  let gmailBotService: jest.Mocked<GmailService>;
 
   const mockUser: User = {
     id: 'user-uuid-1',
@@ -52,7 +52,7 @@ describe('UserAccountService', () => {
           },
         },
         {
-          provide: GmailBotService,
+          provide: GmailService,
           useValue: {
             sendEmail: jest.fn().mockResolvedValue(true),
           },
@@ -68,7 +68,7 @@ describe('UserAccountService', () => {
 
     service = module.get<UserAccountService>(UserAccountService);
     usersRepository = module.get(getRepositoryToken(User));
-    gmailBotService = module.get(GmailBotService);
+    gmailBotService = module.get(GmailService);
 
     jest.clearAllMocks();
   });

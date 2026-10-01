@@ -136,22 +136,11 @@ export class ResponsePdfsService {
     // Convertimos el stream del PDF a Buffer
     const pdfBuffer = await this.getPdfBuffer(pdfDoc);
 
-    // Simulamos el objeto MulterFile para que tu FilesService lo acepte
-    const fakeFile = {
-      buffer: pdfBuffer,
-      originalname: `solicitud-${ticket.folio}.pdf`,
-      mimetype: 'application/pdf',
-      size: pdfBuffer.length,
-      fieldname: 'file',
-      encoding: '7bit',
-      destination: '',
-      filename: '',
-      path: '',
-    };
-
-    // Subimos el archivo al bucket 'pdfs'.
-    const uploadResult = await this.filesService.uploadFile(
-      fakeFile,
+    // Subimos el Buffer generado directamente al bucket 'pdfs-request'
+    const uploadResult = await this.filesService.uploadBuffer(
+      pdfBuffer,
+      `solicitud-${ticket.folio}.pdf`,
+      'application/pdf',
       'pdfs-request',
       ticket.folio,
     );
@@ -241,29 +230,17 @@ export class ResponsePdfsService {
 
     // Convertimos el stream a Buffer para poder subirlo
     const pdfBuffer = await this.getPdfBuffer(pdfDoc);
-
-    // Creamos el objeto fakeFile compatible con lo que espera tu FilesService (estilo Multer)
     const folio = ticket.folio;
-    const fakeFile = {
-      buffer: pdfBuffer,
-      originalname: `respuesta-${folio}.pdf`,
-      mimetype: 'application/pdf',
-      size: pdfBuffer.length,
-      fieldname: 'file',
-      encoding: '7bit',
-      destination: '',
-      filename: '',
-      path: '',
-    };
 
-    // Subimos el archivo al bucket 'pdfs' usando el folio como identificador/carpeta
-    const uploadResult = await this.filesService.uploadFile(
-      fakeFile,
+    // Subimos el Buffer generado directamente al bucket 'pdfs-response'
+    const uploadResult = await this.filesService.uploadBuffer(
+      pdfBuffer,
+      `respuesta-${folio}.pdf`,
+      'application/pdf',
       'pdfs-response',
-      folio.toString(), // Convertimos a string por consistencia
+      folio.toString(),
     );
 
-    // Retornamos el resultado de la subida (usualmente la URL o el path del archivo)
     return uploadResult;
   }
 }

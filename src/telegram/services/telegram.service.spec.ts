@@ -2,19 +2,18 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { getQueueToken } from '@nestjs/bull';
 import { Job, Queue } from 'bull';
 import {
-  TelegramBotService,
+  TelegramService,
   TelegramNotificationOptions,
-} from './telegram-bot.service';
+} from './telegram.service';
 
-describe('TelegramBotService', () => {
-  let service: TelegramBotService;
+describe('TelegramService', () => {
+  let service: TelegramService;
   let telegramQueue: jest.Mocked<Queue>;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [
-        TelegramBotService,
-        // 👇 Así se hace el mock de un @InjectQueue en NestJS
+        TelegramService,
         {
           provide: getQueueToken('telegram-queue'),
           useValue: {
@@ -24,12 +23,12 @@ describe('TelegramBotService', () => {
       ],
     }).compile();
 
-    service = module.get<TelegramBotService>(TelegramBotService);
+    service = module.get<TelegramService>(TelegramService);
     telegramQueue = module.get(getQueueToken('telegram-queue'));
 
-    // Silenciamos el logger específicamente para esta instancia para evitar logs rojos en las pruebas de error
-    jest.spyOn(service['logger'], 'error').mockImplementation(() => {});
     jest.spyOn(service['logger'], 'log').mockImplementation(() => {});
+    jest.spyOn(service['logger'], 'warn').mockImplementation(() => {});
+    jest.spyOn(service['logger'], 'error').mockImplementation(() => {});
 
     jest.clearAllMocks();
   });
@@ -43,61 +42,66 @@ describe('TelegramBotService', () => {
     const message = 'Hola, este es un mensaje de prueba';
     const options: TelegramNotificationOptions = {
       reply_markup: {
-        inline_keyboard: [
-          [{ text: 'Abrir Sistema', url: 'https://ejemplo.com' }],
-        ],
+        inline_keyboard: [[{ text: 'Ver Ticket', url: 'https://test.com' }]],
       },
     };
 
-    it('debe agregar el trabajo a la cola y retornar éxito', async () => {
-      // Simulamos que Bull nos responde con un trabajo que contiene un ID generado
-      const mockJob = { id: 999 };
-      telegramQueue.add.mockResolvedValue(mockJob as Job);
+    it('debe rechazar chatIds inválidos o de menos de 4 caracteres sin llamar a la cola', async () => {
+      const result = await service.sendNotification('12', message);
+
+      expect(result).toEqual({
+        success: false,
+        error:
+          'No se puede encolar la notificación porque el chatId es inválido o menor a 4 caracteres',
+      });
+      expect(telegramQueue.add).not.toHaveBeenCalled();
+      expect(service['logger'].warn).toHaveBeenCalled();
+    });
+
+    it('debe agregar el trabajo a la cola y retornar éxito inmediatamente', async () => {
+      const mockJob = { id: 'job-123' } as Job;
+      telegramQueue.add.mockResolvedValue(mockJob);
 
       const result = await service.sendNotification(chatId, message, options);
 
-      // 1. Validamos que el trabajo se haya añadido a la cola con los parámetros exactos
       expect(telegramQueue.add).toHaveBeenCalledWith(
-        'enviar-notificacion', // El nombre del job
-        { chatId, message, options }, // La data (payload)
+        'enviar-notificacion',
+        {
+          chatId,
+          message,
+          options,
+        },
         {
           attempts: 3,
           backoff: 5000,
           removeOnComplete: true,
           removeOnFail: false,
-        }, // Las opciones de reintento
+        },
       );
 
-      // 2. Validamos que el logger haya registrado el éxito
       expect(service['logger'].log).toHaveBeenCalledWith(
-        'Notificación encolada para 123456789 (Job ID: 999)',
+        `Notificación encolada para ${chatId} (Job ID: job-123)`,
       );
 
-      // 3. Validamos la respuesta que se enviará al controlador
       expect(result).toEqual({
         success: true,
         message: 'Notificación encolada correctamente',
-        jobId: 999,
+        jobId: 'job-123',
       });
     });
 
-    it('debe manejar errores de la cola y retornar success: false sin detener la aplicación', async () => {
-      // Simulamos que Redis está caído o la cola falla al guardar
-      const queueError = new Error('Redis connection failed');
+    it('debe manejar errores de la cola y retornar success: false de manera segura', async () => {
+      const queueError = new Error('Conexión perdida con Redis');
       telegramQueue.add.mockRejectedValue(queueError);
 
       const result = await service.sendNotification(chatId, message);
 
-      // 1. Validamos que intentó agregarlo
       expect(telegramQueue.add).toHaveBeenCalled();
-
-      // 2. Validamos que el error se registró en el logger
       expect(service['logger'].error).toHaveBeenCalledWith(
         'Error al encolar la notificación de Telegram',
         queueError,
       );
 
-      // 3. Validamos que devuelve un mensaje de error limpio al usuario
       expect(result).toEqual({
         success: false,
         error: 'No se pudo procesar la solicitud (Error interno de cola)',

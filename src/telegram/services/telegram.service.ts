@@ -1,24 +1,19 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { InjectQueue } from '@nestjs/bull';
 import type { Queue } from 'bull';
+import {
+  TelegramJobData,
+  TelegramJobResult,
+  TelegramNotificationOptions,
+} from '../interfaces/telegram-job.interface';
 
-export interface TelegramNotificationOptions {
-  reply_markup?: {
-    inline_keyboard: Array<
-      Array<{
-        text: string;
-        url: string;
-      }>
-    >;
-  };
-}
+export { TelegramNotificationOptions };
 
 @Injectable()
-export class TelegramBotService {
-  private readonly logger = new Logger(TelegramBotService.name);
+export class TelegramService {
+  private readonly logger = new Logger(TelegramService.name);
 
   constructor(
-    // Inyectamos la cola 'telegram-queue' que registramos en el módulo
     @InjectQueue('telegram-queue') private readonly telegramQueue: Queue,
   ) {}
 
@@ -26,7 +21,7 @@ export class TelegramBotService {
     chatId: string | number,
     message: string,
     options?: TelegramNotificationOptions,
-  ) {
+  ): Promise<TelegramJobResult> {
     try {
       const safeChatId = chatId ? String(chatId).trim() : '';
       if (!safeChatId || safeChatId.length < 4) {
@@ -39,29 +34,24 @@ export class TelegramBotService {
             'No se puede encolar la notificación porque el chatId es inválido o menor a 4 caracteres',
         };
       }
-      // 1. Agregamos el trabajo a la cola
-      // 'enviar-notificacion' es el nombre del trabajo que el Processor debe escuchar
-      const job = await this.telegramQueue.add(
-        'enviar-notificacion',
-        {
-          chatId,
-          message,
-          options,
-        },
-        {
-          attempts: 3, // Si falla (ej. sin internet), reintenta 3 veces
-          backoff: 5000, // Espera 5 segundos entre reintentos
-          removeOnComplete: true, // Borra el registro de Redis si sale bien (ahorra memoria)
-          removeOnFail: false, // Guárdalo si falla para que puedas revisarlo
-        },
-      );
+
+      const jobData: TelegramJobData = {
+        chatId: safeChatId,
+        message,
+        options,
+      };
+
+      const job = await this.telegramQueue.add('enviar-notificacion', jobData, {
+        attempts: 3,
+        backoff: 5000,
+        removeOnComplete: true,
+        removeOnFail: false,
+      });
 
       this.logger.log(
-        `Notificación encolada para ${chatId} (Job ID: ${job.id})`,
+        `Notificación encolada para ${safeChatId} (Job ID: ${job.id})`,
       );
 
-      // 2. Respondemos INMEDIATAMENTE al usuario (frontend/postman)
-      // No esperamos a que Telegram responda, solo confirmamos que ya está en la fila.
       return {
         success: true,
         message: 'Notificación encolada correctamente',
@@ -76,3 +66,6 @@ export class TelegramBotService {
     }
   }
 }
+
+// Alias para retrocompatibilidad
+export const TelegramBotService = TelegramService;

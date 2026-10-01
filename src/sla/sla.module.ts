@@ -6,7 +6,7 @@ import { SlaController } from './sla.controller';
 import { SlaCalculatorService } from './services/sla-calculator.service';
 import { SlaMonitorService } from './services/sla-monitor.service';
 import { SlaTicketListener } from './listeners/sla-ticket.listener';
-import { TelegramBotModule } from 'src/telegram-bot/telegram-bot.module';
+import { TelegramModule } from 'src/telegram/telegram.module';
 import { NotificationsModule } from 'src/notifications/notifications.module';
 import { GeneralWebsocketModule } from 'src/general-websocket/general-websocket.module';
 import { AuthModule } from 'src/auth/auth.module';
@@ -14,7 +14,7 @@ import { AuthModule } from 'src/auth/auth.module';
 @Module({
   imports: [
     TypeOrmModule.forFeature([Ticket, TicketSla]),
-    TelegramBotModule,
+    TelegramModule,
     NotificationsModule,
     GeneralWebsocketModule,
     AuthModule,

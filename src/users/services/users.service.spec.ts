@@ -25,7 +25,7 @@ import { Role } from 'src/auth/roles/entities/role.entity';
 import { Department } from 'src/departments/entities/department.entity';
 import { Coordination } from 'src/coordinations/entities/coordination.entity';
 
-import { GmailBotService } from 'src/gmail-bot/gmail-bot.service';
+import { GmailService } from 'src/gmail/services/gmail.service';
 import { CoordinationsService } from 'src/coordinations/services/coordinations.service';
 import { RolesService } from 'src/auth/roles/services/roles.service';
 import { CreateUserDto } from '../dto/create-user.dto';
@@ -41,7 +41,7 @@ describe('UsersService', () => {
   let service: UsersService;
   let usersRepository: jest.Mocked<Repository<User>>;
   let dataSource: jest.Mocked<DataSource>;
-  let gmailBotService: jest.Mocked<GmailBotService>;
+  let gmailBotService: jest.Mocked<GmailService>;
 
   beforeAll(() => {
     Logger.overrideLogger(false);
@@ -171,7 +171,7 @@ describe('UsersService', () => {
           },
         },
         {
-          provide: GmailBotService,
+          provide: GmailService,
           useValue: {
             sendEmail: jest.fn().mockResolvedValue(true),
           },
@@ -200,7 +200,7 @@ describe('UsersService', () => {
     service = module.get<UsersService>(UsersService);
     usersRepository = module.get(getRepositoryToken(User));
     dataSource = module.get(DataSource);
-    gmailBotService = module.get(GmailBotService);
+    gmailBotService = module.get(GmailService);
 
     jest.clearAllMocks();
 

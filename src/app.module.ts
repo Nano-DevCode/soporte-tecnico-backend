@@ -29,10 +29,8 @@ import { BullModule } from '@nestjs/bull';
 import { RolesModule } from './auth/roles/roles.module';
 import { CommonModule } from './common/common.module';
 import { UsersModule } from './users/users.module';
-import { TelegramBotModule } from './telegram-bot/telegram-bot.module';
-import { GmailBotModule } from './gmail-bot/gmail-bot.module';
-import { GmailProcessorModule } from './gmail-processor/gmail-processor.module';
-import { TelegramProcessorModule } from './telegram-processor/telegram-processor.module';
+import { TelegramModule } from './telegram/telegram.module';
+import { GmailModule } from './gmail/gmail.module';
 import { FilesModule } from './files/files.module';
 import { AuthModule } from './auth/auth.module';
 import { ResponsesModule } from './responses/responses.module';
@@ -214,10 +212,8 @@ import { AuditModule } from './audit/audit.module';
     RolesModule,
     CommonModule,
     UsersModule,
-    TelegramBotModule,
-    GmailBotModule,
-    GmailProcessorModule,
-    TelegramProcessorModule,
+    TelegramModule,
+    GmailModule,
     FilesModule,
     AuthModule,
 

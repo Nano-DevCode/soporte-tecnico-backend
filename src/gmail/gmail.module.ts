@@ -1,13 +1,12 @@
 import { Module } from '@nestjs/common';
-import { GmailProcessorService } from './gmail-processor.service';
+import { BullModule } from '@nestjs/bull';
 import { MailerModule } from '@nestjs-modules/mailer';
 import { ConfigModule, ConfigService } from '@nestjs/config';
+import { GmailService } from './services/gmail.service';
+import { GmailProcessor } from './processors/gmail.processor';
 
 @Module({
-  providers: [GmailProcessorService],
-  exports: [GmailProcessorService],
   imports: [
-    // Configuracion de Correo
     MailerModule.forRootAsync({
       imports: [ConfigModule],
       inject: [ConfigService],
@@ -28,6 +27,14 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
           },
         }) as unknown as import('@nestjs-modules/mailer').MailerOptions,
     }),
+    BullModule.registerQueue({
+      name: 'email-queue',
+    }),
   ],
+  providers: [GmailService, GmailProcessor],
+  exports: [GmailService, GmailProcessor],
 })
-export class GmailProcessorModule {}
+export class GmailModule {}
+
+export const GmailBotModule = GmailModule;
+export const GmailProcessorModule = GmailModule;

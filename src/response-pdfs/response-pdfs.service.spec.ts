@@ -120,6 +120,7 @@ describe('ResponsePdfsService', () => {
           provide: FilesService,
           useValue: {
             uploadFile: jest.fn(),
+            uploadBuffer: jest.fn(),
           },
         },
       ],
@@ -181,12 +182,12 @@ describe('ResponsePdfsService', () => {
       printerService.createPdf.mockReturnValue(
         mockStream as unknown as MockPdfDoc,
       );
-      const uploadResult: Awaited<ReturnType<FilesService['uploadFile']>> = {
+      const uploadResult: Awaited<ReturnType<FilesService['uploadBuffer']>> = {
         fileName: 'solicitud.pdf',
         url: 'http://bucket/solicitud.pdf',
         bucket: 'pdfs-request',
       };
-      filesService.uploadFile.mockResolvedValue(uploadResult);
+      filesService.uploadBuffer.mockResolvedValue(uploadResult);
 
       const result = await service.pdfRequestBucket(mockTicket);
 
@@ -198,12 +199,10 @@ describe('ResponsePdfsService', () => {
         }),
       );
 
-      // FIX: Usar un match más permisivo para el archivo (Multer mockeado)
-      expect(filesService.uploadFile).toHaveBeenCalledWith(
-        expect.objectContaining({
-          originalname: 'solicitud-FOLIO-123.pdf',
-          mimetype: 'application/pdf',
-        }),
+      expect(filesService.uploadBuffer).toHaveBeenCalledWith(
+        expect.any(Buffer),
+        'solicitud-FOLIO-123.pdf',
+        'application/pdf',
         'pdfs-request',
         'FOLIO-123',
       );
@@ -221,7 +220,7 @@ describe('ResponsePdfsService', () => {
         'Error de stream simulado',
       );
 
-      expect(filesService.uploadFile).not.toHaveBeenCalled();
+      expect(filesService.uploadBuffer).not.toHaveBeenCalled();
     });
   });
 
@@ -231,16 +230,15 @@ describe('ResponsePdfsService', () => {
       printerService.createPdf.mockReturnValue(
         mockStream as unknown as MockPdfDoc,
       );
-      const uploadResult: Awaited<ReturnType<FilesService['uploadFile']>> = {
+      const uploadResult: Awaited<ReturnType<FilesService['uploadBuffer']>> = {
         fileName: 'respuesta.pdf',
         url: 'http://bucket/respuesta.pdf',
         bucket: 'pdfs-response',
       };
-      filesService.uploadFile.mockResolvedValue(uploadResult);
+      filesService.uploadBuffer.mockResolvedValue(uploadResult);
 
       const result = await service.pdfResponseBucket(mockTicket);
 
-      // FIX: Adaptar expectedResponse al nuevo formato que usa tu ResponseTemplate
       const expectedResponse = {
         folio_interno: 'INT-123',
         firmaVerifico: 'hash-jefe',
@@ -252,11 +250,10 @@ describe('ResponsePdfsService', () => {
         expect.objectContaining(expectedResponse),
       );
 
-      expect(filesService.uploadFile).toHaveBeenCalledWith(
-        expect.objectContaining({
-          originalname: 'respuesta-FOLIO-123.pdf',
-          mimetype: 'application/pdf',
-        }),
+      expect(filesService.uploadBuffer).toHaveBeenCalledWith(
+        expect.any(Buffer),
+        'respuesta-FOLIO-123.pdf',
+        'application/pdf',
         'pdfs-response',
         'FOLIO-123',
       );

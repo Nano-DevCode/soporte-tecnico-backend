@@ -5,7 +5,7 @@ import { SlaMonitorService } from './sla-monitor.service';
 import { SlaCalculatorService } from './sla-calculator.service';
 import { Ticket } from 'src/tickets/entities/ticket.entity';
 import { SlaStatus, TicketSla } from '../entities/ticket-sla.entity';
-import { TelegramBotService } from 'src/telegram-bot/telegram-bot.service';
+import { TelegramService } from 'src/telegram/services/telegram.service';
 import { NotificationsService } from 'src/notifications/notifications.service';
 import { GeneralWebsocketGateway } from 'src/general-websocket/general-websocket.gateway';
 import { TicketStatus } from 'src/common/machine/TicketStateMachine.machine';
@@ -103,7 +103,7 @@ describe('SlaMonitorService', () => {
           useValue: mockTicketSlaRepository,
         },
         {
-          provide: TelegramBotService,
+          provide: TelegramService,
           useValue: mockTelegramBotService,
         },
         {
