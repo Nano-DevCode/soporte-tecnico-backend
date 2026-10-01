@@ -6,9 +6,14 @@ import cookieParser from 'cookie-parser';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { RedisIoAdapter } from './common/adapters/redis-io.adapter';
 import { ConfigService } from '@nestjs/config';
+import { AppLoggerService } from './common/services/app-logger.service';
 
 async function bootstrap() {
-  const app = await NestFactory.create(AppModule);
+  const app = await NestFactory.create(AppModule, {
+    bufferLogs: true,
+  });
+  const logger = await app.resolve(AppLoggerService);
+  app.useLogger(logger);
 
   const config = new DocumentBuilder()
     .setTitle('API de la Ticketera') // El título de tu proyecto

@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { MiddlewareConsumer, Module, NestModule } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { AppConfiguration, JoiValidationSchema } from './config';
@@ -50,7 +50,9 @@ import { EquipmentSeedModule } from './equipment-seed/equipment-seed.module';
 import { ResponsePdfsModule } from './response-pdfs/response-pdfs.module';
 import { PrinterModule } from './printer/printer.module';
 import { ThrottlerGuard, ThrottlerModule } from '@nestjs/throttler';
-import { APP_GUARD } from '@nestjs/core';
+import { APP_GUARD, APP_INTERCEPTOR } from '@nestjs/core';
+import { RequestIdMiddleware } from './common/middlewares/request-id.middleware';
+import { LoggingInterceptor } from './common/interceptors/logging.interceptor';
 import { CoordinationsModule } from './coordinations/coordinations.module';
 import { ComputerprocessorsModule } from './computerprocessors/computerprocessors.module';
 import { PruebasocketsModule } from './pruebasockets/pruebasockets.module';
@@ -286,8 +288,14 @@ import { ScheduleModule } from '@nestjs/schedule';
       provide: APP_GUARD,
       useClass: ThrottlerGuard,
     },
+    {
+      provide: APP_INTERCEPTOR,
+      useClass: LoggingInterceptor,
+    },
   ],
 })
-export class AppModule {
-  constructor() {}
+export class AppModule implements NestModule {
+  configure(consumer: MiddlewareConsumer) {
+    consumer.apply(RequestIdMiddleware).forRoutes('*');
+  }
 }
