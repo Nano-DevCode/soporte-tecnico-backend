@@ -1,7 +1,7 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import { ItAssetsMovement } from 'src/it-assets-movements/entities/it-assets-movement.entity';
 import { ItAssetsStatus } from 'src/it-assets-status/entities/it-assets-status.entity';
-import { Staff } from 'src/staff/entities/staff.entity';
+import { Staff } from 'src/users/entities/staff.entity';
 import { Ticket } from 'src/tickets/entities/ticket.entity';
 import {
   Column,

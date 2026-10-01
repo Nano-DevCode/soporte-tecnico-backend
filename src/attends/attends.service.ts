@@ -7,7 +7,7 @@ import { EntityManager, Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Attend } from './entities/attend.entity';
 import { Ticket } from 'src/tickets/entities/ticket.entity';
-import { Staff } from 'src/staff/entities/staff.entity';
+import { Staff } from 'src/users/entities/staff.entity';
 import { I18nService } from 'nestjs-i18n';
 import { User } from 'src/users/entities/user.entity';
 

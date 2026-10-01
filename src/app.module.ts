@@ -26,7 +26,7 @@ import { DepartmentsModule } from './departments/departments.module';
 import { ResponsibleequipmentsModule } from './responsibleequipments/responsibleequipments.module';
 import { EquipmentticketsModule } from './equipmenttickets/equipmenttickets.module';
 import { BullModule } from '@nestjs/bull';
-import { RolesModule } from './roles/roles.module';
+import { RolesModule } from './auth/roles/roles.module';
 import { CommonModule } from './common/common.module';
 import { UsersModule } from './users/users.module';
 import { TelegramBotModule } from './telegram-bot/telegram-bot.module';
@@ -34,11 +34,7 @@ import { GmailBotModule } from './gmail-bot/gmail-bot.module';
 import { GmailProcessorModule } from './gmail-processor/gmail-processor.module';
 import { TelegramProcessorModule } from './telegram-processor/telegram-processor.module';
 import { FilesModule } from './files/files.module';
-import { RoleSeedModule } from './role-seed/role-seed.module';
 import { AuthModule } from './auth/auth.module';
-import { StaffModule } from './staff/staff.module';
-import { UserSeedModule } from './user-seed/user-seed.module';
-import { DepartamentSeedModule } from './departament-seed/departament-seed.module';
 import { ResponsesModule } from './responses/responses.module';
 import { MaintenanceTypeModule } from './maintenance-type/maintenance-type.module';
 import { ServiceTypeModule } from './service-type/service-type.module';
@@ -60,7 +56,6 @@ import { EventEmitterModule } from '@nestjs/event-emitter';
 import { GeneralWebsocketModule } from './general-websocket/general-websocket.module';
 import { AttendsModule } from './attends/attends.module';
 import { ComputingCenterManagerModule } from './computing-center-manager/computing-center-manager.module';
-import { CoordinationSeedModule } from './coordination-seed/coordination-seed.module';
 import { TechnicalReportsModule } from './technical-reports/technical-reports.module';
 import { FolioCountersModule } from './folio-counters/folio-counters.module';
 import { ResponseSignatureModule } from './response-signature/response-signature.module';
@@ -220,7 +215,6 @@ import { AuditModule } from './audit/audit.module';
     EquipmentticketsModule,
 
     //Manu Dependencias // Modulos del sistema
-    DepartmentsModule,
     RolesModule,
     CommonModule,
     UsersModule,
@@ -229,11 +223,7 @@ import { AuditModule } from './audit/audit.module';
     GmailProcessorModule,
     TelegramProcessorModule,
     FilesModule,
-    RoleSeedModule,
     AuthModule,
-    StaffModule,
-    UserSeedModule,
-    DepartamentSeedModule,
 
     //// utlimo mio jaz
     OperatingsystemsModule,
@@ -245,9 +235,6 @@ import { AuditModule } from './audit/audit.module';
     CoordinationsModule,
     ComputerprocessorsModule,
 
-    CoordinationSeedModule,
-    ToolsModule,
-    CoordinationSeedModule,
     ToolsModule,
     ExcelModule,
     HealthModule,

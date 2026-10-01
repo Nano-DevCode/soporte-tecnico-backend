@@ -3,7 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { SchoolPeriodsService } from 'src/school-periods/school-periods.service';
 import { EntityManager, In, Repository } from 'typeorm';
 import { FolioCounter } from './entities/folio-counter.entity';
-import { DepartmentsService } from '../departments/departments.service';
+import { DepartmentsService } from '../departments/services/departments.service';
 import { UpdateFolioCounterDto } from './dto/update-folio-counter.dto';
 import { User } from 'src/users/entities/user.entity';
 import { I18nService } from 'nestjs-i18n';

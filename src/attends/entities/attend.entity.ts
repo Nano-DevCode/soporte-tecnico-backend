@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { Staff } from 'src/staff/entities/staff.entity';
+import { Staff } from 'src/users/entities/staff.entity';
 import { Ticket } from 'src/tickets/entities/ticket.entity';
 import {
   Column,
@@ -22,7 +22,7 @@ export class Attend {
     example: '550e8400-e29b-41d4-a716-446655440000',
   })
   @PrimaryGeneratedColumn('uuid')
-  id: string;
+  id!: string;
 
   @ApiProperty({
     description:
@@ -32,7 +32,7 @@ export class Attend {
   @Column('boolean', {
     default: true,
   })
-  is_active: boolean;
+  is_active!: boolean;
 
   @ApiProperty({
     description:
@@ -42,7 +42,7 @@ export class Attend {
   @Column('boolean', {
     default: false,
   })
-  is_attending: boolean;
+  is_attending!: boolean;
 
   @ApiProperty({
     description: 'Fecha y hora en la que se asignó la atención.',
@@ -50,7 +50,7 @@ export class Attend {
   })
   @Index()
   @CreateDateColumn({ type: 'timestamptz', default: () => 'CURRENT_TIMESTAMP' })
-  assigned_at: Date;
+  assigned_at!: Date;
 
   @ApiProperty({
     description: 'Fecha y hora de la última actualización del registro.',
@@ -60,7 +60,7 @@ export class Attend {
     type: 'timestamptz',
     default: () => 'CURRENT_TIMESTAMP',
   })
-  updated_at: Date;
+  updated_at!: Date;
 
   @ApiProperty({
     description: 'Ticket asociado a esta atención.',
@@ -68,7 +68,7 @@ export class Attend {
   })
   @Index()
   @ManyToOne(() => Ticket, (ticket) => ticket.attends)
-  ticket: Ticket;
+  ticket!: Ticket;
 
   @ApiProperty({
     description: 'Técnico encargado de la atención.',
@@ -76,5 +76,5 @@ export class Attend {
   })
   @Index()
   @ManyToOne(() => Staff, (technician) => technician.attends)
-  technician: Staff;
+  technician!: Staff;
 }

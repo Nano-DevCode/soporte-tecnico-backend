@@ -7,7 +7,6 @@ import { DepartmentsModule } from 'src/departments/departments.module';
 import { TicketHistoryModule } from 'src/ticket-history/ticket-history.module';
 import { IssueTypeModule } from 'src/issue_type/issue_type.module';
 import { AttendsModule } from 'src/attends/attends.module';
-import { StaffModule } from 'src/staff/staff.module';
 import {
   AssignTicketService,
   CreateTicketService,
@@ -44,7 +43,6 @@ import { FaultValiditiesModule } from 'src/fault-validities/fault-validities.mod
     TicketHistoryModule,
     IssueTypeModule,
     AttendsModule,
-    StaffModule,
     AuthModule,
     UsersModule,
     RejectionReportsModule,

@@ -4,12 +4,8 @@ describe('AuditSanitizerUtil', () => {
   it('should return null for non-object values', () => {
     expect(sanitizeAuditData(null)).toBeNull();
     expect(sanitizeAuditData(undefined)).toBeNull();
-    expect(
-      sanitizeAuditData('string' as unknown as Record<string, unknown>),
-    ).toBeNull();
-    expect(
-      sanitizeAuditData(123 as unknown as Record<string, unknown>),
-    ).toBeNull();
+    expect(sanitizeAuditData('string')).toBeNull();
+    expect(sanitizeAuditData(123)).toBeNull();
   });
 
   it('should redact sensitive fields regardless of case', () => {
@@ -67,9 +63,7 @@ describe('AuditSanitizerUtil', () => {
     const b: CircularEntity = { id: 'b-1', entityA: a };
     a.entityB = b;
 
-    const sanitized = sanitizeAuditData(
-      a as unknown as Record<string, unknown>,
-    );
+    const sanitized = sanitizeAuditData(a);
     expect(sanitized?.name).toBe('Entity A');
     expect(sanitized?.entityB).toBeDefined();
   });

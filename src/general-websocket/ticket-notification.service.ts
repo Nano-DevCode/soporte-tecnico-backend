@@ -3,7 +3,7 @@ import { OnEvent, EventEmitter2 } from '@nestjs/event-emitter';
 import { GmailBotService } from 'src/gmail-bot/gmail-bot.service';
 import { TelegramBotService } from 'src/telegram-bot/telegram-bot.service';
 import { Ticket } from 'src/tickets/entities/ticket.entity';
-import { StaffService } from '../staff/staff.service';
+import { StaffService } from 'src/users/services/staff.service';
 
 @Injectable()
 export class TicketNotificationService {

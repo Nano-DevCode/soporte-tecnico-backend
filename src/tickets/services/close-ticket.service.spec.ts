@@ -11,7 +11,7 @@ import { CloseTicketService } from './close-ticket.service';
 import { TicketHistoryService } from 'src/ticket-history/ticket-history.service';
 import { TicketsService } from './tickets.service';
 import { ResponseSignatureService } from '../../response-signature/response-signature.service';
-import { UsersService } from '../../users/users.service';
+import { UsersService } from '../../users/services/users.service';
 import { ResponsesService } from '../../responses/responses.service';
 import { ResponsePdfsService } from '../../response-pdfs/response-pdfs.service';
 import { SurveyService } from '../../survey/survey.service';

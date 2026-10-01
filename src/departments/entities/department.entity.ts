@@ -8,7 +8,7 @@ import {
   OneToMany,
   Index,
 } from 'typeorm';
-import { Staff } from 'src/staff/entities/staff.entity';
+import { Staff } from 'src/users/entities/staff.entity';
 import { Equipment } from 'src/equipments/entities/equipment.entity';
 import { ConsumableMovement } from 'src/consumable-movements/entities/consumable-movement.entity';
 

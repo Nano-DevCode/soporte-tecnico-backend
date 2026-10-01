@@ -76,7 +76,10 @@ describe('FilesService', () => {
 
     // 3. Mockeamos el método privado que envuelve la librería ESM conflictiva
     jest
-      .spyOn(service as unknown as { getFileTypeDetector: () => Promise<unknown> }, 'getFileTypeDetector')
+      .spyOn(
+        service as unknown as { getFileTypeDetector: () => Promise<unknown> },
+        'getFileTypeDetector',
+      )
       .mockResolvedValue(
         jest.fn().mockResolvedValue({ ext: 'jpg', mime: 'image/jpeg' }),
       );
@@ -107,7 +110,10 @@ describe('FilesService', () => {
     it('debe subir un documento válido (PDF) sin usar Sharp ni forzar webp', async () => {
       // Cambiamos el mock del detector dinámico solo para esta prueba
       jest
-        .spyOn(service as unknown as { getFileTypeDetector: () => Promise<unknown> }, 'getFileTypeDetector')
+        .spyOn(
+          service as unknown as { getFileTypeDetector: () => Promise<unknown> },
+          'getFileTypeDetector',
+        )
         .mockResolvedValue(
           jest.fn().mockResolvedValue({ ext: 'pdf', mime: 'application/pdf' }),
         );
@@ -147,12 +153,17 @@ describe('FilesService', () => {
     });
 
     it('debe lanzar BadRequestException si el tipo mime detectado no está permitido', async () => {
-      jest.spyOn(service as unknown as { getFileTypeDetector: () => Promise<unknown> }, 'getFileTypeDetector').mockResolvedValue(
-        jest.fn().mockResolvedValue({
-          ext: 'exe',
-          mime: 'application/x-msdownload',
-        }),
-      );
+      jest
+        .spyOn(
+          service as unknown as { getFileTypeDetector: () => Promise<unknown> },
+          'getFileTypeDetector',
+        )
+        .mockResolvedValue(
+          jest.fn().mockResolvedValue({
+            ext: 'exe',
+            mime: 'application/x-msdownload',
+          }),
+        );
 
       await expect(
         service.uploadFile(mockFile, 'tools-images'),

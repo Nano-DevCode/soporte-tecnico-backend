@@ -1,7 +1,7 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { OnEvent, EventEmitter2 } from '@nestjs/event-emitter';
 import { Ticket } from 'src/tickets/entities/ticket.entity';
-import { StaffService } from '../staff/staff.service';
+import { StaffService } from 'src/users/services/staff.service';
 import { NotificationType } from 'src/notifications/entities/notification.entity';
 
 export interface NotificationMessages {

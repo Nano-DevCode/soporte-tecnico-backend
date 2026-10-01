@@ -3,7 +3,7 @@ import { TicketsService } from './tickets.service';
 import { getRepositoryToken } from '@nestjs/typeorm';
 import { Ticket } from '../entities/ticket.entity';
 import { IssueTypeService } from '../../issue_type/issue_type.service';
-import { DepartmentsService } from '../../departments/departments.service';
+import { DepartmentsService } from '../../departments/services/departments.service';
 import { I18nService } from 'nestjs-i18n';
 import { Repository, EntityManager } from 'typeorm';
 import { NotFoundException, ForbiddenException, Logger } from '@nestjs/common';

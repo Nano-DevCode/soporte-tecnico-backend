@@ -1,6 +1,8 @@
-import { Module } from '@nestjs/common';
-import { DepartmentsService } from './departments.service';
-import { DepartmentsController } from './departments.controller';
+import { forwardRef, Module } from '@nestjs/common';
+import { DepartmentsService } from './services/departments.service';
+import { DepartmentsController } from './controllers/departments.controller';
+import { DepartmentSeedService } from './seed/department-seed.service';
+import { DepartmentSeedController } from './seed/department-seed.controller';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { Department } from './entities/department.entity';
 import { AuthModule } from 'src/auth/auth.module';
@@ -9,15 +11,16 @@ import { BatchesproductsModule } from 'src/batchesproducts/batchesproducts.modul
 import { CommonModule } from 'src/common/common.module';
 
 @Module({
-  controllers: [DepartmentsController],
-  providers: [DepartmentsService],
+  controllers: [DepartmentsController, DepartmentSeedController],
+  providers: [DepartmentsService, DepartmentSeedService],
   imports: [
     TypeOrmModule.forFeature([Department]),
-    AuthModule,
+    forwardRef(() => AuthModule),
     ConsumableMovementsModule,
     BatchesproductsModule,
     CommonModule,
   ],
-  exports: [DepartmentsService, TypeOrmModule],
+  exports: [DepartmentsService, DepartmentSeedService, TypeOrmModule],
 })
 export class DepartmentsModule {}
+

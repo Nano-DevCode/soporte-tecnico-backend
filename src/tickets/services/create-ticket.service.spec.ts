@@ -12,14 +12,14 @@ import { SchoolPeriodsService } from 'src/school-periods/school-periods.service'
 import { TicketHistoryService } from 'src/ticket-history/ticket-history.service';
 import { IssueTypeService } from '../../issue_type/issue_type.service';
 import { TicketsService } from './tickets.service';
-import { UsersService } from '../../users/users.service';
+import { UsersService } from '../../users/services/users.service';
 import { ResponsePdfsService } from '../../response-pdfs/response-pdfs.service';
 import { FolioCountersService } from 'src/folio-counters/folio-counters.service';
 import { RouteTicketService } from './route-ticket.service';
 import { ValidRole } from 'src/auth/interfaces/valid-roles';
 import { Ticket } from '../entities/ticket.entity';
 import { User } from 'src/users/entities/user.entity';
-import { Staff } from 'src/staff/entities/staff.entity';
+import { Staff } from 'src/users/entities/staff.entity';
 import { Document } from 'src/documents/entities/document.entity';
 import { CreateTicketDto } from '../dto';
 import { CreateTicketOnBehalfDto } from '../dto/create-ticket-on-behalf';

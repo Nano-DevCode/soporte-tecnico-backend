@@ -5,7 +5,7 @@ import { UnauthorizedException } from '@nestjs/common';
 import { I18nService } from 'nestjs-i18n';
 import { RefreshTokenService } from './refresh-token.service';
 import { RedisService } from 'src/common/services/redis.service';
-import { UsersService } from 'src/users/users.service';
+import { UsersService } from 'src/users/services/users.service';
 import { User } from 'src/users/entities/user.entity';
 
 describe('RefreshTokenService', () => {

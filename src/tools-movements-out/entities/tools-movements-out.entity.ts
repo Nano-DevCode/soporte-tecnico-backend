@@ -1,5 +1,5 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
-import { Staff } from 'src/staff/entities/staff.entity';
+import { Staff } from 'src/users/entities/staff.entity';
 import { Ticket } from 'src/tickets/entities/ticket.entity';
 import { ToolsMovement } from 'src/tools-movements/entities/tools-movement.entity';
 import { ToolsStatus } from 'src/tools-status/entities/tools-status.entity';

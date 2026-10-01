@@ -18,7 +18,7 @@ import { TicketHistoryService } from 'src/ticket-history/ticket-history.service'
 import { TicketsService } from './tickets.service';
 import { ResponseSignatureService } from '../../response-signature/response-signature.service';
 import { User } from 'src/users/entities/user.entity';
-import { UsersService } from '../../users/users.service';
+import { UsersService } from '../../users/services/users.service';
 import { SignatureRole } from 'src/response-signature/entities/response-signature.entity';
 import { ResponsesService } from '../../responses/responses.service';
 import { ResponsePdfsService } from '../../response-pdfs/response-pdfs.service';

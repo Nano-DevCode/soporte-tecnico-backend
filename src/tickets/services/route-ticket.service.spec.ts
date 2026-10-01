@@ -8,13 +8,13 @@ import {
 import { EventEmitter2 } from '@nestjs/event-emitter';
 import { TicketHistoryService } from 'src/ticket-history/ticket-history.service';
 import { TicketsService } from './tickets.service';
-import { StaffService } from 'src/staff/staff.service';
+import { StaffService } from 'src/users/services/staff.service';
 import { I18nService } from 'nestjs-i18n';
 import { ConflictException, Logger } from '@nestjs/common';
 import { Ticket } from '../entities/ticket.entity';
 import { RouteTicketDto } from '../dto/route-ticket.dto';
 import { TicketHistory } from 'src/ticket-history/entities/ticket-history.entity';
-import { Staff } from 'src/staff/entities/staff.entity';
+import { Staff } from 'src/users/entities/staff.entity';
 import { Status } from 'src/ticket-history/entities';
 
 jest.mock('src/common/machine/TicketStateMachine.machine', () => {

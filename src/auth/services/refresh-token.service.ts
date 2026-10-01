@@ -4,7 +4,7 @@ import { ConfigService } from '@nestjs/config';
 import { randomUUID } from 'crypto';
 import { I18nService } from 'nestjs-i18n';
 import { RedisService } from 'src/common/services/redis.service';
-import { UsersService } from 'src/users/users.service';
+import { UsersService } from 'src/users/services/users.service';
 import { User } from 'src/users/entities/user.entity';
 import { RefreshTokenPayload } from '../interfaces/refresh-token-payload.interface';
 import { JwtPayload } from '../interfaces/jwt-payload.interface';

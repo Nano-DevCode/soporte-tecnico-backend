@@ -42,9 +42,7 @@ export class AuditSubscriber implements EntitySubscriberInterface {
     event: InsertEvent<Record<string, unknown>>,
   ): Promise<void> {
     const entityName = event.metadata.name;
-    const entity = event.entity
-      ? (event.entity as Record<string, unknown>)
-      : undefined;
+    const entity = event.entity ? event.entity : undefined;
 
     if (this.isIgnored(entityName) || !entity) {
       return;
@@ -86,9 +84,7 @@ export class AuditSubscriber implements EntitySubscriberInterface {
     const newEntity = event.entity
       ? (event.entity as Record<string, unknown>)
       : undefined;
-    const oldEntity = event.databaseEntity
-      ? (event.databaseEntity as Record<string, unknown>)
-      : {};
+    const oldEntity = event.databaseEntity ? event.databaseEntity : {};
 
     if (this.isIgnored(entityName) || !newEntity) {
       return;

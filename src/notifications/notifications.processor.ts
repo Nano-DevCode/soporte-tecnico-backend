@@ -4,7 +4,7 @@ import { GeneralWebsocketGateway } from '../general-websocket/general-websocket.
 import { NotificationType } from './entities/notification.entity';
 import { Logger } from '@nestjs/common';
 import type { Job } from 'bull';
-import { UsersService } from '../users/users.service';
+import { UsersService } from '../users/services/users.service';
 
 export interface NotificationJobData {
   userId: string;

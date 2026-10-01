@@ -310,7 +310,7 @@ export class SlaMonitorService {
       .leftJoinAndSelect('ticket.ticket_histories', 'histories')
       .leftJoinAndSelect('histories.status', 'status')
       .leftJoinAndSelect('ticket.pause_report', 'pause_report')
-      .where('ticket.pause_report IS NULL')
+      .where('pause_report.id IS NULL')
       .getMany();
 
     return rawTickets.filter((ticket) => {

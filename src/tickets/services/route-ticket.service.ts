@@ -10,7 +10,7 @@ import {
 import { TicketHistoryService } from 'src/ticket-history/ticket-history.service';
 import { RouteTicketDto } from '../dto/route-ticket.dto';
 import { TicketsService } from './tickets.service';
-import { StaffService } from 'src/staff/staff.service';
+import { StaffService } from 'src/users/services/staff.service';
 import { I18nService } from 'nestjs-i18n';
 
 @Injectable()

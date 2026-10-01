@@ -1,6 +1,6 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
-import { Role } from 'src/roles/entities/role.entity';
-import { Staff } from 'src/staff/entities/staff.entity';
+import { Role } from 'src/auth/roles/entities/role.entity';
+import { Staff } from './staff.entity';
 import {
   BeforeInsert,
   BeforeUpdate,

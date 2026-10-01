@@ -25,7 +25,7 @@ import { PaginationWithPageDto } from '../../common/dtos/paginationWithPage.dto'
 import { FilterTicketReportsDto } from '../dto/filter-ticket-reports.dto';
 import { MatrixRow } from 'src/excel/interfaces/report-config.interface';
 import { IssueTypeService } from '../../issue_type/issue_type.service';
-import { DepartmentsService } from '../../departments/departments.service';
+import { DepartmentsService } from '../../departments/services/departments.service';
 import { I18nService } from 'nestjs-i18n';
 import { ResponsePdfsService } from 'src/response-pdfs/response-pdfs.service';
 import { RegeneratePdfDto, DocumentType } from '../dto/regenerate-pdf.dto';

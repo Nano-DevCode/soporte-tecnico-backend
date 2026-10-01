@@ -6,7 +6,7 @@ import { EntityManager } from 'typeorm';
 import { AttendsService } from './attends.service';
 import { Attend } from './entities/attend.entity';
 import { Ticket } from 'src/tickets/entities/ticket.entity';
-import { Staff } from 'src/staff/entities/staff.entity';
+import { Staff } from 'src/users/entities/staff.entity';
 import { User } from 'src/users/entities/user.entity';
 
 describe('AttendsService', () => {

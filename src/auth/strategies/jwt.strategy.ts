@@ -4,7 +4,7 @@ import { User } from 'src/users/entities/user.entity';
 import { JwtPayload } from '../interfaces/jwt-payload.interface';
 import { ConfigService } from '@nestjs/config';
 import { Inject, Injectable, UnauthorizedException } from '@nestjs/common';
-import { UsersService } from 'src/users/users.service';
+import { UsersService } from 'src/users/services/users.service';
 import { Request } from 'express';
 import { I18nService } from 'nestjs-i18n';
 
