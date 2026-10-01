@@ -5,21 +5,21 @@ import {
   InternalServerErrorException,
   Logger,
 } from '@nestjs/common';
-import { CreateItAssetsModelDto } from './dto/create-it-assets-model.dto';
-import { UpdateItAssetsModelDto } from './dto/update-it-assets-model.dto';
+import { CreateItAssetsModelDto } from '../dto/create-it-assets-model.dto';
+import { UpdateItAssetsModelDto } from '../dto/update-it-assets-model.dto';
 import { InjectRepository } from '@nestjs/typeorm';
-import { ItAssetsModel } from './entities/it-assets-model.entity';
+import { ItAssetsModel } from '../entities/it-assets-model.entity';
 import { Repository } from 'typeorm';
 import { I18nService } from 'nestjs-i18n';
 import { DatabaseError } from 'src/interfaces/DatabaseError';
-import { FilterItAssetsModelDto } from './dto/filter-it-assets-model.dto';
+import { FilterItAssetsModelDto } from '../dto/filter-it-assets-model.dto';
 
 @Injectable()
 export class ItAssetsModelsService {
   private readonly logger = new Logger('ItAssetsModelsService');
   constructor(
     @InjectRepository(ItAssetsModel)
-    private itAssetsModelsRepository: Repository<ItAssetsModel>,
+    private readonly itAssetsModelsRepository: Repository<ItAssetsModel>,
     private readonly i18n: I18nService,
   ) {}
 
@@ -74,12 +74,16 @@ export class ItAssetsModelsService {
     };
   }
 
-  update(id: string, updateItAssetsModelDto: UpdateItAssetsModelDto) {
+  async update(id: string, updateItAssetsModelDto: UpdateItAssetsModelDto) {
     try {
-      return this.itAssetsModelsRepository.preload({
+      const model = await this.itAssetsModelsRepository.preload({
         id,
         ...updateItAssetsModelDto,
       });
+      if (!model) {
+        return null;
+      }
+      return await this.itAssetsModelsRepository.save(model);
     } catch (error) {
       this.handleDBExeptions(error);
     }

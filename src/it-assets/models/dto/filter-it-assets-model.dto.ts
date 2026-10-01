@@ -21,7 +21,7 @@ export class FilterItAssetsModelDto {
   @Type(() => Number)
   @IsInt({ message: i18nValidationMessage('validation.isInt') })
   @IsPositive({ message: i18nValidationMessage('validation.isPositive') })
-  @Max(100, { message: i18nValidationMessage('validation.max') }) // Seguridad: Evita consultas masivas
+  @Max(100, { message: i18nValidationMessage('validation.max') })
   limit?: number = 10;
 
   @ApiPropertyOptional({

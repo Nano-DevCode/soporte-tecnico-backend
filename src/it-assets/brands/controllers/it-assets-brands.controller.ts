@@ -7,10 +7,10 @@ import {
   Param,
   Query,
 } from '@nestjs/common';
-import { ItAssetsBrandsService } from './it-assets-brands.service';
-import { CreateItAssetsBrandDto } from './dto/create-it-assets-brand.dto';
-import { UpdateItAssetsBrandDto } from './dto/update-it-assets-brand.dto';
-import { FilterItAssetsBrandDto } from './dto/filter-it-assets-brand.dto';
+import { ItAssetsBrandsService } from '../services/it-assets-brands.service';
+import { CreateItAssetsBrandDto } from '../dto/create-it-assets-brand.dto';
+import { UpdateItAssetsBrandDto } from '../dto/update-it-assets-brand.dto';
+import { FilterItAssetsBrandDto } from '../dto/filter-it-assets-brand.dto';
 import { Auth } from 'src/auth/decorators/auth.decorator';
 import { ValidRole } from 'src/auth/interfaces/valid-roles';
 import {
@@ -25,7 +25,7 @@ import {
 } from '@nestjs/swagger';
 
 @ApiTags('IT Assets Brands (Marcas)')
-@ApiCookieAuth() // Indica que estas rutas requieren autenticación
+@ApiCookieAuth()
 @Controller('it-assets-brands')
 export class ItAssetsBrandsController {
   constructor(private readonly itAssetsBrandsService: ItAssetsBrandsService) {}
@@ -95,6 +95,6 @@ export class ItAssetsBrandsController {
     @Param('id') id: string,
     @Body() updateItAssetsBrandDto: UpdateItAssetsBrandDto,
   ) {
-    return this.itAssetsBrandsService.update(+id, updateItAssetsBrandDto);
+    return this.itAssetsBrandsService.update(id, updateItAssetsBrandDto);
   }
 }

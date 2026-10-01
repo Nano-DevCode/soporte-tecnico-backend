@@ -214,4 +214,3 @@ export class ItAssetsController {
     return this.itAssetsService.update(id, updateItAssetDto, file);
   }
 }
-

@@ -7,10 +7,10 @@ import {
   Param,
   Query,
 } from '@nestjs/common';
-import { ItAssetsModelsService } from './it-assets-models.service';
-import { CreateItAssetsModelDto } from './dto/create-it-assets-model.dto';
-import { UpdateItAssetsModelDto } from './dto/update-it-assets-model.dto';
-import { FilterItAssetsModelDto } from './dto/filter-it-assets-model.dto';
+import { ItAssetsModelsService } from '../services/it-assets-models.service';
+import { CreateItAssetsModelDto } from '../dto/create-it-assets-model.dto';
+import { UpdateItAssetsModelDto } from '../dto/update-it-assets-model.dto';
+import { FilterItAssetsModelDto } from '../dto/filter-it-assets-model.dto';
 import { Auth } from 'src/auth/decorators/auth.decorator';
 import { ValidRole } from 'src/auth/interfaces/valid-roles';
 import {
@@ -25,7 +25,7 @@ import {
 } from '@nestjs/swagger';
 
 @ApiTags('IT Assets Models (Modelos)')
-@ApiCookieAuth() // Requiere autenticación
+@ApiCookieAuth()
 @Controller('it-assets-models')
 export class ItAssetsModelsController {
   constructor(private readonly itAssetsModelsService: ItAssetsModelsService) {}

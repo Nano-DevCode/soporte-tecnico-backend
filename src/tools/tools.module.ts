@@ -12,4 +12,3 @@ import { FilesModule } from 'src/files/files.module';
   exports: [ToolsService, TypeOrmModule],
 })
 export class ToolsModule {}
-

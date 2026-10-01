@@ -12,7 +12,7 @@ import { UpdateItAssetDto } from '../dto/update-it-asset.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { ItAsset } from '../entities/it-asset.entity';
 import { DataSource, Repository } from 'typeorm';
-import { ItAssetsModel } from 'src/it-assets-models/entities/it-assets-model.entity';
+import { ItAssetsModel } from 'src/it-assets/models/entities/it-assets-model.entity';
 import { ItAssetsStatus } from 'src/it-assets-status/entities/it-assets-status.entity';
 import { ItAssetsType } from 'src/it-assets-type/entities/it-assets-type.entity';
 import { ItAssetsInvoice } from 'src/it-assets-invoices/entities/it-assets-invoice.entity';
@@ -313,4 +313,3 @@ export class ItAssetsService {
     );
   }
 }
-

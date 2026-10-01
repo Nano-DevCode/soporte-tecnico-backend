@@ -229,4 +229,3 @@ export class ToolsController {
     return this.toolsService.update(id, updateToolDto, file);
   }
 }
-

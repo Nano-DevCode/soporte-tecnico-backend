@@ -5,13 +5,13 @@ import {
   InternalServerErrorException,
   Logger,
 } from '@nestjs/common';
-import { CreateItAssetsBrandDto } from './dto/create-it-assets-brand.dto';
-import { UpdateItAssetsBrandDto } from './dto/update-it-assets-brand.dto';
+import { CreateItAssetsBrandDto } from '../dto/create-it-assets-brand.dto';
+import { UpdateItAssetsBrandDto } from '../dto/update-it-assets-brand.dto';
 import { DatabaseError } from 'src/interfaces/DatabaseError';
 import { InjectRepository } from '@nestjs/typeorm';
-import { ItAssetsBrand } from './entities/it-assets-brand.entity';
+import { ItAssetsBrand } from '../entities/it-assets-brand.entity';
 import { Repository } from 'typeorm';
-import { FilterItAssetsBrandDto } from './dto/filter-it-assets-brand.dto';
+import { FilterItAssetsBrandDto } from '../dto/filter-it-assets-brand.dto';
 import { I18nService } from 'nestjs-i18n';
 
 @Injectable()
@@ -51,7 +51,7 @@ export class ItAssetsBrandsService {
     const [itAssetsBrands, total] = await queryBuilder.getManyAndCount();
 
     return {
-      itAssetsBrands: itAssetsBrands,
+      itAssetsBrands,
       meta: {
         total,
         page: Math.floor(offset / limit) + 1,
@@ -60,9 +60,12 @@ export class ItAssetsBrandsService {
     };
   }
 
-  update(id: number, updateItAssetsBrandDto: UpdateItAssetsBrandDto) {
+  async update(id: string, updateItAssetsBrandDto: UpdateItAssetsBrandDto) {
     try {
-      return this.itAssetsBrandsRepository.update(id, updateItAssetsBrandDto);
+      return await this.itAssetsBrandsRepository.update(
+        id,
+        updateItAssetsBrandDto,
+      );
     } catch (error) {
       this.handleDBExeptions(error);
     }

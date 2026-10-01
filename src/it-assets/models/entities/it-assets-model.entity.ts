@@ -1,5 +1,5 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
-import { ItAssetsBrand } from 'src/it-assets-brands/entities/it-assets-brand.entity';
+import { ItAssetsBrand } from 'src/it-assets/brands/entities/it-assets-brand.entity';
 import { ItAsset } from 'src/it-assets/entities/it-asset.entity';
 import { Entity, Index, OneToMany } from 'typeorm';
 import {
@@ -27,7 +27,6 @@ export class ItAssetsModel {
   @Column('text')
   name!: string;
 
-  // No se documentan en Swagger al tener select: false
   @CreateDateColumn({
     name: 'created_at',
     type: 'timestamp',

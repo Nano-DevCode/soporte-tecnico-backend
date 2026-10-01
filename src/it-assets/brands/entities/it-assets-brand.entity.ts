@@ -1,5 +1,5 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
-import { ItAssetsModel } from 'src/it-assets-models/entities/it-assets-model.entity';
+import { ItAssetsModel } from 'src/it-assets/models/entities/it-assets-model.entity';
 import {
   Column,
   CreateDateColumn,
