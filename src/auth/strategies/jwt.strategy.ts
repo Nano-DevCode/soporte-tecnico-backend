@@ -8,8 +8,11 @@ import { UsersService } from 'src/users/users.service';
 import { Request } from 'express';
 import { I18nService } from 'nestjs-i18n';
 
+import { RequestContext } from 'src/common/context/request-context';
+
 @Injectable()
 export class JwtStrategy extends PassportStrategy(Strategy, 'jwt') {
+
   constructor(
     private readonly usersService: UsersService,
     @Inject(ConfigService)
@@ -40,8 +43,12 @@ export class JwtStrategy extends PassportStrategy(Strategy, 'jwt') {
     if (!user.status) {
       throw new UnauthorizedException(this.i18n.t('errors.auth.userNotActive'));
     }
+
+    RequestContext.setUser(user.id, user.email);
+
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const { password: _, ...rest } = user;
+
 
     return {
       ...rest,

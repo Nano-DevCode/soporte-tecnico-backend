@@ -105,6 +105,8 @@ import { NotificationsModule } from './notifications/notifications.module';
 import { ScheduleModule } from '@nestjs/schedule';
 import { SlaModule } from './sla/sla.module';
 import { CacheModule } from './cache/cache.module';
+import { AuditModule } from './audit/audit.module';
+
 
 @Module({
   imports: [
@@ -285,7 +287,9 @@ import { CacheModule } from './cache/cache.module';
     NotificationsModule,
     SlaModule,
     CacheModule,
+    AuditModule,
   ],
+
 
   controllers: [],
   providers: [

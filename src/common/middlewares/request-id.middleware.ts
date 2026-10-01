@@ -27,7 +27,9 @@ export class RequestIdMiddleware implements NestMiddleware {
       ip: req.ip || req.socket?.remoteAddress,
       method: req.method,
       url: req.originalUrl || req.url,
+      userAgent: req.headers['user-agent'] as string,
     };
+
 
     requestContextStorage.run(store, () => {
       next();
