@@ -160,10 +160,7 @@ describe('DepartmentsController', () => {
 
       const result = await controller.update(mockDepartment.id, updateDto);
 
-      expect(service.update).toHaveBeenCalledWith(
-        mockDepartment.id,
-        updateDto,
-      );
+      expect(service.update).toHaveBeenCalledWith(mockDepartment.id, updateDto);
       expect(result).toEqual(updatedDepartment);
     });
   });
@@ -179,4 +176,3 @@ describe('DepartmentsController', () => {
     });
   });
 });
-

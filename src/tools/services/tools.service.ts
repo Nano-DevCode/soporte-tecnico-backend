@@ -7,17 +7,17 @@ import {
   Logger,
   NotFoundException,
 } from '@nestjs/common';
-import { CreateToolDto } from './dto/create-tool.dto';
-import { UpdateToolDto } from './dto/update-tool.dto';
+import { CreateToolDto } from '../dto/create-tool.dto';
+import { UpdateToolDto } from '../dto/update-tool.dto';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Tool } from './entities/tool.entity';
+import { Tool } from '../entities/tool.entity';
 import { DataSource, In, Repository } from 'typeorm';
 import { DatabaseError } from 'src/interfaces/DatabaseError';
-import { FilterToolDto } from './dto/filter-tool.dto';
-import { ChangeStatusToolDto } from './dto/change-status-tool.dto';
+import { FilterToolDto } from '../dto/filter-tool.dto';
+import { ChangeStatusToolDto } from '../dto/change-status-tool.dto';
 import { I18nService } from 'nestjs-i18n';
 import { FilesService, type MulterFile } from 'src/files/files.service';
-import { FindByIdsDto } from './dto/find-by-ids.dto';
+import { FindByIdsDto } from '../dto/find-by-ids.dto';
 import {
   MovementType,
   ToolsMovement,
@@ -39,7 +39,6 @@ export class ToolsService {
   ) {}
 
   async create(createDto: CreateToolDto, file?: MulterFile) {
-    // Declaramos esto afuera para poder borrar la imagen en el catch si es necesario
     let uploadedImage: {
       fileName: string;
       url: string;
@@ -47,9 +46,7 @@ export class ToolsService {
     } | null = null;
 
     try {
-      // Iniciamos la transaccion
       return await this.dataSource.transaction(async (transactionManager) => {
-        // 1. Preparamos el Tool sin la imagen
         const newTool = transactionManager.create(Tool, {
           idInventary: createDto.idInventary,
           description: createDto.description,
@@ -62,11 +59,8 @@ export class ToolsService {
             : undefined,
         });
 
-        // 2. Guardamos la primera vez para que PostgreSQL genere el ID.
-        // Si hay un error de llave duplicada o foranea, fallará aqui antes de subir nada.
         const savedTool = await transactionManager.save(newTool);
 
-        // Creamos la la entrada en la tabla de entradas
         const initialMovement = transactionManager.create(ToolsMovement, {
           type: MovementType.IN,
           tool: savedTool,
@@ -77,7 +71,6 @@ export class ToolsService {
         });
         await transactionManager.save(initialMovement);
 
-        // 3. Verificamos si viene una imagen antes de subirla
         if (file) {
           uploadedImage = await this.filesService.uploadFile(
             file,
@@ -85,23 +78,19 @@ export class ToolsService {
             savedTool.id,
           );
 
-          // 4. Actualizamos la URL en el objeto y volvemos a guardar
           savedTool.imageUrl = uploadedImage.url;
           return await transactionManager.save(savedTool);
         }
 
-        // Si no hay archivo, simplemente retornamos la herramienta guardada inicialmente
         return savedTool;
       });
     } catch (error) {
-      // Creamos una referencia forzando el tipo original para que TS no se confunda
       const imgToRevert = uploadedImage as {
         fileName: string;
         url: string;
         bucket: string;
       } | null;
 
-      // Usamos la nueva variable para la validación y el borrado
       if (imgToRevert) {
         await this.filesService.deleteFile(
           imgToRevert.bucket,
@@ -109,7 +98,6 @@ export class ToolsService {
         );
       }
 
-      // Mandamos el error al manejador para que le responda al usuario
       this.handleDBExeptions(error);
     }
   }
@@ -146,14 +134,12 @@ export class ToolsService {
 
     const queryBuilder = this.toolsRepository.createQueryBuilder('tool');
 
-    // 1. Unimos las relaciones
     queryBuilder.leftJoinAndSelect('tool.model', 'model');
     queryBuilder.leftJoinAndSelect('model.brand', 'brand');
     queryBuilder.leftJoinAndSelect('tool.toolStatus', 'toolStatus');
     queryBuilder.leftJoinAndSelect('tool.toolType', 'toolType');
     queryBuilder.leftJoinAndSelect('tool.invoice', 'invoice');
 
-    // 2. Aplicamos la búsqueda general
     if (query) {
       queryBuilder.andWhere(
         '("tool"."idInventary" ILIKE :query OR "tool"."id"::text ILIKE :query OR "tool"."name" ILIKE :query)',
@@ -161,7 +147,6 @@ export class ToolsService {
       );
     }
 
-    // 3. Aplicamos los filtros
     if (status != undefined) {
       queryBuilder.andWhere('status = :status', { status });
     }
@@ -178,10 +163,7 @@ export class ToolsService {
       queryBuilder.andWhere('brand.id = :brandId', { brandId });
     }
 
-    // 4. Aplicamos paginacion
     queryBuilder.take(limit).skip(offset);
-
-    // 5. Ejecutamos la consulta y ordenamos por fecha de actualizacion descendente
     queryBuilder.orderBy('tool.updatedAt', 'DESC');
     const [tools, total] = await queryBuilder.getManyAndCount();
 
@@ -214,7 +196,6 @@ export class ToolsService {
   }
 
   async update(id: string, updateDto: UpdateToolDto, file?: MulterFile) {
-    // Declaramos esto afuera para el rollback manual si la BD falla despues de subir la foto
     let uploadedImage: {
       fileName: string;
       url: string;
@@ -223,7 +204,6 @@ export class ToolsService {
 
     try {
       return await this.dataSource.transaction(async (transactionManager) => {
-        // 1. Buscamos el activo existente para asegurarnos de que exista
         const tool = await transactionManager.findOne(Tool, {
           where: { id },
         });
@@ -234,25 +214,21 @@ export class ToolsService {
           );
         }
 
-        // 2. Si el usuario envió una nueva imagen, la procesamos
         if (file) {
-          // Tu filesService ya limpia versiones viejas internamente si pasas el mismo ID
           uploadedImage = await this.filesService.uploadFile(
             file,
             'tools-images',
-            id, // Seguimos usando el ID del activo como nombre de archivo
+            id,
           );
           tool.imageUrl = uploadedImage.url;
         }
 
-        // 3. Actualizamos los campos de texto si vienen en el DTO
         if (updateDto.idInventary !== undefined)
           tool.idInventary = updateDto.idInventary;
         if (updateDto.name !== undefined) tool.name = updateDto.name;
         if (updateDto.description !== undefined)
           tool.description = updateDto.description!;
 
-        // 4. Actualizamos las relaciones de forma segura (y tipada)
         if (updateDto.modelId) {
           tool.model = { id: updateDto.modelId } as ToolsModel;
         }
@@ -262,18 +238,15 @@ export class ToolsService {
         if (updateDto.typeId) {
           tool.toolType = { id: updateDto.typeId } as ToolsType;
         }
-        // Si invoiceId viene como null o string vacío, rompemos la relación, si viene un UUID la creamos
         if (updateDto.invoiceId !== undefined) {
           tool.invoice = updateDto.invoiceId
             ? ({ id: updateDto.invoiceId } as ToolsInvoice)
             : null;
         }
 
-        // 5. Guardamos los cambios (TypeORM ejecutará un UPDATE en la base de datos)
         return await transactionManager.save(tool);
       });
     } catch (error) {
-      // Aplicamos el truco del casteo para evitar el error de tipo 'never' en TS
       const imgToRevert = uploadedImage as {
         fileName: string;
         url: string;
@@ -287,7 +260,6 @@ export class ToolsService {
         );
       }
 
-      // Procesamos duplicados o llaves foráneas inexistentes introducidas en el update
       this.handleDBExeptions(error);
     }
   }
@@ -344,3 +316,4 @@ export class ToolsService {
     );
   }
 }
+

@@ -75,4 +75,3 @@ describe('DepartmentSeedService', () => {
     expect(direccionCall).toBeUndefined();
   });
 });
-

@@ -1,10 +1,10 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { ItAssetsController } from './it-assets.controller';
-import { ItAssetsService } from './it-assets.service';
-import { CreateItAssetDto } from './dto/create-it-asset.dto';
-import { UpdateItAssetDto } from './dto/update-it-asset.dto';
-import { FilterItAssetBrandDto } from './dto/filter-it-asset.dto';
-import { ChangeStatusItAssetDto } from './dto/change-status-it-asset.dto';
+import { ItAssetsService } from '../services/it-assets.service';
+import { CreateItAssetDto } from '../dto/create-it-asset.dto';
+import { UpdateItAssetDto } from '../dto/update-it-asset.dto';
+import { FilterItAssetBrandDto } from '../dto/filter-it-asset.dto';
+import { ChangeStatusItAssetDto } from '../dto/change-status-it-asset.dto';
 import { MulterFile } from 'src/files/files.service';
 import { Reflector } from '@nestjs/core';
 import { I18nService } from 'nestjs-i18n';
@@ -13,7 +13,6 @@ describe('ItAssetsController', () => {
   let controller: ItAssetsController;
   let service: jest.Mocked<ItAssetsService>;
 
-  // Mock básico de un archivo subido (MulterFile)
   const mockFile = {
     originalname: 'equipo.jpg',
     mimetype: 'image/jpeg',
@@ -21,7 +20,6 @@ describe('ItAssetsController', () => {
     size: 1024,
   } as MulterFile;
 
-  // Mock de un activo de respuesta
   const mockAssetResponse = {
     id: 'asset-uuid-1',
     name: 'Monitor Dell',
@@ -69,9 +67,6 @@ describe('ItAssetsController', () => {
     expect(controller).toBeDefined();
   });
 
-  /* ========================================================================
-     CREATE
-  ======================================================================== */
   describe('create', () => {
     it('debe llamar a service.create con el DTO y el archivo, y retornar el resultado', async () => {
       const createDto: CreateItAssetDto = {
@@ -94,9 +89,6 @@ describe('ItAssetsController', () => {
     });
   });
 
-  /* ========================================================================
-     FIND ALL
-  ======================================================================== */
   describe('findAll', () => {
     it('debe llamar a service.findAll con los filtros y retornar el resultado', async () => {
       const filterDto: FilterItAssetBrandDto = {
@@ -125,9 +117,6 @@ describe('ItAssetsController', () => {
     });
   });
 
-  /* ========================================================================
-     FIND ONE
-  ======================================================================== */
   describe('findOne', () => {
     it('debe llamar a service.findOne con el ID provisto y retornar el activo', async () => {
       const id = 'asset-uuid-1';
@@ -140,9 +129,6 @@ describe('ItAssetsController', () => {
     });
   });
 
-  /* ========================================================================
-     CHANGE STATUS
-  ======================================================================== */
   describe('changeStatus', () => {
     it('debe llamar a service.changeStatus con el ID y el DTO, y retornar el activo actualizado', async () => {
       const id = 'asset-uuid-1';
@@ -158,9 +144,6 @@ describe('ItAssetsController', () => {
     });
   });
 
-  /* ========================================================================
-     UPDATE
-  ======================================================================== */
   describe('update', () => {
     const id = 'asset-uuid-1';
     const updateDto: UpdateItAssetDto = {
@@ -181,7 +164,6 @@ describe('ItAssetsController', () => {
       const updatedAsset = { ...mockAssetResponse, name: 'Monitor Modificado' };
       service.update.mockResolvedValue(updatedAsset);
 
-      // Simulamos la llamada sin el tercer parámetro (file)
       const result = await controller.update(id, updateDto, undefined);
 
       expect(service.update).toHaveBeenCalledWith(id, updateDto, undefined);
@@ -189,3 +171,4 @@ describe('ItAssetsController', () => {
     });
   });
 });
+

@@ -80,4 +80,3 @@ export const seed_departament: DepartmentSeed[] = [
   { name: 'Sindicato Sección 22', priority: 4, acronym: 'SIND22' },
   { name: 'Sindicato Sección 61', priority: 4, acronym: 'SIND61' },
 ];
-

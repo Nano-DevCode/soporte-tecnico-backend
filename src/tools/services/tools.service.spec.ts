@@ -1,6 +1,6 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { getRepositoryToken } from '@nestjs/typeorm';
-import { DataSource, Repository } from 'typeorm';
+import { DataSource, EntityManager, Repository } from 'typeorm';
 import { I18nService } from 'nestjs-i18n';
 import {
   ConflictException,
@@ -9,12 +9,12 @@ import {
 } from '@nestjs/common';
 
 import { ToolsService } from './tools.service';
-import { Tool } from './entities/tool.entity';
+import { Tool } from '../entities/tool.entity';
 import { FilesService, MulterFile } from 'src/files/files.service';
-import { CreateToolDto } from './dto/create-tool.dto';
-import { UpdateToolDto } from './dto/update-tool.dto';
-import { FilterToolDto } from './dto/filter-tool.dto';
-import { ChangeStatusToolDto } from './dto/change-status-tool.dto';
+import { CreateToolDto } from '../dto/create-tool.dto';
+import { UpdateToolDto } from '../dto/update-tool.dto';
+import { FilterToolDto } from '../dto/filter-tool.dto';
+import { ChangeStatusToolDto } from '../dto/change-status-tool.dto';
 import { MovementType } from 'src/tools-movements/entities/tools-movement.entity';
 
 describe('ToolsService', () => {
@@ -22,7 +22,6 @@ describe('ToolsService', () => {
   let toolsRepository: jest.Mocked<Repository<Tool>>;
   let filesService: jest.Mocked<FilesService>;
 
-  // Mock del QueryBuilder para la búsqueda
   const mockQueryBuilder = {
     leftJoinAndSelect: jest.fn().mockReturnThis(),
     andWhere: jest.fn().mockReturnThis(),
@@ -32,7 +31,6 @@ describe('ToolsService', () => {
     getManyAndCount: jest.fn(),
   };
 
-  // Mock del EntityManager para las Transacciones
   const mockEntityManager = {
     create: jest.fn(),
     save: jest.fn(),
@@ -86,9 +84,15 @@ describe('ToolsService', () => {
           useValue: {
             transaction: jest
               .fn()
-              .mockImplementation(async <T>(cb: NewType<T>) => {
-                return await cb(mockEntityManager);
-              }),
+              .mockImplementation(
+                async <T>(
+                  cb: (manager: EntityManager) => Promise<T>,
+                ): Promise<T> => {
+                  return await cb(
+                    mockEntityManager as unknown as EntityManager,
+                  );
+                },
+              ),
           },
         },
       ],
@@ -98,7 +102,6 @@ describe('ToolsService', () => {
     toolsRepository = module.get(getRepositoryToken(Tool));
     filesService = module.get(FilesService);
 
-    // Silenciamos los logs nativos para pruebas de error
     jest.spyOn(service['logger'], 'error').mockImplementation(() => {});
 
     jest.clearAllMocks();
@@ -108,9 +111,6 @@ describe('ToolsService', () => {
     expect(service).toBeDefined();
   });
 
-  /* ========================================================================
-     CREATE
-  ======================================================================== */
   describe('create', () => {
     const createDto: CreateToolDto = {
       idInventary: 'HER-001',
@@ -126,12 +126,12 @@ describe('ToolsService', () => {
     it('debe crear una herramienta, registrar el movimiento, subir imagen y retornar la herramienta final', async () => {
       mockEntityManager.create.mockReturnValue(mockTool);
       mockEntityManager.save
-        .mockResolvedValueOnce(mockTool) // 1. Herramienta base
-        .mockResolvedValueOnce({}) // 2. Movimiento inicial
+        .mockResolvedValueOnce(mockTool)
+        .mockResolvedValueOnce({})
         .mockResolvedValueOnce({
           ...mockTool,
           imageUrl: 'http://url.com/herramienta.jpg',
-        }); // 3. Herramienta actualizada
+        });
 
       filesService.uploadFile.mockResolvedValue({
         fileName: 'herramienta.jpg',
@@ -187,9 +187,6 @@ describe('ToolsService', () => {
     });
   });
 
-  /* ========================================================================
-     FIND BY IDS
-  ======================================================================== */
   describe('findByIds', () => {
     it('debe retornar array vacío si no se envían ids', async () => {
       const result = await service.findByIds({ ids: [] });
@@ -217,9 +214,6 @@ describe('ToolsService', () => {
     });
   });
 
-  /* ========================================================================
-     FIND ALL
-  ======================================================================== */
   describe('findAll', () => {
     it('debe aplicar los filtros, paginación y retornar la data formateada', async () => {
       const filterDto = {
@@ -252,15 +246,12 @@ describe('ToolsService', () => {
 
       expect(result.meta).toEqual({
         total: 15,
-        page: 3, // (10 / 5) + 1
-        lastPage: 3, // 15 / 5
+        page: 3,
+        lastPage: 3,
       });
     });
   });
 
-  /* ========================================================================
-     FIND ONE
-  ======================================================================== */
   describe('findOne', () => {
     it('debe retornar la herramienta con sus relaciones', async () => {
       toolsRepository.findOne.mockResolvedValue(mockTool);
@@ -277,9 +268,6 @@ describe('ToolsService', () => {
     });
   });
 
-  /* ========================================================================
-     UPDATE
-  ======================================================================== */
   describe('update', () => {
     const updateDto: UpdateToolDto = {
       name: 'Taladro Modificado',
@@ -316,7 +304,7 @@ describe('ToolsService', () => {
       );
     });
 
-    it('debe lanzar NotFoundException si la herramienta no existe (requiere fix en handleDBExeptions)', async () => {
+    it('debe lanzar NotFoundException si la herramienta no existe', async () => {
       mockEntityManager.findOne.mockResolvedValue(null);
       await expect(service.update('invalid-id', updateDto)).rejects.toThrow(
         NotFoundException,
@@ -324,9 +312,6 @@ describe('ToolsService', () => {
     });
   });
 
-  /* ========================================================================
-     CHANGE STATUS
-  ======================================================================== */
   describe('changeStatus', () => {
     it('debe cambiar el estado lógico exitosamente', async () => {
       const dto: ChangeStatusToolDto = { status: false };
@@ -351,9 +336,6 @@ describe('ToolsService', () => {
     });
   });
 
-  /* ========================================================================
-     HANDLE DB EXCEPTIONS
-  ======================================================================== */
   describe('handleDBExeptions', () => {
     it('debe lanzar ConflictException para error 23505 (Inventario)', async () => {
       const dbError = {
@@ -388,3 +370,4 @@ describe('ToolsService', () => {
     });
   });
 });
+

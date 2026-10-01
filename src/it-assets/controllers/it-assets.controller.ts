@@ -9,13 +9,13 @@ import {
   UploadedFile,
   UseInterceptors,
 } from '@nestjs/common';
-import { ItAssetsService } from './it-assets.service';
-import { CreateItAssetDto } from './dto/create-it-asset.dto';
-import { UpdateItAssetDto } from './dto/update-it-asset.dto';
-import { FilterItAssetBrandDto } from './dto/filter-it-asset.dto';
+import { ItAssetsService } from '../services/it-assets.service';
+import { CreateItAssetDto } from '../dto/create-it-asset.dto';
+import { UpdateItAssetDto } from '../dto/update-it-asset.dto';
+import { FilterItAssetBrandDto } from '../dto/filter-it-asset.dto';
 import { type MulterFile } from 'src/files/files.service';
 import { FileInterceptor } from '@nestjs/platform-express';
-import { ChangeStatusItAssetDto } from './dto/change-status-it-asset.dto';
+import { ChangeStatusItAssetDto } from '../dto/change-status-it-asset.dto';
 import { I18nImagePipe } from 'src/common/pipes/i18n-image.pipe';
 import { Auth } from 'src/auth/decorators/auth.decorator';
 import { ValidRole } from 'src/auth/interfaces/valid-roles';
@@ -35,8 +35,8 @@ import {
 } from '@nestjs/swagger';
 
 @ApiTags('IT Assets (Activos TI)')
-@ApiCookieAuth() // Indica que las rutas requieren autenticación
-@ApiExtraModels(CreateItAssetDto, UpdateItAssetDto) // Necesario para fusionar DTOs con archivos en Swagger
+@ApiCookieAuth()
+@ApiExtraModels(CreateItAssetDto, UpdateItAssetDto)
 @Controller('it-assets')
 export class ItAssetsController {
   constructor(private readonly itAssetsService: ItAssetsService) {}
@@ -214,3 +214,4 @@ export class ItAssetsController {
     return this.itAssetsService.update(id, updateItAssetDto, file);
   }
 }
+

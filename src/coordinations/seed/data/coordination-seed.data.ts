@@ -7,4 +7,3 @@ export const coordination_seed: SeedCoordination[] = [
   { name: 'Desarrollo de Sistemas' },
   { name: 'Soporte Técnico' },
 ];
-

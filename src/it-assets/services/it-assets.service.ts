@@ -7,24 +7,24 @@ import {
   NotFoundException,
   HttpException,
 } from '@nestjs/common';
-import { CreateItAssetDto } from './dto/create-it-asset.dto';
-import { UpdateItAssetDto } from './dto/update-it-asset.dto';
+import { CreateItAssetDto } from '../dto/create-it-asset.dto';
+import { UpdateItAssetDto } from '../dto/update-it-asset.dto';
 import { InjectRepository } from '@nestjs/typeorm';
-import { ItAsset } from './entities/it-asset.entity';
+import { ItAsset } from '../entities/it-asset.entity';
 import { DataSource, Repository } from 'typeorm';
 import { ItAssetsModel } from 'src/it-assets-models/entities/it-assets-model.entity';
 import { ItAssetsStatus } from 'src/it-assets-status/entities/it-assets-status.entity';
 import { ItAssetsType } from 'src/it-assets-type/entities/it-assets-type.entity';
 import { ItAssetsInvoice } from 'src/it-assets-invoices/entities/it-assets-invoice.entity';
 import { I18nService } from 'nestjs-i18n';
-import { FilterItAssetBrandDto } from './dto/filter-it-asset.dto';
+import { FilterItAssetBrandDto } from '../dto/filter-it-asset.dto';
 import { DatabaseError } from 'src/interfaces/DatabaseError';
 import { FilesService, MulterFile } from 'src/files/files.service';
 import {
   ItAssetsMovement,
   MovementType,
 } from 'src/it-assets-movements/entities/it-assets-movement.entity';
-import { ChangeStatusItAssetDto } from './dto/change-status-it-asset.dto';
+import { ChangeStatusItAssetDto } from '../dto/change-status-it-asset.dto';
 
 @Injectable()
 export class ItAssetsService {
@@ -37,8 +37,7 @@ export class ItAssetsService {
     private readonly dataSource: DataSource,
   ) {}
 
-  async create(createDto: CreateItAssetDto, file: MulterFile) {
-    // Declaramos esto afuera para poder borrar la imagen en el catch si es necesario
+  async create(createDto: CreateItAssetDto, file?: MulterFile) {
     let uploadedImage: {
       fileName: string;
       url: string;
@@ -46,9 +45,7 @@ export class ItAssetsService {
     } | null = null;
 
     try {
-      // Iniciamos la transaccion
       return await this.dataSource.transaction(async (transactionManager) => {
-        // 1. Preparamos el Asset sin la imagen
         const newAsset = transactionManager.create(ItAsset, {
           idInventary: createDto.idInventary,
           serialNumber: createDto.serialNumber,
@@ -62,11 +59,8 @@ export class ItAssetsService {
             : undefined,
         });
 
-        // 2. Guardamos la primera vez para que PostgreSQL genere el ID.
-        // Si hay un error de llave duplicada o foranea, fallara aqui antes de subir nada.
         const savedAsset = await transactionManager.save(newAsset);
 
-        // Creamos la la entrada en la tabla de entradas
         const initialMovement = transactionManager.create(ItAssetsMovement, {
           type: MovementType.IN,
           itAsset: savedAsset,
@@ -77,31 +71,26 @@ export class ItAssetsService {
         });
         await transactionManager.save(initialMovement);
 
-        // 3. Verificamos si viene una imagen antes de intentar subirla
         if (file) {
           uploadedImage = await this.filesService.uploadFile(
             file,
             'it-assets-images',
-            savedAsset.id, // Le pasas el ID del activo
+            savedAsset.id,
           );
 
-          // 4. Actualizamos la URL en el objeto y volvemos a guardar
           savedAsset.imageUrl = uploadedImage.url;
           return await transactionManager.save(savedAsset);
         }
 
-        // Si no hay imagen, retornamos el activo tal como se guardó en el paso 2
         return savedAsset;
       });
     } catch (error) {
-      // Creamos una referencia forzando el tipo original para que TS no se confunda
       const imgToRevert = uploadedImage as {
         fileName: string;
         url: string;
         bucket: string;
       } | null;
 
-      // Usamos la nueva variable para la validación y el borrado
       if (imgToRevert) {
         await this.filesService.deleteFile(
           imgToRevert.bucket,
@@ -109,7 +98,6 @@ export class ItAssetsService {
         );
       }
 
-      // Mandamos el error al manejador para que le responda al usuario
       this.handleDBExeptions(error);
     }
   }
@@ -128,14 +116,12 @@ export class ItAssetsService {
 
     const queryBuilder = this.itAssetRepository.createQueryBuilder('itAsset');
 
-    // 1. Unimos las relaciones
     queryBuilder.leftJoinAndSelect('itAsset.model', 'model');
     queryBuilder.leftJoinAndSelect('model.brand', 'brand');
     queryBuilder.leftJoinAndSelect('itAsset.itAssetStatus', 'status');
     queryBuilder.leftJoinAndSelect('itAsset.itAssetsType', 'type');
     queryBuilder.leftJoinAndSelect('itAsset.invoice', 'invoice');
 
-    // 2. Aplicamos la busqueda general
     if (query) {
       queryBuilder.andWhere(
         '("itAsset"."serialNumber" ILIKE :query OR "itAsset"."idInventary" ILIKE :query OR "itAsset"."id"::text ILIKE :query OR "itAsset"."name" ILIKE :query)',
@@ -143,7 +129,6 @@ export class ItAssetsService {
       );
     }
 
-    // 3. Aplicamos los filtros
     if (status != undefined) {
       queryBuilder.andWhere('status = :status', { status });
     }
@@ -160,10 +145,7 @@ export class ItAssetsService {
       queryBuilder.andWhere('brand.id = :brandId', { brandId });
     }
 
-    // 4. Aplicamos paginacion
     queryBuilder.take(limit).skip(offset);
-
-    // 5. Ejecutamos la consulta y ordenamos por fecha de creación descendente
     queryBuilder.orderBy('itAsset.createdAt', 'DESC');
     const [itAssets, total] = await queryBuilder.getManyAndCount();
 
@@ -196,7 +178,6 @@ export class ItAssetsService {
   }
 
   async update(id: string, updateDto: UpdateItAssetDto, file?: MulterFile) {
-    // Declaramos esto afuera para el rollback manual si la BD falla después de subir la foto
     let uploadedImage: {
       fileName: string;
       url: string;
@@ -205,7 +186,6 @@ export class ItAssetsService {
 
     try {
       return await this.dataSource.transaction(async (transactionManager) => {
-        // 1. Buscamos el activo existente para asegurarnos de que exista
         const asset = await transactionManager.findOne(ItAsset, {
           where: { id },
         });
@@ -216,7 +196,6 @@ export class ItAssetsService {
           );
         }
 
-        // 2. Si el usuario envio una nueva imagen, la procesamos
         if (file) {
           uploadedImage = await this.filesService.uploadFile(
             file,
@@ -226,7 +205,6 @@ export class ItAssetsService {
           asset.imageUrl = uploadedImage.url;
         }
 
-        // 3. Actualizamos los campos de texto si vienen en el DTO
         if (updateDto.idInventary !== undefined)
           asset.idInventary = updateDto.idInventary;
         if (updateDto.name !== undefined) asset.name = updateDto.name;
@@ -234,7 +212,6 @@ export class ItAssetsService {
         if (updateDto.description !== undefined)
           asset.description = updateDto.description!;
 
-        // 4. Actualizamos las relaciones de forma segura (y tipada)
         if (updateDto.modelId) {
           asset.model = { id: updateDto.modelId } as ItAssetsModel;
         }
@@ -244,18 +221,15 @@ export class ItAssetsService {
         if (updateDto.typeId) {
           asset.itAssetsType = { id: updateDto.typeId } as ItAssetsType;
         }
-        // Si invoiceId viene como null o string vacío, rompemos la relación, si viene un UUID la creamos
         if (updateDto.invoiceId !== undefined) {
           asset.invoice = updateDto.invoiceId
             ? ({ id: updateDto.invoiceId } as ItAssetsInvoice)
             : (null as unknown as ItAssetsInvoice);
         }
 
-        // 5. Guardamos los cambios (TypeORM ejecutará un UPDATE en la base de datos)
         return await transactionManager.save(asset);
       });
     } catch (error) {
-      // Aplicamos el truco del casteo para evitar el error de tipo 'never' en TS
       const imgToRevert = uploadedImage as {
         fileName: string;
         url: string;
@@ -269,7 +243,6 @@ export class ItAssetsService {
         );
       }
 
-      // Procesamos duplicados o llaves foráneas inexistentes introducidas en el update
       this.handleDBExeptions(error);
     }
   }
@@ -340,3 +313,4 @@ export class ItAssetsService {
     );
   }
 }
+

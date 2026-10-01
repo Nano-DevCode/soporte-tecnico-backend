@@ -23,4 +23,3 @@ import { CommonModule } from 'src/common/common.module';
   exports: [DepartmentsService, DepartmentSeedService, TypeOrmModule],
 })
 export class DepartmentsModule {}
-

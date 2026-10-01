@@ -11,16 +11,16 @@ import {
   UploadedFile,
   HttpCode,
 } from '@nestjs/common';
-import { ToolsService } from './tools.service';
-import { CreateToolDto } from './dto/create-tool.dto';
-import { UpdateToolDto } from './dto/update-tool.dto';
-import { FilterToolDto } from './dto/filter-tool.dto';
-import { ChangeStatusToolDto } from './dto/change-status-tool.dto';
+import { ToolsService } from '../services/tools.service';
+import { CreateToolDto } from '../dto/create-tool.dto';
+import { UpdateToolDto } from '../dto/update-tool.dto';
+import { FilterToolDto } from '../dto/filter-tool.dto';
+import { ChangeStatusToolDto } from '../dto/change-status-tool.dto';
 import { Auth } from 'src/auth/decorators/auth.decorator';
 import { ValidRole } from 'src/auth/interfaces/valid-roles';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { type MulterFile } from 'src/files/files.service';
-import { FindByIdsDto } from './dto/find-by-ids.dto';
+import { FindByIdsDto } from '../dto/find-by-ids.dto';
 import { I18nImagePipe } from 'src/common/pipes/i18n-image.pipe';
 import {
   ApiTags,
@@ -38,8 +38,8 @@ import {
 } from '@nestjs/swagger';
 
 @ApiTags('Tools (Herramientas)')
-@ApiCookieAuth() // Indica que las rutas requieren autenticación
-@ApiExtraModels(CreateToolDto, UpdateToolDto) // Necesario para fusionar DTOs con archivos en Swagger
+@ApiCookieAuth()
+@ApiExtraModels(CreateToolDto, UpdateToolDto)
 @Controller('tools')
 export class ToolsController {
   constructor(private readonly toolsService: ToolsService) {}
@@ -207,7 +207,6 @@ export class ToolsController {
         {
           properties: {
             image: {
-              // <-- Nota que aquí espera el campo "image" según tu FileInterceptor
               type: 'string',
               format: 'binary',
               description: 'Nueva imagen de la herramienta (opcional)',
@@ -230,3 +229,4 @@ export class ToolsController {
     return this.toolsService.update(id, updateToolDto, file);
   }
 }
+

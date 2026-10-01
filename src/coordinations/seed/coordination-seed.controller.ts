@@ -42,4 +42,3 @@ export class CoordinationSeedController {
     return this.coordinationSeedService.runSeed();
   }
 }
-

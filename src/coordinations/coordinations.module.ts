@@ -14,4 +14,3 @@ import { CoordinationSeedController } from './seed/coordination-seed.controller'
   exports: [CoordinationsService, CoordinationSeedService, TypeOrmModule],
 })
 export class CoordinationsModule {}
-

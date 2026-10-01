@@ -51,4 +51,3 @@ export class DepartmentSeedService {
     return true;
   }
 }
-

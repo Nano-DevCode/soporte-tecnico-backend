@@ -3,19 +3,18 @@ import { Reflector } from '@nestjs/core';
 import { I18nService } from 'nestjs-i18n';
 
 import { ToolsController } from './tools.controller';
-import { ToolsService } from './tools.service';
-import { CreateToolDto } from './dto/create-tool.dto';
-import { UpdateToolDto } from './dto/update-tool.dto';
-import { FilterToolDto } from './dto/filter-tool.dto';
-import { ChangeStatusToolDto } from './dto/change-status-tool.dto';
-import { FindByIdsDto } from './dto/find-by-ids.dto';
+import { ToolsService } from '../services/tools.service';
+import { CreateToolDto } from '../dto/create-tool.dto';
+import { UpdateToolDto } from '../dto/update-tool.dto';
+import { FilterToolDto } from '../dto/filter-tool.dto';
+import { ChangeStatusToolDto } from '../dto/change-status-tool.dto';
+import { FindByIdsDto } from '../dto/find-by-ids.dto';
 import { MulterFile } from 'src/files/files.service';
 
 describe('ToolsController', () => {
   let controller: ToolsController;
   let service: jest.Mocked<ToolsService>;
 
-  // Mock básico de un archivo subido (MulterFile)
   const mockFile = {
     originalname: 'herramienta.jpg',
     mimetype: 'image/jpeg',
@@ -23,7 +22,6 @@ describe('ToolsController', () => {
     size: 1024,
   } as MulterFile;
 
-  // Mock de una herramienta de respuesta
   const mockToolResponse = {
     id: 'tool-uuid-1',
     name: 'Taladro Bosch',
@@ -47,7 +45,6 @@ describe('ToolsController', () => {
             changeStatus: jest.fn(),
           },
         },
-        // 👇 Mocks necesarios para que el UserRoleGuard (del decorador @Auth) no rompa la prueba
         {
           provide: Reflector,
           useValue: {
@@ -74,9 +71,6 @@ describe('ToolsController', () => {
     expect(controller).toBeDefined();
   });
 
-  /* ========================================================================
-     FIND BY IDS
-  ======================================================================== */
   describe('findByIds', () => {
     it('debe llamar a service.findByIds con el DTO y retornar las herramientas', async () => {
       const idsDto: FindByIdsDto = { ids: ['tool-uuid-1'] };
@@ -89,9 +83,6 @@ describe('ToolsController', () => {
     });
   });
 
-  /* ========================================================================
-     CREATE
-  ======================================================================== */
   describe('create', () => {
     it('debe llamar a service.create con el DTO y el archivo, y retornar el resultado', async () => {
       const createDto: CreateToolDto = {
@@ -113,9 +104,6 @@ describe('ToolsController', () => {
     });
   });
 
-  /* ========================================================================
-     FIND ALL
-  ======================================================================== */
   describe('findAll', () => {
     it('debe llamar a service.findAll con los filtros y retornar el resultado', async () => {
       const filterDto: FilterToolDto = {
@@ -143,9 +131,6 @@ describe('ToolsController', () => {
     });
   });
 
-  /* ========================================================================
-     FIND ONE
-  ======================================================================== */
   describe('findOne', () => {
     it('debe llamar a service.findOne con el ID provisto y retornar la herramienta', async () => {
       const id = 'tool-uuid-1';
@@ -158,9 +143,6 @@ describe('ToolsController', () => {
     });
   });
 
-  /* ========================================================================
-     CHANGE STATUS
-  ======================================================================== */
   describe('changeStatus', () => {
     it('debe llamar a service.changeStatus con el ID y el DTO, y retornar la herramienta actualizada', async () => {
       const id = 'tool-uuid-1';
@@ -176,9 +158,6 @@ describe('ToolsController', () => {
     });
   });
 
-  /* ========================================================================
-     UPDATE
-  ======================================================================== */
   describe('update', () => {
     const id = 'tool-uuid-1';
     const updateDto: UpdateToolDto = {
@@ -199,7 +178,6 @@ describe('ToolsController', () => {
       const updatedTool = { ...mockToolResponse, name: 'Taladro Modificado' };
       service.update.mockResolvedValue(updatedTool);
 
-      // Simulamos la llamada sin el tercer parámetro (file)
       const result = await controller.update(id, updateDto, undefined);
 
       expect(service.update).toHaveBeenCalledWith(id, updateDto, undefined);
@@ -207,3 +185,4 @@ describe('ToolsController', () => {
     });
   });
 });
+

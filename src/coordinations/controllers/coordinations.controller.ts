@@ -94,4 +94,3 @@ export class CoordinationsController {
     return this.coordinationsService.update(id, updateCoordinationDto);
   }
 }
-

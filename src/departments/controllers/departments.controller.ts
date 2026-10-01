@@ -191,4 +191,3 @@ export class DepartmentsController {
     return this.departmentsService.remove(id);
   }
 }
-

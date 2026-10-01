@@ -156,4 +156,3 @@ describe('DepartmentsService (Reactive Cache & Events)', () => {
     });
   });
 });
-

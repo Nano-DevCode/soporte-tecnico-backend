@@ -16,9 +16,7 @@ import {
 @ApiCookieAuth()
 @Controller('departament-seed')
 export class DepartmentSeedController {
-  constructor(
-    private readonly departmentSeedService: DepartmentSeedService,
-  ) {}
+  constructor(private readonly departmentSeedService: DepartmentSeedService) {}
 
   @Get()
   @Auth(ValidRole.superAdmin)
@@ -42,4 +40,3 @@ export class DepartmentSeedController {
     return this.departmentSeedService.runSeed();
   }
 }
-
