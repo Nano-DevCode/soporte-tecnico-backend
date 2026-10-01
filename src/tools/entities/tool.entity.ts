@@ -1,9 +1,9 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
-import { ToolsInvoice } from 'src/tools-invoices/entities/tools-invoice.entity';
-import { ToolsModel } from 'src/tools-models/entities/tools-model.entity';
-import { ToolsMovement } from 'src/tools-movements/entities/tools-movement.entity';
-import { ToolsStatus } from 'src/tools-status/entities/tools-status.entity';
-import { ToolsType } from 'src/tools-types/entities/tools-type.entity';
+import { ToolsInvoice } from 'src/tools/invoices/entities/tools-invoice.entity';
+import { ToolsModel } from 'src/tools/models/entities/tools-model.entity';
+import { ToolsMovement } from 'src/tools/movements/entities/tools-movement.entity';
+import { ToolsStatus } from 'src/tools/status/entities/tools-status.entity';
+import { ToolsType } from 'src/tools/types/entities/tools-type.entity';
 import {
   Column,
   CreateDateColumn,

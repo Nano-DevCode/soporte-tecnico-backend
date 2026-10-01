@@ -96,7 +96,7 @@ describe('ItAssetsMovementsInController', () => {
   describe('findOne', () => {
     it('debe buscar y retornar un movimiento de entrada por ID', async () => {
       const id = 'movement-uuid';
-      service.findOne.mockResolvedValue(mockMovementResponse as unknown as never);
+      service.findOne.mockResolvedValue(mockMovementResponse);
 
       const result = await controller.findOne(id);
 

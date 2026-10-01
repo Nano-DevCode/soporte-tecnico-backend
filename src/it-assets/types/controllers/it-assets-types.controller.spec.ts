@@ -59,7 +59,7 @@ describe('ItAssetsTypesController', () => {
   describe('create', () => {
     it('debe registrar un nuevo tipo de activo', async () => {
       const dto: CreateItAssetsTypeDto = { name: 'MONITOR' };
-      service.create.mockResolvedValue(mockType as unknown as never);
+      service.create.mockResolvedValue(mockType);
 
       const result = await controller.create(dto);
 
@@ -75,7 +75,7 @@ describe('ItAssetsTypesController', () => {
         itAssetsTypes: [mockType],
         meta: { total: 1, page: 1, lastPage: 1 },
       };
-      service.findAll.mockResolvedValue(response as unknown as never);
+      service.findAll.mockResolvedValue(response);
 
       const result = await controller.findAll(filterDto);
 
@@ -88,7 +88,7 @@ describe('ItAssetsTypesController', () => {
     it('debe actualizar un tipo de activo', async () => {
       const dto: UpdateItAssetsTypeDto = { name: 'LAPTOP' };
       const updateResult = { generatedMaps: [], raw: [], affected: 1 };
-      service.update.mockResolvedValue(updateResult as unknown as never);
+      service.update.mockResolvedValue(updateResult);
 
       const result = await controller.update('type-uuid-1', dto);
 

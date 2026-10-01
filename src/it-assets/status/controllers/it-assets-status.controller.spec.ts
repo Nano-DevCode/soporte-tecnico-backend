@@ -85,7 +85,7 @@ describe('ItAssetsStatusController', () => {
 
   describe('seed', () => {
     it('debe inicializar estados por defecto', async () => {
-      service.seed.mockResolvedValue({ complete: true } as unknown as never);
+      service.seed.mockResolvedValue({ complete: true });
 
       const result = await controller.seed();
 
@@ -100,7 +100,7 @@ describe('ItAssetsStatusController', () => {
         name: 'Baja Definitiva',
       };
       const updateResult = { generatedMaps: [], raw: [], affected: 1 };
-      service.update.mockResolvedValue(updateResult as unknown as never);
+      service.update.mockResolvedValue(updateResult);
 
       const result = await controller.update('status-uuid-1', dto);
 

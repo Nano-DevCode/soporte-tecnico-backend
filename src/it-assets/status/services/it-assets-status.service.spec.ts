@@ -2,7 +2,10 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { getRepositoryToken } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { I18nService } from 'nestjs-i18n';
-import { BadRequestException, InternalServerErrorException } from '@nestjs/common';
+import {
+  BadRequestException,
+  InternalServerErrorException,
+} from '@nestjs/common';
 import { ItAssetsStatusService } from './it-assets-status.service';
 import { ItAssetsStatus } from '../entities/it-assets-status.entity';
 import { CreateItAssetsStatusDto } from '../dto/create-it-assets-status.dto';
@@ -74,18 +77,18 @@ describe('ItAssetsStatusService', () => {
         detail: 'Key is still referenced',
       });
 
-      await expect(
-        service.create({ name: 'Test' }),
-      ).rejects.toThrow(BadRequestException);
+      await expect(service.create({ name: 'Test' })).rejects.toThrow(
+        BadRequestException,
+      );
     });
 
     it('debe lanzar InternalServerErrorException en otros errores', async () => {
       repository.create.mockReturnValue(mockStatus);
       repository.save.mockRejectedValue(new Error('DB failure'));
 
-      await expect(
-        service.create({ name: 'Test' }),
-      ).rejects.toThrow(InternalServerErrorException);
+      await expect(service.create({ name: 'Test' })).rejects.toThrow(
+        InternalServerErrorException,
+      );
     });
   });
 

@@ -61,7 +61,7 @@ describe('ItAssetsInvoicesController', () => {
   describe('create', () => {
     it('debe registrar una factura', async () => {
       const dto: CreateItAssetsInvoiceDto = { idInternal: 'FAC-2026-001' };
-      service.create.mockResolvedValue(mockInvoice as unknown as never);
+      service.create.mockResolvedValue(mockInvoice);
 
       const result = await controller.create(dto);
 
@@ -77,7 +77,7 @@ describe('ItAssetsInvoicesController', () => {
         itAssetsInvoices: [mockInvoice],
         meta: { total: 1, page: 1, lastPage: 1 },
       };
-      service.findAll.mockResolvedValue(response as unknown as never);
+      service.findAll.mockResolvedValue(response);
 
       const result = await controller.findAll(filterDto);
 
@@ -90,7 +90,7 @@ describe('ItAssetsInvoicesController', () => {
     it('debe actualizar una factura', async () => {
       const dto: UpdateItAssetsInvoiceDto = { idInternal: 'FAC-UPDATED' };
       const updateResult = { generatedMaps: [], raw: [], affected: 1 };
-      service.update.mockResolvedValue(updateResult as unknown as never);
+      service.update.mockResolvedValue(updateResult);
 
       const result = await controller.update('invoice-uuid-1', dto);
 

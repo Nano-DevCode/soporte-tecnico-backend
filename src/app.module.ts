@@ -83,14 +83,12 @@ import path from 'path';
 import { ConsumableSeedModule } from './consumable-seed/consumable-seed.module';
 import { FaultValiditiesModule } from './fault-validities/fault-validities.module';
 import { DashboardModule } from './dashboard/dashboard.module';
-import { ToolsBrandsModule } from './tools-brands/tools-brands.module';
-import { ToolsModelsModule } from './tools-models/tools-models.module';
-import { ToolsInvoicesModule } from './tools-invoices/tools-invoices.module';
-import { ToolsStatusModule } from './tools-status/tools-status.module';
-import { ToolsTypesModule } from './tools-types/tools-types.module';
-import { ToolsMovementsModule } from './tools-movements/tools-movements.module';
-import { ToolsMovementsInModule } from './tools-movements-in/tools-movements-in.module';
-import { ToolsMovementsOutModule } from './tools-movements-out/tools-movements-out.module';
+import { ToolsBrandsModule } from './tools/brands/tools-brands.module';
+import { ToolsModelsModule } from './tools/models/tools-models.module';
+import { ToolsInvoicesModule } from './tools/invoices/tools-invoices.module';
+import { ToolsStatusModule } from './tools/status/tools-status.module';
+import { ToolsTypesModule } from './tools/types/tools-types.module';
+import { ToolsMovementsModule } from './tools/movements/tools-movements.module';
 import { SurveyModule } from './survey/survey.module';
 import { FeatureFlagsModule } from './feature-flags/feature-flags.module';
 import { FeatureFlagsSeedModule } from './feature-flags-seed/feature-flags-seed.module';
@@ -261,8 +259,6 @@ import { AuditModule } from './audit/audit.module';
     ToolsStatusModule,
     ToolsTypesModule,
     ToolsMovementsModule,
-    ToolsMovementsInModule,
-    ToolsMovementsOutModule,
     SurveyModule,
     FeatureFlagsModule,
     FeatureFlagsSeedModule,

@@ -21,11 +21,11 @@ import { FindByIdsDto } from '../dto/find-by-ids.dto';
 import {
   MovementType,
   ToolsMovement,
-} from 'src/tools-movements/entities/tools-movement.entity';
-import { ToolsModel } from 'src/tools-models/entities/tools-model.entity';
-import { ToolsStatus } from 'src/tools-status/entities/tools-status.entity';
-import { ToolsType } from 'src/tools-types/entities/tools-type.entity';
-import { ToolsInvoice } from 'src/tools-invoices/entities/tools-invoice.entity';
+} from '../movements/entities/tools-movement.entity';
+import { ToolsModel } from '../models/entities/tools-model.entity';
+import { ToolsStatus } from '../status/entities/tools-status.entity';
+import { ToolsType } from '../types/entities/tools-type.entity';
+import { ToolsInvoice } from '../invoices/entities/tools-invoice.entity';
 
 @Injectable()
 export class ToolsService {

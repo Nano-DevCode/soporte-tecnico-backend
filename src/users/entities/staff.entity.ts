@@ -3,6 +3,7 @@ import { Attend } from 'src/attends/entities/attend.entity';
 import { Coordination } from 'src/coordinations/entities/coordination.entity';
 import { Department } from 'src/departments/entities/department.entity';
 import { ItAssetsMovementsOut } from 'src/it-assets/movements/entities/it-assets-movements-out.entity';
+import { ToolsMovementsOut } from 'src/tools/movements/entities/tools-movements-out.entity';
 import { Ticket } from 'src/tickets/entities/ticket.entity';
 import { User } from 'src/users/entities/user.entity';
 import {
@@ -151,10 +152,10 @@ export class Staff {
   @JoinColumn()
   itAssetsMovementsOut!: ItAssetsMovementsOut[];
 
-  @ApiPropertyOptional({ type: () => [ItAssetsMovementsOut] })
-  @OneToMany(() => ItAssetsMovementsOut, (movementOut) => movementOut.staff)
+  @ApiPropertyOptional({ type: () => [ToolsMovementsOut] })
+  @OneToMany(() => ToolsMovementsOut, (movementOut) => movementOut.staff)
   @JoinColumn()
-  toolsMovementsOut!: ItAssetsMovementsOut[];
+  toolsMovementsOut!: ToolsMovementsOut[];
 
   @BeforeInsert()
   checkFieldsBeforeInsert() {

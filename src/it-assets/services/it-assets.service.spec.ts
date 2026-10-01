@@ -439,4 +439,3 @@ describe('ItAssetsService', () => {
     });
   });
 });
-

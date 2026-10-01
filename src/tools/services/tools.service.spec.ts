@@ -15,7 +15,7 @@ import { CreateToolDto } from '../dto/create-tool.dto';
 import { UpdateToolDto } from '../dto/update-tool.dto';
 import { FilterToolDto } from '../dto/filter-tool.dto';
 import { ChangeStatusToolDto } from '../dto/change-status-tool.dto';
-import { MovementType } from 'src/tools-movements/entities/tools-movement.entity';
+import { MovementType } from '../movements/entities/tools-movement.entity';
 
 describe('ToolsService', () => {
   let service: ToolsService;

@@ -2,7 +2,10 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { getRepositoryToken } from '@nestjs/typeorm';
 import { Repository, SelectQueryBuilder } from 'typeorm';
 import { I18nService } from 'nestjs-i18n';
-import { BadRequestException, InternalServerErrorException } from '@nestjs/common';
+import {
+  BadRequestException,
+  InternalServerErrorException,
+} from '@nestjs/common';
 import { ItAssetsTypesService } from './it-assets-types.service';
 import { ItAssetsType } from '../entities/it-assets-type.entity';
 import { CreateItAssetsTypeDto } from '../dto/create-it-assets-type.dto';
@@ -48,10 +51,12 @@ describe('ItAssetsTypesService', () => {
         {
           provide: I18nService,
           useValue: {
-            t: jest.fn((key: string, options?: { args?: { name?: string } }) => {
-              if (options?.args?.name) return `${key}: ${options.args.name}`;
-              return key;
-            }),
+            t: jest.fn(
+              (key: string, options?: { args?: { name?: string } }) => {
+                if (options?.args?.name) return `${key}: ${options.args.name}`;
+                return key;
+              },
+            ),
           },
         },
       ],
@@ -120,7 +125,9 @@ describe('ItAssetsTypesService', () => {
 
       const result = await service.findAll({});
 
-      expect(repository.createQueryBuilder).toHaveBeenCalledWith('itAssetsType');
+      expect(repository.createQueryBuilder).toHaveBeenCalledWith(
+        'itAssetsType',
+      );
       expect(result).toEqual({
         itAssetsTypes: [mockType],
         meta: {
