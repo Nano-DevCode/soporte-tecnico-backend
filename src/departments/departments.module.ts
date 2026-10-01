@@ -6,6 +6,8 @@ import { Department } from './entities/department.entity';
 import { AuthModule } from 'src/auth/auth.module';
 import { ConsumableMovementsModule } from 'src/consumable-movements/consumable-movements.module';
 import { BatchesproductsModule } from 'src/batchesproducts/batchesproducts.module';
+import { CommonModule } from 'src/common/common.module';
+
 @Module({
   controllers: [DepartmentsController],
   providers: [DepartmentsService],
@@ -14,6 +16,7 @@ import { BatchesproductsModule } from 'src/batchesproducts/batchesproducts.modul
     AuthModule,
     ConsumableMovementsModule,
     BatchesproductsModule,
+    CommonModule,
   ],
   exports: [DepartmentsService, TypeOrmModule],
 })

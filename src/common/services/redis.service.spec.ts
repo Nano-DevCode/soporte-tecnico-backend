@@ -71,6 +71,16 @@ describe('RedisService', () => {
       const result = await service.expire('key', 10);
       expect(result).toBe(false);
     });
+
+    it('keys should return empty array if disconnected', async () => {
+      const result = await service.keys('test:*');
+      expect(result).toEqual([]);
+    });
+
+    it('delByPattern should return 0 if disconnected', async () => {
+      const result = await service.delByPattern('test:*');
+      expect(result).toBe(0);
+    });
   });
 
   describe('when connected with mock client', () => {
@@ -85,6 +95,7 @@ describe('RedisService', () => {
         smembers: jest.fn().mockResolvedValue(['token1', 'token2']),
         srem: jest.fn().mockResolvedValue(1),
         expire: jest.fn().mockResolvedValue(1),
+        keys: jest.fn().mockResolvedValue(['key1', 'key2']),
         quit: jest.fn().mockResolvedValue('OK'),
         disconnect: jest.fn(),
       };
@@ -131,6 +142,27 @@ describe('RedisService', () => {
       const result = await service.expire('test-key', 60);
       expect(mockClient.expire).toHaveBeenCalledWith('test-key', 60);
       expect(result).toBe(true);
+    });
+
+    it('should call client.keys and return matching keys', async () => {
+      const result = await service.keys('dashboard:*');
+      expect(mockClient.keys).toHaveBeenCalledWith('dashboard:*');
+      expect(result).toEqual(['key1', 'key2']);
+    });
+
+    it('should call client.delByPattern and delete matching keys', async () => {
+      mockClient.del.mockResolvedValue(2);
+      const result = await service.delByPattern('dashboard:*');
+      expect(mockClient.keys).toHaveBeenCalledWith('dashboard:*');
+      expect(mockClient.del).toHaveBeenCalledWith('key1', 'key2');
+      expect(result).toBe(2);
+    });
+
+    it('should return 0 in delByPattern if no keys match', async () => {
+      mockClient.keys.mockResolvedValue([]);
+      const result = await service.delByPattern('empty:*');
+      expect(result).toBe(0);
+      expect(mockClient.del).not.toHaveBeenCalled();
     });
   });
 });

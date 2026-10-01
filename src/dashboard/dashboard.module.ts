@@ -8,6 +8,7 @@ import { TicketHistoryModule } from 'src/ticket-history/ticket-history.module';
 import { SurveyModule } from 'src/survey/survey.module';
 import { DepartmentsModule } from 'src/departments/departments.module';
 import { IssueTypeModule } from 'src/issue_type/issue_type.module';
+import { CommonModule } from 'src/common/common.module';
 
 @Module({
   imports: [
@@ -18,6 +19,7 @@ import { IssueTypeModule } from 'src/issue_type/issue_type.module';
     SurveyModule,
     DepartmentsModule,
     IssueTypeModule,
+    CommonModule,
   ],
   controllers: [DashboardController],
   providers: [DashboardService],

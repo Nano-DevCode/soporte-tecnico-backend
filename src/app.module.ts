@@ -104,6 +104,7 @@ import { FeatureFlagsSeedModule } from './feature-flags-seed/feature-flags-seed.
 import { NotificationsModule } from './notifications/notifications.module';
 import { ScheduleModule } from '@nestjs/schedule';
 import { SlaModule } from './sla/sla.module';
+import { CacheModule } from './cache/cache.module';
 
 @Module({
   imports: [
@@ -283,7 +284,9 @@ import { SlaModule } from './sla/sla.module';
     FeatureFlagsSeedModule,
     NotificationsModule,
     SlaModule,
+    CacheModule,
   ],
+
   controllers: [],
   providers: [
     {

@@ -6,6 +6,7 @@ import { LoggingInterceptor } from './interceptors/logging.interceptor';
 import { RequestIdMiddleware } from './middlewares/request-id.middleware';
 
 import { RedisService } from './services/redis.service';
+import { AppCacheService } from './services/app-cache.service';
 
 @Module({
   imports: [ConfigModule],
@@ -15,6 +16,7 @@ import { RedisService } from './services/redis.service';
     LoggingInterceptor,
     RequestIdMiddleware,
     RedisService,
+    AppCacheService,
   ],
   exports: [
     DigitalSignatureService,
@@ -22,6 +24,7 @@ import { RedisService } from './services/redis.service';
     LoggingInterceptor,
     RequestIdMiddleware,
     RedisService,
+    AppCacheService,
   ],
 })
 export class CommonModule {}

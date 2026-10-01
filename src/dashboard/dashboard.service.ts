@@ -23,6 +23,7 @@ import {
   START_OPERATION_DATE,
   TicketPriorityLevel,
 } from 'src/config/params.config';
+import { AppCacheService } from 'src/common/services/app-cache.service';
 
 @Injectable()
 export class DashboardService {
@@ -41,6 +42,7 @@ export class DashboardService {
     private readonly issueTypeRepository: Repository<IssueType>,
 
     private readonly ticketHistoryService: TicketHistoryService,
+    private readonly cacheService: AppCacheService,
   ) {}
 
   private parseLocalDate(dateString: string, isEndOfDay = false): Date {
@@ -77,104 +79,117 @@ export class DashboardService {
   async getCriticalServiceAvailability(
     filters: DashboardFiltersDto,
   ): Promise<number> {
-    const {
-      status,
-      department,
-      school_period,
-      issue_type,
-      tags,
-      start_date,
-      end_date,
-    } = filters;
-
-    const { endDate, startDate } = this.calculateDateRange(
-      start_date,
-      end_date,
+    const cacheKey = this.cacheService.generateKey(
+      'dashboard:availability',
+      filters as Record<string, any>,
     );
+    return this.cacheService.wrap(
+      cacheKey,
+      async () => {
+        const {
+          status,
+          department,
+          school_period,
+          issue_type,
+          tags,
+          start_date,
+          end_date,
+        } = filters;
 
-    const query = this.ticketRepository
-      .createQueryBuilder('ticket')
-      .leftJoinAndSelect('ticket.ticket_histories', 'ticket_histories')
-      .leftJoinAndSelect('ticket_histories.status', 'status')
-      .leftJoin('ticket.issue_type', 'issue_type')
-      .leftJoin('ticket.jefe_depto', 'jefe_depto')
-      .leftJoin('ticket.school_period', 'school_period')
-      .leftJoin('jefe_depto.department', 'department')
-      .leftJoin(
-        'ticket.ticket_histories',
-        'latest_history_sort',
-        'latest_history_sort.id = (SELECT th.id FROM ticket_history th WHERE th."ticketId" = ticket.id ORDER BY th.created_at DESC LIMIT 1)',
-      )
-      .leftJoin('latest_history_sort.status', 'latest_status_sort')
-      .where('ticket.priority = :criticalPriority', {
-        criticalPriority: TicketPriorityLevel.CRITIC,
-      });
+        const { endDate, startDate } = this.calculateDateRange(
+          start_date,
+          end_date,
+        );
 
-    query.andWhere('ticket.created_at BETWEEN :startDate AND :endDate', {
-      startDate,
-      endDate,
-    });
+        const query = this.ticketRepository
+          .createQueryBuilder('ticket')
+          .leftJoinAndSelect('ticket.ticket_histories', 'ticket_histories')
+          .leftJoinAndSelect('ticket_histories.status', 'status')
+          .leftJoin('ticket.issue_type', 'issue_type')
+          .leftJoin('ticket.jefe_depto', 'jefe_depto')
+          .leftJoin('ticket.school_period', 'school_period')
+          .leftJoin('jefe_depto.department', 'department')
+          .leftJoin(
+            'ticket.ticket_histories',
+            'latest_history_sort',
+            'latest_history_sort.id = (SELECT th.id FROM ticket_history th WHERE th."ticketId" = ticket.id ORDER BY th.created_at DESC LIMIT 1)',
+          )
+          .leftJoin('latest_history_sort.status', 'latest_status_sort')
+          .where('ticket.priority = :criticalPriority', {
+            criticalPriority: TicketPriorityLevel.CRITIC,
+          });
 
-    if (tags && tags.length > 0) {
-      query.innerJoin('ticket.tags', 'tag_filter');
-      query.andWhere('tag_filter.name IN (:...tags)', { tags });
-    }
+        query.andWhere('ticket.created_at BETWEEN :startDate AND :endDate', {
+          startDate,
+          endDate,
+        });
 
-    if (status) {
-      query.andWhere('latest_status_sort.code = :status', { status });
-    }
+        if (tags && tags.length > 0) {
+          query.innerJoin('ticket.tags', 'tag_filter');
+          query.andWhere('tag_filter.name IN (:...tags)', { tags });
+        }
 
-    if (department) {
-      query.andWhere('department.id = :department', { department });
-    }
+        if (status) {
+          query.andWhere('latest_status_sort.code = :status', { status });
+        }
 
-    if (school_period) {
-      query.andWhere('school_period.id = :school_period', { school_period });
-    }
+        if (department) {
+          query.andWhere('department.id = :department', { department });
+        }
 
-    if (issue_type) {
-      query.andWhere('issue_type.id = :issue_type', { issue_type });
-    }
+        if (school_period) {
+          query.andWhere('school_period.id = :school_period', {
+            school_period,
+          });
+        }
 
-    query.orderBy('ticket.created_at', 'ASC');
+        if (issue_type) {
+          query.andWhere('issue_type.id = :issue_type', { issue_type });
+        }
 
-    const criticalTickets = await query.getMany();
+        query.orderBy('ticket.created_at', 'ASC');
 
-    const downtimeIntervals = criticalTickets.map((ticket) => {
-      const startTime = ticket.created_at.getTime();
+        const criticalTickets = await query.getMany();
 
-      const solucionadaHistory = ticket.ticket_histories?.find(
-        (h) => h.status.code === (TicketStatus.SOLUCIONADA as string),
-      );
+        const downtimeIntervals = criticalTickets.map((ticket) => {
+          const startTime = ticket.created_at.getTime();
 
-      const ticketEndTime = solucionadaHistory
-        ? solucionadaHistory.created_at.getTime()
-        : endDate.getTime();
+          const solucionadaHistory = ticket.ticket_histories?.find(
+            (h) => h.status.code === (TicketStatus.SOLUCIONADA as string),
+          );
 
-      const endTime = Math.min(ticketEndTime, endDate.getTime());
+          const ticketEndTime = solucionadaHistory
+            ? solucionadaHistory.created_at.getTime()
+            : endDate.getTime();
 
-      return { start: startTime, end: endTime };
-    });
+          const endTime = Math.min(ticketEndTime, endDate.getTime());
 
-    const mergedDowntimes = this.mergeIntervals(downtimeIntervals);
+          return { start: startTime, end: endTime };
+        });
 
-    const totalDowntimeMs = mergedDowntimes.reduce((total, interval) => {
-      return total + (interval.end - interval.start);
-    }, 0);
-    const totalDowntimeHours = totalDowntimeMs / (1000 * 60 * 60);
+        const mergedDowntimes = this.mergeIntervals(downtimeIntervals);
 
-    const totalCalendarMs = endDate.getTime() - startDate.getTime();
-    const totalCalendarHours = totalCalendarMs / (1000 * 60 * 60);
+        const totalDowntimeMs = mergedDowntimes.reduce((total, interval) => {
+          return total + (interval.end - interval.start);
+        }, 0);
+        const totalDowntimeHours = totalDowntimeMs / (1000 * 60 * 60);
 
-    if (totalCalendarHours === 0) return 100;
+        const totalCalendarMs = endDate.getTime() - startDate.getTime();
+        const totalCalendarHours = totalCalendarMs / (1000 * 60 * 60);
 
-    let availability =
-      ((totalCalendarHours - totalDowntimeHours) / totalCalendarHours) * 100;
+        if (totalCalendarHours === 0) return 100;
 
-    if (availability < 0) availability = 0;
-    if (availability > 100) availability = 100;
+        let availability =
+          ((totalCalendarHours - totalDowntimeHours) / totalCalendarHours) *
+          100;
 
-    return Number(availability.toFixed(2));
+        if (availability < 0) availability = 0;
+        if (availability > 100) availability = 100;
+
+        return Number(availability.toFixed(2));
+      },
+      300,
+    );
   }
 
   private mergeIntervals(intervals: { start: number; end: number }[]) {
@@ -205,281 +220,324 @@ export class DashboardService {
     difference: number;
     isImproved: boolean;
   }> {
-    const {
-      priority,
-      department,
-      school_period,
-      issue_type,
-      tags,
-      start_date,
-      end_date,
-    } = filters;
+    const cacheKey = this.cacheService.generateKey(
+      'dashboard:mttr',
+      filters as Record<string, any>,
+    );
+    return this.cacheService.wrap(
+      cacheKey,
+      async () => {
+        const {
+          priority,
+          department,
+          school_period,
+          issue_type,
+          tags,
+          start_date,
+          end_date,
+        } = filters;
 
-    const now = new Date();
+        const now = new Date();
 
-    let currentStartDate: Date;
-    let currentEndDate: Date;
+        let currentStartDate: Date;
+        let currentEndDate: Date;
 
-    if (start_date && end_date) {
-      currentStartDate = this.parseLocalDate(start_date);
-      currentEndDate = this.parseLocalDate(end_date, true);
-    } else {
-      const currentMonth = now.getMonth();
-      const startOfQuarterMonth = currentMonth - (currentMonth % 3);
+        if (start_date && end_date) {
+          currentStartDate = this.parseLocalDate(start_date);
+          currentEndDate = this.parseLocalDate(end_date, true);
+        } else {
+          const currentMonth = now.getMonth();
+          const startOfQuarterMonth = currentMonth - (currentMonth % 3);
 
-      currentStartDate = new Date(
-        now.getFullYear(),
-        startOfQuarterMonth,
-        1,
-        0,
-        0,
-        0,
-        0,
-      );
-      currentEndDate = now;
-    }
+          currentStartDate = new Date(
+            now.getFullYear(),
+            startOfQuarterMonth,
+            1,
+            0,
+            0,
+            0,
+            0,
+          );
+          currentEndDate = now;
+        }
 
-    const durationMs = currentEndDate.getTime() - currentStartDate.getTime();
+        const durationMs =
+          currentEndDate.getTime() - currentStartDate.getTime();
 
-    const prevEndDate = new Date(currentStartDate.getTime() - 1);
-    const prevStartDate = new Date(prevEndDate.getTime() - durationMs);
+        const prevEndDate = new Date(currentStartDate.getTime() - 1);
+        const prevStartDate = new Date(prevEndDate.getTime() - durationMs);
 
-    const createBaseQuery = () => {
-      const qb = this.ticketRepository
-        .createQueryBuilder('ticket')
-        .innerJoin('ticket.ticket_histories', 'history_solucionada')
-        .innerJoin(
-          'history_solucionada.status',
-          'status_solucionada',
-          'status_solucionada.code = :solCode',
-          { solCode: TicketStatus.SOLUCIONADA },
-        )
-        .leftJoin('ticket.issue_type', 'issue_type')
-        .leftJoin('ticket.jefe_depto', 'jefe_depto')
-        .leftJoin('jefe_depto.department', 'department')
-        .leftJoin('ticket.school_period', 'school_period');
+        const createBaseQuery = () => {
+          const qb = this.ticketRepository
+            .createQueryBuilder('ticket')
+            .innerJoin('ticket.ticket_histories', 'history_solucionada')
+            .innerJoin(
+              'history_solucionada.status',
+              'status_solucionada',
+              'status_solucionada.code = :solCode',
+              { solCode: TicketStatus.SOLUCIONADA },
+            )
+            .leftJoin('ticket.issue_type', 'issue_type')
+            .leftJoin('ticket.jefe_depto', 'jefe_depto')
+            .leftJoin('jefe_depto.department', 'department')
+            .leftJoin('ticket.school_period', 'school_period');
 
-      if (priority) qb.andWhere('ticket.priority = :priority', { priority });
-      if (department)
-        qb.andWhere('department.id = :department', { department });
-      if (school_period)
-        qb.andWhere('school_period.id = :school_period', { school_period });
-      if (issue_type)
-        qb.andWhere('issue_type.id = :issue_type', { issue_type });
-      if (tags && tags.length > 0) {
-        qb.innerJoin('ticket.tags', 'tag_filter');
-        qb.andWhere('tag_filter.name IN (:...tags)', { tags });
-      }
+          if (priority)
+            qb.andWhere('ticket.priority = :priority', { priority });
+          if (department)
+            qb.andWhere('department.id = :department', { department });
+          if (school_period)
+            qb.andWhere('school_period.id = :school_period', { school_period });
+          if (issue_type)
+            qb.andWhere('issue_type.id = :issue_type', { issue_type });
+          if (tags && tags.length > 0) {
+            qb.innerJoin('ticket.tags', 'tag_filter');
+            qb.andWhere('tag_filter.name IN (:...tags)', { tags });
+          }
 
-      return qb;
-    };
+          return qb;
+        };
 
-    const currentQuery = createBaseQuery()
-      .andWhere(
-        'ticket.created_at BETWEEN :currentStartDate AND :currentEndDate',
-        {
-          currentStartDate,
-          currentEndDate,
-        },
-      )
-      .select(
-        'AVG(EXTRACT(EPOCH FROM (history_solucionada.created_at - ticket.created_at)))',
-        'avg_seconds',
-      );
+        const currentQuery = createBaseQuery()
+          .andWhere(
+            'ticket.created_at BETWEEN :currentStartDate AND :currentEndDate',
+            {
+              currentStartDate,
+              currentEndDate,
+            },
+          )
+          .select(
+            'AVG(EXTRACT(EPOCH FROM (history_solucionada.created_at - ticket.created_at)))',
+            'avg_seconds',
+          );
 
-    const prevQuery = createBaseQuery()
-      .andWhere('ticket.created_at BETWEEN :prevStartDate AND :prevEndDate', {
-        prevStartDate,
-        prevEndDate,
-      })
-      .select(
-        'AVG(EXTRACT(EPOCH FROM (history_solucionada.created_at - ticket.created_at)))',
-        'avg_seconds',
-      );
+        const prevQuery = createBaseQuery()
+          .andWhere(
+            'ticket.created_at BETWEEN :prevStartDate AND :prevEndDate',
+            {
+              prevStartDate,
+              prevEndDate,
+            },
+          )
+          .select(
+            'AVG(EXTRACT(EPOCH FROM (history_solucionada.created_at - ticket.created_at)))',
+            'avg_seconds',
+          );
 
-    type MttrRawResult = { avg_seconds: string | null };
+        type MttrRawResult = { avg_seconds: string | null };
 
-    const [currentResult, prevResult] = await Promise.all([
-      currentQuery.getRawOne<MttrRawResult>(),
-      prevQuery.getRawOne<MttrRawResult>(),
-    ]);
+        const [currentResult, prevResult] = await Promise.all([
+          currentQuery.getRawOne<MttrRawResult>(),
+          prevQuery.getRawOne<MttrRawResult>(),
+        ]);
 
-    const currentSeconds = currentResult?.avg_seconds
-      ? Number(currentResult.avg_seconds)
-      : 0;
-    const prevSeconds = prevResult?.avg_seconds
-      ? Number(prevResult.avg_seconds)
-      : 0;
+        const currentSeconds = currentResult?.avg_seconds
+          ? Number(currentResult.avg_seconds)
+          : 0;
+        const prevSeconds = prevResult?.avg_seconds
+          ? Number(prevResult.avg_seconds)
+          : 0;
 
-    const currentMttr = Number((currentSeconds / 3600).toFixed(2));
-    const previousMttr = Number((prevSeconds / 3600).toFixed(2));
+        const currentMttr = Number((currentSeconds / 3600).toFixed(2));
+        const previousMttr = Number((prevSeconds / 3600).toFixed(2));
 
-    const difference = Number((currentMttr - previousMttr).toFixed(2));
-    const isImproved = currentMttr <= previousMttr;
+        const difference = Number((currentMttr - previousMttr).toFixed(2));
+        const isImproved = currentMttr <= previousMttr;
 
-    return {
-      currentMttr,
-      previousMttr,
-      difference,
-      isImproved,
-    };
+        return {
+          currentMttr,
+          previousMttr,
+          difference,
+          isImproved,
+        };
+      },
+      300,
+    );
   }
 
   // Interrupciones criticas por mes
   async getCriticalInterruptionsPerMonth(
     filters: DashboardFiltersDto,
   ): Promise<{ month: string; count: number }[]> {
-    const {
-      department,
-      school_period,
-      issue_type,
-      tags,
-      start_date,
-      end_date,
-    } = filters;
-
-    const now = new Date();
-    const lastSixMonths = new Date(now.getFullYear(), now.getMonth() - 5, 1);
-
-    const { startDate, endDate } = this.calculateDateRange(
-      start_date,
-      end_date,
-      lastSixMonths,
+    const cacheKey = this.cacheService.generateKey(
+      'dashboard:interruptions',
+      filters as Record<string, any>,
     );
+    return this.cacheService.wrap(
+      cacheKey,
+      async () => {
+        const {
+          department,
+          school_period,
+          issue_type,
+          tags,
+          start_date,
+          end_date,
+        } = filters;
 
-    const query = this.ticketRepository
-      .createQueryBuilder('ticket')
-      .select("TO_CHAR(ticket.created_at, 'YYYY-MM')", 'month')
-      .addSelect('COUNT(ticket.id)', 'count')
-      .leftJoin('ticket.issue_type', 'issue_type')
-      .leftJoin('ticket.jefe_depto', 'jefe_depto')
-      .leftJoin('jefe_depto.department', 'department')
-      .leftJoin('ticket.school_period', 'school_period')
-      .where('ticket.priority = :criticalPriority', {
-        criticalPriority: TicketPriorityLevel.CRITIC,
-      })
-      .andWhere('ticket.created_at BETWEEN :startDate AND :endDate', {
-        startDate,
-        endDate,
-      });
+        const now = new Date();
+        const lastSixMonths = new Date(
+          now.getFullYear(),
+          now.getMonth() - 5,
+          1,
+        );
 
-    if (department) {
-      query.andWhere('department.id = :department', { department });
-    }
-    if (school_period) {
-      query.andWhere('school_period.id = :school_period', { school_period });
-    }
-    if (issue_type) {
-      query.andWhere('issue_type.id = :issue_type', { issue_type });
-    }
-    if (tags && tags.length > 0) {
-      query.innerJoin('ticket.tags', 'tag_filter');
-      query.andWhere('tag_filter.name IN (:...tags)', { tags });
-    }
+        const { startDate, endDate } = this.calculateDateRange(
+          start_date,
+          end_date,
+          lastSixMonths,
+        );
 
-    query.groupBy("TO_CHAR(ticket.created_at, 'YYYY-MM')");
-    query.orderBy('month', 'ASC');
+        const query = this.ticketRepository
+          .createQueryBuilder('ticket')
+          .select("TO_CHAR(ticket.created_at, 'YYYY-MM')", 'month')
+          .addSelect('COUNT(ticket.id)', 'count')
+          .leftJoin('ticket.issue_type', 'issue_type')
+          .leftJoin('ticket.jefe_depto', 'jefe_depto')
+          .leftJoin('jefe_depto.department', 'department')
+          .leftJoin('ticket.school_period', 'school_period')
+          .where('ticket.priority = :criticalPriority', {
+            criticalPriority: TicketPriorityLevel.CRITIC,
+          })
+          .andWhere('ticket.created_at BETWEEN :startDate AND :endDate', {
+            startDate,
+            endDate,
+          });
 
-    const rawResults = await query.getRawMany<{
-      month: string;
-      count: string;
-    }>();
+        if (department) {
+          query.andWhere('department.id = :department', { department });
+        }
+        if (school_period) {
+          query.andWhere('school_period.id = :school_period', {
+            school_period,
+          });
+        }
+        if (issue_type) {
+          query.andWhere('issue_type.id = :issue_type', { issue_type });
+        }
+        if (tags && tags.length > 0) {
+          query.innerJoin('ticket.tags', 'tag_filter');
+          query.andWhere('tag_filter.name IN (:...tags)', { tags });
+        }
 
-    const finalResults: { month: string; count: number }[] = [];
+        query.groupBy("TO_CHAR(ticket.created_at, 'YYYY-MM')");
+        query.orderBy('month', 'ASC');
 
-    const iteratorDate = new Date(
-      startDate.getFullYear(),
-      startDate.getMonth(),
-      1,
+        const rawResults = await query.getRawMany<{
+          month: string;
+          count: string;
+        }>();
+
+        const finalResults: { month: string; count: number }[] = [];
+
+        const iteratorDate = new Date(
+          startDate.getFullYear(),
+          startDate.getMonth(),
+          1,
+        );
+
+        while (iteratorDate <= endDate) {
+          const monthStr = `${iteratorDate.getFullYear()}-${String(iteratorDate.getMonth() + 1).padStart(2, '0')}`;
+          const found = rawResults.find((r) => r.month === monthStr);
+
+          finalResults.push({
+            month: monthStr,
+            count: found ? Number(found.count) : 0,
+          });
+
+          iteratorDate.setMonth(iteratorDate.getMonth() + 1);
+        }
+
+        return finalResults;
+      },
+      300,
     );
-
-    while (iteratorDate <= endDate) {
-      const monthStr = `${iteratorDate.getFullYear()}-${String(iteratorDate.getMonth() + 1).padStart(2, '0')}`;
-      const found = rawResults.find((r) => r.month === monthStr);
-
-      finalResults.push({
-        month: monthStr,
-        count: found ? Number(found.count) : 0,
-      });
-
-      iteratorDate.setMonth(iteratorDate.getMonth() + 1);
-    }
-
-    return finalResults;
   }
 
   //  Promedio de resolucion por prioridad
   async getAverageResolutionTimeByPriority(
     filters: DashboardFiltersDto,
   ): Promise<{ priority: number; avg_hours: number }[]> {
-    const {
-      department,
-      school_period,
-      issue_type,
-      tags,
-      start_date,
-      end_date,
-    } = filters;
-
-    const { startDate, endDate } = this.calculateDateRange(
-      start_date,
-      end_date,
+    const cacheKey = this.cacheService.generateKey(
+      'dashboard:res_priority',
+      filters as Record<string, any>,
     );
+    return this.cacheService.wrap(
+      cacheKey,
+      async () => {
+        const {
+          department,
+          school_period,
+          issue_type,
+          tags,
+          start_date,
+          end_date,
+        } = filters;
 
-    const query = this.ticketRepository
-      .createQueryBuilder('ticket')
-      .select('ticket.priority', 'priority')
-      .addSelect(
-        'AVG(EXTRACT(EPOCH FROM (history_solucionada.created_at - ticket.created_at))) / 3600',
-        'avg_hours',
-      )
-      .innerJoin('ticket.ticket_histories', 'history_solucionada')
-      .innerJoin(
-        'history_solucionada.status',
-        'status_solucionada',
-        'status_solucionada.code = :solCode',
-        { solCode: TicketStatus.SOLUCIONADA },
-      )
-      .leftJoin('ticket.issue_type', 'issue_type')
-      .leftJoin('ticket.jefe_depto', 'jefe_depto')
-      .leftJoin('jefe_depto.department', 'department')
-      .leftJoin('ticket.school_period', 'school_period')
-      .where('ticket.created_at BETWEEN :startDate AND :endDate', {
-        startDate,
-        endDate,
-      });
+        const { startDate, endDate } = this.calculateDateRange(
+          start_date,
+          end_date,
+        );
 
-    if (department) {
-      query.andWhere('department.id = :department', { department });
-    }
-    if (school_period) {
-      query.andWhere('school_period.id = :school_period', { school_period });
-    }
-    if (issue_type) {
-      query.andWhere('issue_type.id = :issue_type', { issue_type });
-    }
-    if (tags && tags.length > 0) {
-      query.innerJoin('ticket.tags', 'tag_filter');
-      query.andWhere('tag_filter.name IN (:...tags)', { tags });
-    }
+        const query = this.ticketRepository
+          .createQueryBuilder('ticket')
+          .select('ticket.priority', 'priority')
+          .addSelect(
+            'AVG(EXTRACT(EPOCH FROM (history_solucionada.created_at - ticket.created_at))) / 3600',
+            'avg_hours',
+          )
+          .innerJoin('ticket.ticket_histories', 'history_solucionada')
+          .innerJoin(
+            'history_solucionada.status',
+            'status_solucionada',
+            'status_solucionada.code = :solCode',
+            { solCode: TicketStatus.SOLUCIONADA },
+          )
+          .leftJoin('ticket.issue_type', 'issue_type')
+          .leftJoin('ticket.jefe_depto', 'jefe_depto')
+          .leftJoin('jefe_depto.department', 'department')
+          .leftJoin('ticket.school_period', 'school_period')
+          .where('ticket.created_at BETWEEN :startDate AND :endDate', {
+            startDate,
+            endDate,
+          });
 
-    query.groupBy('ticket.priority').orderBy('ticket.priority', 'ASC');
+        if (department) {
+          query.andWhere('department.id = :department', { department });
+        }
+        if (school_period) {
+          query.andWhere('school_period.id = :school_period', {
+            school_period,
+          });
+        }
+        if (issue_type) {
+          query.andWhere('issue_type.id = :issue_type', { issue_type });
+        }
+        if (tags && tags.length > 0) {
+          query.innerJoin('ticket.tags', 'tag_filter');
+          query.andWhere('tag_filter.name IN (:...tags)', { tags });
+        }
 
-    const result = await query.getRawMany<{
-      priority: number;
-      avg_hours: string;
-    }>();
+        query.groupBy('ticket.priority').orderBy('ticket.priority', 'ASC');
 
-    const allPriorities = [1, 2, 3, 4];
+        const result = await query.getRawMany<{
+          priority: number;
+          avg_hours: string;
+        }>();
 
-    return allPriorities.map((p) => {
-      const found = result.find((row) => Number(row.priority) === p);
+        const allPriorities = [1, 2, 3, 4];
 
-      return {
-        priority: p,
-        avg_hours: found ? Number(Number(found.avg_hours).toFixed(2)) : 0,
-      };
-    });
+        return allPriorities.map((p) => {
+          const found = result.find((row) => Number(row.priority) === p);
+
+          return {
+            priority: p,
+            avg_hours: found ? Number(Number(found.avg_hours).toFixed(2)) : 0,
+          };
+        });
+      },
+      300,
+    );
   }
 
   // Solucion en primer nivel
@@ -488,153 +546,177 @@ export class DashboardService {
     totalResolved: number;
     firstLevelResolved: number;
   }> {
-    const {
-      department,
-      school_period,
-      issue_type,
-      tags,
-      start_date,
-      end_date,
-    } = filters;
-
-    const { startDate, endDate } = this.calculateDateRange(
-      start_date,
-      end_date,
+    const cacheKey = this.cacheService.generateKey(
+      'dashboard:first_level',
+      filters as Record<string, any>,
     );
+    return this.cacheService.wrap(
+      cacheKey,
+      async () => {
+        const {
+          department,
+          school_period,
+          issue_type,
+          tags,
+          start_date,
+          end_date,
+        } = filters;
 
-    const query = this.ticketRepository
-      .createQueryBuilder('ticket')
-      .innerJoin('ticket.ticket_histories', 'history_solucionada')
-      .innerJoin(
-        'history_solucionada.status',
-        'status_solucionada',
-        'status_solucionada.code = :solCode',
-        { solCode: TicketStatus.SOLUCIONADA },
-      )
-      .leftJoin('ticket.issue_type', 'issue_type')
-      .leftJoin('ticket.jefe_depto', 'jefe_depto')
-      .leftJoin('jefe_depto.department', 'department')
-      .leftJoin('ticket.school_period', 'school_period')
-      .where('ticket.created_at BETWEEN :startDate AND :endDate', {
-        startDate,
-        endDate,
-      });
+        const { startDate, endDate } = this.calculateDateRange(
+          start_date,
+          end_date,
+        );
 
-    if (department)
-      query.andWhere('department.id = :department', { department });
-    if (school_period)
-      query.andWhere('school_period.id = :school_period', { school_period });
-    if (issue_type)
-      query.andWhere('issue_type.id = :issue_type', { issue_type });
-    if (tags && tags.length > 0) {
-      query.innerJoin('ticket.tags', 'tag_filter');
-      query.andWhere('tag_filter.name IN (:...tags)', { tags });
-    }
+        const query = this.ticketRepository
+          .createQueryBuilder('ticket')
+          .innerJoin('ticket.ticket_histories', 'history_solucionada')
+          .innerJoin(
+            'history_solucionada.status',
+            'status_solucionada',
+            'status_solucionada.code = :solCode',
+            { solCode: TicketStatus.SOLUCIONADA },
+          )
+          .leftJoin('ticket.issue_type', 'issue_type')
+          .leftJoin('ticket.jefe_depto', 'jefe_depto')
+          .leftJoin('jefe_depto.department', 'department')
+          .leftJoin('ticket.school_period', 'school_period')
+          .where('ticket.created_at BETWEEN :startDate AND :endDate', {
+            startDate,
+            endDate,
+          });
 
-    const totalResolved = await query.getCount();
+        if (department)
+          query.andWhere('department.id = :department', { department });
+        if (school_period)
+          query.andWhere('school_period.id = :school_period', {
+            school_period,
+          });
+        if (issue_type)
+          query.andWhere('issue_type.id = :issue_type', { issue_type });
+        if (tags && tags.length > 0) {
+          query.innerJoin('ticket.tags', 'tag_filter');
+          query.andWhere('tag_filter.name IN (:...tags)', { tags });
+        }
 
-    if (totalResolved === 0) {
-      return { percentage: 100, totalResolved: 0, firstLevelResolved: 0 };
-    }
+        const totalResolved = await query.getCount();
 
-    query.andWhere((qb) => {
-      const subQuery = qb
-        .subQuery()
-        .select('tr."ticketId"')
-        .from('technical_report', 'tr')
-        .groupBy('tr."ticketId"')
-        .having('COUNT(tr.id) > 1')
-        .getQuery();
+        if (totalResolved === 0) {
+          return { percentage: 100, totalResolved: 0, firstLevelResolved: 0 };
+        }
 
-      return `ticket.id NOT IN ${subQuery}`;
-    });
+        query.andWhere((qb) => {
+          const subQuery = qb
+            .subQuery()
+            .select('tr."ticketId"')
+            .from('technical_report', 'tr')
+            .groupBy('tr."ticketId"')
+            .having('COUNT(tr.id) > 1')
+            .getQuery();
 
-    const firstLevelResolved = await query.getCount();
+          return `ticket.id NOT IN ${subQuery}`;
+        });
 
-    const percentage = Number(
-      ((firstLevelResolved / totalResolved) * 100).toFixed(2),
+        const firstLevelResolved = await query.getCount();
+
+        const percentage = Number(
+          ((firstLevelResolved / totalResolved) * 100).toFixed(2),
+        );
+
+        return { percentage, totalResolved, firstLevelResolved };
+      },
+      300,
     );
-
-    return { percentage, totalResolved, firstLevelResolved };
   }
 
   async getSlaCompliance(
     filters: DashboardFiltersDto,
   ): Promise<{ percentage: number; totalResolved: number; slaMet: number }> {
-    const {
-      department,
-      school_period,
-      issue_type,
-      tags,
-      start_date,
-      end_date,
-    } = filters;
-
-    const { startDate, endDate } = this.calculateDateRange(
-      start_date,
-      end_date,
+    const cacheKey = this.cacheService.generateKey(
+      'dashboard:sla_compliance',
+      filters as Record<string, any>,
     );
+    return this.cacheService.wrap(
+      cacheKey,
+      async () => {
+        const {
+          department,
+          school_period,
+          issue_type,
+          tags,
+          start_date,
+          end_date,
+        } = filters;
 
-    const query = this.ticketRepository
-      .createQueryBuilder('ticket')
-      .innerJoin('ticket.ticket_histories', 'history_solucionada')
-      .innerJoin(
-        'history_solucionada.status',
-        'status_solucionada',
-        'status_solucionada.code = :solCode',
-        { solCode: TicketStatus.SOLUCIONADA },
-      )
-      .leftJoin('ticket.issue_type', 'issue_type')
-      .leftJoin('ticket.jefe_depto', 'jefe_depto')
-      .leftJoin('jefe_depto.department', 'department')
-      .leftJoin('ticket.school_period', 'school_period')
-      .where('ticket.created_at BETWEEN :startDate AND :endDate', {
-        startDate,
-        endDate,
-      });
+        const { startDate, endDate } = this.calculateDateRange(
+          start_date,
+          end_date,
+        );
 
-    if (department)
-      query.andWhere('department.id = :department', { department });
-    if (school_period)
-      query.andWhere('school_period.id = :school_period', { school_period });
-    if (issue_type)
-      query.andWhere('issue_type.id = :issue_type', { issue_type });
-    if (tags && tags.length > 0) {
-      query.innerJoin('ticket.tags', 'tag_filter');
-      query.andWhere('tag_filter.name IN (:...tags)', { tags });
-    }
+        const query = this.ticketRepository
+          .createQueryBuilder('ticket')
+          .innerJoin('ticket.ticket_histories', 'history_solucionada')
+          .innerJoin(
+            'history_solucionada.status',
+            'status_solucionada',
+            'status_solucionada.code = :solCode',
+            { solCode: TicketStatus.SOLUCIONADA },
+          )
+          .leftJoin('ticket.issue_type', 'issue_type')
+          .leftJoin('ticket.jefe_depto', 'jefe_depto')
+          .leftJoin('jefe_depto.department', 'department')
+          .leftJoin('ticket.school_period', 'school_period')
+          .where('ticket.created_at BETWEEN :startDate AND :endDate', {
+            startDate,
+            endDate,
+          });
 
-    query.select('COUNT(ticket.id)', 'total_resolved').addSelect(
-      `
-        SUM(
-          CASE 
-            WHEN ticket.priority = '${TicketPriorityLevel.CRITIC}' AND (EXTRACT(EPOCH FROM (history_solucionada.created_at - ticket.created_at)) / 3600) <= ${LimitResolutionTime[TicketPriorityLevel.CRITIC]} THEN 1
-            WHEN ticket.priority = '${TicketPriorityLevel.HIGH}' AND (EXTRACT(EPOCH FROM (history_solucionada.created_at - ticket.created_at)) / 3600) <= ${LimitResolutionTime[TicketPriorityLevel.HIGH]} THEN 1
-            WHEN ticket.priority = '${TicketPriorityLevel.MEDIUM}' AND (EXTRACT(EPOCH FROM (history_solucionada.created_at - ticket.created_at)) / 3600) <= ${LimitResolutionTime[TicketPriorityLevel.MEDIUM]} THEN 1
-            WHEN ticket.priority = '${TicketPriorityLevel.LOW}' AND (EXTRACT(EPOCH FROM (history_solucionada.created_at - ticket.created_at)) / 3600) <= ${LimitResolutionTime[TicketPriorityLevel.LOW]} THEN 1
-            ELSE 0 
-          END
-        )`,
-      'sla_met_count',
+        if (department)
+          query.andWhere('department.id = :department', { department });
+        if (school_period)
+          query.andWhere('school_period.id = :school_period', {
+            school_period,
+          });
+        if (issue_type)
+          query.andWhere('issue_type.id = :issue_type', { issue_type });
+        if (tags && tags.length > 0) {
+          query.innerJoin('ticket.tags', 'tag_filter');
+          query.andWhere('tag_filter.name IN (:...tags)', { tags });
+        }
+
+        query.select('COUNT(ticket.id)', 'total_resolved').addSelect(
+          `
+            SUM(
+              CASE 
+                WHEN ticket.priority = '${TicketPriorityLevel.CRITIC}' AND (EXTRACT(EPOCH FROM (history_solucionada.created_at - ticket.created_at)) / 3600) <= ${LimitResolutionTime[TicketPriorityLevel.CRITIC]} THEN 1
+                WHEN ticket.priority = '${TicketPriorityLevel.HIGH}' AND (EXTRACT(EPOCH FROM (history_solucionada.created_at - ticket.created_at)) / 3600) <= ${LimitResolutionTime[TicketPriorityLevel.HIGH]} THEN 1
+                WHEN ticket.priority = '${TicketPriorityLevel.MEDIUM}' AND (EXTRACT(EPOCH FROM (history_solucionada.created_at - ticket.created_at)) / 3600) <= ${LimitResolutionTime[TicketPriorityLevel.MEDIUM]} THEN 1
+                WHEN ticket.priority = '${TicketPriorityLevel.LOW}' AND (EXTRACT(EPOCH FROM (history_solucionada.created_at - ticket.created_at)) / 3600) <= ${LimitResolutionTime[TicketPriorityLevel.LOW]} THEN 1
+                ELSE 0 
+              END
+            )`,
+          'sla_met_count',
+        );
+
+        const result = await query.getRawOne<{
+          total_resolved: string;
+          sla_met_count: string;
+        }>();
+
+        const totalResolved = result?.total_resolved
+          ? Number(result.total_resolved)
+          : 0;
+        const slaMet = result?.sla_met_count ? Number(result.sla_met_count) : 0;
+
+        if (totalResolved === 0) {
+          return { percentage: 100, totalResolved: 0, slaMet: 0 };
+        }
+
+        const percentage = Number(((slaMet / totalResolved) * 100).toFixed(2));
+
+        return { percentage, totalResolved, slaMet };
+      },
+      300,
     );
-
-    const result = await query.getRawOne<{
-      total_resolved: string;
-      sla_met_count: string;
-    }>();
-
-    const totalResolved = result?.total_resolved
-      ? Number(result.total_resolved)
-      : 0;
-    const slaMet = result?.sla_met_count ? Number(result.sla_met_count) : 0;
-
-    if (totalResolved === 0) {
-      return { percentage: 100, totalResolved: 0, slaMet: 0 };
-    }
-
-    const percentage = Number(((slaMet / totalResolved) * 100).toFixed(2));
-
-    return { percentage, totalResolved, slaMet };
   }
 
   async getPreventiveMaintenanceCoverage(
@@ -644,229 +726,266 @@ export class DashboardService {
     totalEquipment: number;
     maintainedEquipment: number;
   }> {
-    const { department, start_date, end_date } = filters;
-
-    const { startDate, endDate } = this.calculateDateRange(
-      start_date,
-      end_date,
+    const cacheKey = this.cacheService.generateKey(
+      'dashboard:maintenance',
+      filters as Record<string, any>,
     );
+    return this.cacheService.wrap(
+      cacheKey,
+      async () => {
+        const { department, start_date, end_date } = filters;
 
-    const totalEqQuery = this.equipmentRepository
-      .createQueryBuilder('equipment')
-      .where('equipment.status = :status', { status: true });
+        const { startDate, endDate } = this.calculateDateRange(
+          start_date,
+          end_date,
+        );
 
-    if (department) {
-      totalEqQuery.andWhere('equipment.id_departament = :department', {
-        department,
-      });
-    }
-    const totalEquipment = await totalEqQuery.getCount();
+        const totalEqQuery = this.equipmentRepository
+          .createQueryBuilder('equipment')
+          .where('equipment.status = :status', { status: true });
 
-    if (totalEquipment === 0)
-      return { percentage: 0, totalEquipment: 0, maintainedEquipment: 0 };
+        if (department) {
+          totalEqQuery.andWhere('equipment.id_departament = :department', {
+            department,
+          });
+        }
+        const totalEquipment = await totalEqQuery.getCount();
 
-    const maintainedEqQuery = this.equipmentRepository
-      .createQueryBuilder('equipment')
-      .innerJoin('equipment.technical_reports', 'tr')
-      .innerJoin('tr.fault_validity', 'fv')
-      .innerJoin('tr.ticket', 'ticket')
-      .where('fv.name = :faultName', { faultName: 'Mantenimiento preventivo' })
-      .andWhere('ticket.created_at BETWEEN :startDate AND :endDate', {
-        startDate,
-        endDate,
-      })
-      .andWhere('equipment.status = :status', { status: true });
+        if (totalEquipment === 0)
+          return { percentage: 0, totalEquipment: 0, maintainedEquipment: 0 };
 
-    if (department) {
-      maintainedEqQuery.andWhere('equipment.id_departament = :department', {
-        department,
-      });
-    }
-    maintainedEqQuery.select('COUNT(DISTINCT equipment.id)', 'count');
+        const maintainedEqQuery = this.equipmentRepository
+          .createQueryBuilder('equipment')
+          .innerJoin('equipment.technical_reports', 'tr')
+          .innerJoin('tr.fault_validity', 'fv')
+          .innerJoin('tr.ticket', 'ticket')
+          .where('fv.name = :faultName', {
+            faultName: 'Mantenimiento preventivo',
+          })
+          .andWhere('ticket.created_at BETWEEN :startDate AND :endDate', {
+            startDate,
+            endDate,
+          })
+          .andWhere('equipment.status = :status', { status: true });
 
-    const result = await maintainedEqQuery.getRawOne<MaintenanceCountResult>();
+        if (department) {
+          maintainedEqQuery.andWhere('equipment.id_departament = :department', {
+            department,
+          });
+        }
+        maintainedEqQuery.select('COUNT(DISTINCT equipment.id)', 'count');
 
-    const maintainedEquipment = result?.count ? Number(result.count) : 0;
+        const result =
+          await maintainedEqQuery.getRawOne<MaintenanceCountResult>();
 
-    const percentage = Number(
-      ((maintainedEquipment / totalEquipment) * 100).toFixed(2),
+        const maintainedEquipment = result?.count ? Number(result.count) : 0;
+
+        const percentage = Number(
+          ((maintainedEquipment / totalEquipment) * 100).toFixed(2),
+        );
+
+        return { percentage, totalEquipment, maintainedEquipment };
+      },
+      300,
     );
-
-    return { percentage, totalEquipment, maintainedEquipment };
   }
 
   async getCostPerIncident(
     filters: DashboardFiltersDto,
   ): Promise<{ averageCost: number; totalCost: number; totalTickets: number }> {
-    const {
-      department,
-      school_period,
-      issue_type,
-      tags,
-      start_date,
-      end_date,
-    } = filters;
-
-    const { startDate, endDate } = this.calculateDateRange(
-      start_date,
-      end_date,
+    const cacheKey = this.cacheService.generateKey(
+      'dashboard:cost_incident',
+      filters as Record<string, any>,
     );
-
-    const applyFilters = <T extends ObjectLiteral>(
-      queryBuilder: SelectQueryBuilder<T>,
-    ) => {
-      if (department) {
-        queryBuilder.andWhere('department.id = :department', { department });
-      }
-      if (school_period) {
-        queryBuilder.andWhere('school_period.id = :school_period', {
+    return this.cacheService.wrap(
+      cacheKey,
+      async () => {
+        const {
+          department,
           school_period,
-        });
-      }
-      if (issue_type) {
-        queryBuilder.andWhere('issue_type.id = :issue_type', { issue_type });
-      }
-      if (tags && tags.length > 0) {
-        queryBuilder.innerJoin('ticket.tags', 'tag_filter');
-        queryBuilder.andWhere('tag_filter.name IN (:...tags)', { tags });
-      }
-    };
-    const ticketsQuery = this.ticketRepository
-      .createQueryBuilder('ticket')
-      .innerJoin('ticket.ticket_histories', 'history_solucionada')
-      .innerJoin(
-        'history_solucionada.status',
-        'status_solucionada',
-        'status_solucionada.code = :solCode',
-        { solCode: TicketStatus.SOLUCIONADA },
-      )
-      .leftJoin('ticket.issue_type', 'issue_type')
-      .leftJoin('ticket.jefe_depto', 'jefe_depto')
-      .leftJoin('jefe_depto.department', 'department')
-      .leftJoin('ticket.school_period', 'school_period')
-      .where('ticket.created_at BETWEEN :startDate AND :endDate', {
-        startDate,
-        endDate,
-      });
+          issue_type,
+          tags,
+          start_date,
+          end_date,
+        } = filters;
 
-    applyFilters(ticketsQuery);
+        const { startDate, endDate } = this.calculateDateRange(
+          start_date,
+          end_date,
+        );
 
-    ticketsQuery.select('COUNT(DISTINCT ticket.id)', 'count');
+        const applyFilters = <T extends ObjectLiteral>(
+          queryBuilder: SelectQueryBuilder<T>,
+        ) => {
+          if (department) {
+            queryBuilder.andWhere('department.id = :department', {
+              department,
+            });
+          }
+          if (school_period) {
+            queryBuilder.andWhere('school_period.id = :school_period', {
+              school_period,
+            });
+          }
+          if (issue_type) {
+            queryBuilder.andWhere('issue_type.id = :issue_type', {
+              issue_type,
+            });
+          }
+          if (tags && tags.length > 0) {
+            queryBuilder.innerJoin('ticket.tags', 'tag_filter');
+            queryBuilder.andWhere('tag_filter.name IN (:...tags)', { tags });
+          }
+        };
+        const ticketsQuery = this.ticketRepository
+          .createQueryBuilder('ticket')
+          .innerJoin('ticket.ticket_histories', 'history_solucionada')
+          .innerJoin(
+            'history_solucionada.status',
+            'status_solucionada',
+            'status_solucionada.code = :solCode',
+            { solCode: TicketStatus.SOLUCIONADA },
+          )
+          .leftJoin('ticket.issue_type', 'issue_type')
+          .leftJoin('ticket.jefe_depto', 'jefe_depto')
+          .leftJoin('jefe_depto.department', 'department')
+          .leftJoin('ticket.school_period', 'school_period')
+          .where('ticket.created_at BETWEEN :startDate AND :endDate', {
+            startDate,
+            endDate,
+          });
 
-    const tResult = await ticketsQuery.getRawOne<CountResult>();
-    const totalTickets = tResult?.count ? Number(tResult.count) : 0;
+        applyFilters(ticketsQuery);
 
-    if (totalTickets === 0) {
-      return { averageCost: 0, totalCost: 0, totalTickets: 0 };
-    }
+        ticketsQuery.select('COUNT(DISTINCT ticket.id)', 'count');
 
-    const costQuery = this.consumableMovementRepository
-      .createQueryBuilder('cm')
-      .innerJoin('cm.id_ticket', 'ticket')
-      .innerJoin('ticket.ticket_histories', 'history_solucionada')
-      .innerJoin(
-        'history_solucionada.status',
-        'status_solucionada',
-        'status_solucionada.code = :solCode',
-        { solCode: TicketStatus.SOLUCIONADA },
-      )
-      .leftJoin('ticket.issue_type', 'issue_type')
-      .leftJoin('ticket.jefe_depto', 'jefe_depto')
-      .leftJoin('jefe_depto.department', 'department')
-      .leftJoin('ticket.school_period', 'school_period')
-      .where('ticket.created_at BETWEEN :startDate AND :endDate', {
-        startDate,
-        endDate,
-      });
+        const tResult = await ticketsQuery.getRawOne<CountResult>();
+        const totalTickets = tResult?.count ? Number(tResult.count) : 0;
 
-    applyFilters(costQuery);
+        if (totalTickets === 0) {
+          return { averageCost: 0, totalCost: 0, totalTickets: 0 };
+        }
 
-    costQuery.select('SUM(cm.movement_cost)', 'total');
+        const costQuery = this.consumableMovementRepository
+          .createQueryBuilder('cm')
+          .innerJoin('cm.id_ticket', 'ticket')
+          .innerJoin('ticket.ticket_histories', 'history_solucionada')
+          .innerJoin(
+            'history_solucionada.status',
+            'status_solucionada',
+            'status_solucionada.code = :solCode',
+            { solCode: TicketStatus.SOLUCIONADA },
+          )
+          .leftJoin('ticket.issue_type', 'issue_type')
+          .leftJoin('ticket.jefe_depto', 'jefe_depto')
+          .leftJoin('jefe_depto.department', 'department')
+          .leftJoin('ticket.school_period', 'school_period')
+          .where('ticket.created_at BETWEEN :startDate AND :endDate', {
+            startDate,
+            endDate,
+          });
 
-    const cResult = await costQuery.getRawOne<SumResult>();
+        applyFilters(costQuery);
 
-    const totalCost = cResult?.total ? Number(cResult.total) : 0;
-    const averageCost = Number((totalCost / totalTickets).toFixed(2));
+        costQuery.select('SUM(cm.movement_cost)', 'total');
 
-    return { averageCost, totalCost, totalTickets };
+        const cResult = await costQuery.getRawOne<SumResult>();
+
+        const totalCost = cResult?.total ? Number(cResult.total) : 0;
+        const averageCost = Number((totalCost / totalTickets).toFixed(2));
+
+        return { averageCost, totalCost, totalTickets };
+      },
+      300,
+    );
   }
 
   async getTicketsByStatus(
     filters: DashboardFiltersDto,
   ): Promise<{ status: string; code: string; count: number }[]> {
-    const {
-      department,
-      school_period,
-      issue_type,
-      tags,
-      start_date,
-      end_date,
-    } = filters;
-    const { startDate, endDate } = this.calculateDateRange(
-      start_date,
-      end_date,
+    const cacheKey = this.cacheService.generateKey(
+      'dashboard:status',
+      filters as Record<string, any>,
     );
+    return this.cacheService.wrap(
+      cacheKey,
+      async () => {
+        const {
+          department,
+          school_period,
+          issue_type,
+          tags,
+          start_date,
+          end_date,
+        } = filters;
+        const { startDate, endDate } = this.calculateDateRange(
+          start_date,
+          end_date,
+        );
 
-    const query = this.ticketRepository
-      .createQueryBuilder('ticket')
-      .innerJoin('ticket.ticket_histories', 'current_history')
-      .innerJoin('current_history.status', 'status')
-      .leftJoin(
-        'ticket.ticket_histories',
-        'newer_history',
-        'newer_history.created_at > current_history.created_at',
-      )
-      .where('newer_history.id IS NULL')
-      .andWhere('ticket.created_at BETWEEN :startDate AND :endDate', {
-        startDate,
-        endDate,
-      });
+        const query = this.ticketRepository
+          .createQueryBuilder('ticket')
+          .innerJoin('ticket.ticket_histories', 'current_history')
+          .innerJoin('current_history.status', 'status')
+          .leftJoin(
+            'ticket.ticket_histories',
+            'newer_history',
+            'newer_history.created_at > current_history.created_at',
+          )
+          .where('newer_history.id IS NULL')
+          .andWhere('ticket.created_at BETWEEN :startDate AND :endDate', {
+            startDate,
+            endDate,
+          });
 
-    if (department) {
-      query
-        .leftJoin('ticket.jefe_depto', 'jefe_depto')
-        .leftJoin('jefe_depto.department', 'department')
-        .andWhere('department.id = :department', { department });
-    }
+        if (department) {
+          query
+            .leftJoin('ticket.jefe_depto', 'jefe_depto')
+            .leftJoin('jefe_depto.department', 'department')
+            .andWhere('department.id = :department', { department });
+        }
 
-    if (school_period) {
-      query
-        .leftJoin('ticket.school_period', 'school_period')
-        .andWhere('school_period.id = :school_period', { school_period });
-    }
+        if (school_period) {
+          query
+            .leftJoin('ticket.school_period', 'school_period')
+            .andWhere('school_period.id = :school_period', { school_period });
+        }
 
-    if (issue_type) {
-      query
-        .leftJoin('ticket.issue_type', 'issue_type')
-        .andWhere('issue_type.id = :issue_type', { issue_type });
-    }
+        if (issue_type) {
+          query
+            .leftJoin('ticket.issue_type', 'issue_type')
+            .andWhere('issue_type.id = :issue_type', { issue_type });
+        }
 
-    if (tags && tags.length > 0) {
-      query
-        .innerJoin('ticket.tags', 'tag_filter')
-        .andWhere('tag_filter.name IN (:...tags)', { tags });
-    }
+        if (tags && tags.length > 0) {
+          query
+            .innerJoin('ticket.tags', 'tag_filter')
+            .andWhere('tag_filter.name IN (:...tags)', { tags });
+        }
 
-    query
-      .select([
-        'status.name AS status_name',
-        'COUNT(DISTINCT ticket.id) AS ticket_count',
-      ])
-      .groupBy('status.id')
-      .addGroupBy('status.name');
+        query
+          .select([
+            'status.name AS status_name',
+            'COUNT(DISTINCT ticket.id) AS ticket_count',
+          ])
+          .groupBy('status.id')
+          .addGroupBy('status.name');
 
-    const result: RawTicketCount[] = await query.getRawMany();
+        const result: RawTicketCount[] = await query.getRawMany();
 
-    const status = await this.ticketHistoryService.findAllStatus();
+        const status = await this.ticketHistoryService.findAllStatus();
 
-    return status.map((item) => ({
-      status: item.name,
-      code: item.code,
-      count: Number(
-        result.find((counted) => counted.status_name === item.name)
-          ?.ticket_count || 0,
-      ),
-    }));
+        return status.map((item) => ({
+          status: item.name,
+          code: item.code,
+          count: Number(
+            result.find((counted) => counted.status_name === item.name)
+              ?.ticket_count || 0,
+          ),
+        }));
+      },
+      180,
+    );
   }
 
   async getUserSatisfactionMetrics(filters: DashboardFiltersDto): Promise<{
@@ -880,141 +999,155 @@ export class DashboardService {
       totalResponses: number;
     }[];
   }> {
-    const {
-      department,
-      school_period,
-      issue_type,
-      tags,
-      start_date,
-      end_date,
-      priority,
-    } = filters;
-
-    const { startDate, endDate } = this.calculateDateRange(
-      start_date,
-      end_date,
+    const cacheKey = this.cacheService.generateKey(
+      'dashboard:satisfaction',
+      filters as Record<string, any>,
     );
+    return this.cacheService.wrap(
+      cacheKey,
+      async () => {
+        const {
+          department,
+          school_period,
+          issue_type,
+          tags,
+          start_date,
+          end_date,
+          priority,
+        } = filters;
 
-    const query = this.surveyRepository
-      .createQueryBuilder('survey')
-      .innerJoin('survey.ticket', 'ticket')
-      .leftJoin('ticket.issue_type', 'issue_type')
-      .leftJoin('ticket.jefe_depto', 'jefe_depto')
-      .leftJoin('jefe_depto.department', 'department')
-      .leftJoin('ticket.school_period', 'school_period')
-      .where('ticket.created_at BETWEEN :startDate AND :endDate', {
-        startDate,
-        endDate,
-      });
+        const { startDate, endDate } = this.calculateDateRange(
+          start_date,
+          end_date,
+        );
 
-    if (priority) {
-      query.andWhere('ticket.priority = :priority', { priority });
-    }
+        const query = this.surveyRepository
+          .createQueryBuilder('survey')
+          .innerJoin('survey.ticket', 'ticket')
+          .leftJoin('ticket.issue_type', 'issue_type')
+          .leftJoin('ticket.jefe_depto', 'jefe_depto')
+          .leftJoin('jefe_depto.department', 'department')
+          .leftJoin('ticket.school_period', 'school_period')
+          .where('ticket.created_at BETWEEN :startDate AND :endDate', {
+            startDate,
+            endDate,
+          });
 
-    if (department) {
-      query.andWhere('department.id = :department', { department });
-    }
-    if (school_period) {
-      query.andWhere('school_period.id = :school_period', { school_period });
-    }
-    if (issue_type) {
-      query.andWhere('issue_type.id = :issue_type', { issue_type });
-    }
-    if (tags && tags.length > 0) {
-      query.innerJoin('ticket.tags', 'tag_filter');
-      query.andWhere('tag_filter.name IN (:...tags)', { tags });
-    }
+        if (priority) {
+          query.andWhere('ticket.priority = :priority', { priority });
+        }
 
-    const surveys = await query.getMany();
-    const totalSurveys = surveys.length;
+        if (department) {
+          query.andWhere('department.id = :department', { department });
+        }
+        if (school_period) {
+          query.andWhere('school_period.id = :school_period', {
+            school_period,
+          });
+        }
+        if (issue_type) {
+          query.andWhere('issue_type.id = :issue_type', { issue_type });
+        }
+        if (tags && tags.length > 0) {
+          query.innerJoin('ticket.tags', 'tag_filter');
+          query.andWhere('tag_filter.name IN (:...tags)', { tags });
+        }
 
-    if (totalSurveys === 0) {
-      return {
-        averageScore: 0,
-        csatPercentage: 0,
-        totalSurveys: 0,
-        questionBreakdown: [],
-      };
-    }
+        const surveys = await query.getMany();
+        const totalSurveys = surveys.length;
 
-    let totalRatingSum = 0;
-    let totalRatingCount = 0;
-    let satisfiedSurveysCount = 0;
-    let validSurveysCount = 0;
+        if (totalSurveys === 0) {
+          return {
+            averageScore: 0,
+            csatPercentage: 0,
+            totalSurveys: 0,
+            questionBreakdown: [],
+          };
+        }
 
-    const questionStatsMap = new Map<
-      string,
-      { text: string; sum: number; count: number }
-    >();
+        let totalRatingSum = 0;
+        let totalRatingCount = 0;
+        let satisfiedSurveysCount = 0;
+        let validSurveysCount = 0;
 
-    surveys.forEach((survey) => {
-      if (Array.isArray(survey.answers) && survey.answers.length > 0) {
-        let surveyRatingSum = 0;
-        let surveyRatingCount = 0;
+        const questionStatsMap = new Map<
+          string,
+          { text: string; sum: number; count: number }
+        >();
 
-        survey.answers.forEach((ans) => {
-          if (ans.type === 'RATING' && typeof ans.value === 'number') {
-            const val = Number(ans.value);
+        surveys.forEach((survey) => {
+          if (Array.isArray(survey.answers) && survey.answers.length > 0) {
+            let surveyRatingSum = 0;
+            let surveyRatingCount = 0;
 
-            totalRatingSum += val;
-            totalRatingCount++;
+            survey.answers.forEach((ans) => {
+              if (ans.type === 'RATING' && typeof ans.value === 'number') {
+                const val = Number(ans.value);
 
-            surveyRatingSum += val;
-            surveyRatingCount++;
+                totalRatingSum += val;
+                totalRatingCount++;
 
-            if (!questionStatsMap.has(ans.questionId)) {
-              questionStatsMap.set(ans.questionId, {
-                text: ans.questionText,
-                sum: 0,
-                count: 0,
-              });
+                surveyRatingSum += val;
+                surveyRatingCount++;
+
+                if (!questionStatsMap.has(ans.questionId)) {
+                  questionStatsMap.set(ans.questionId, {
+                    text: ans.questionText,
+                    sum: 0,
+                    count: 0,
+                  });
+                }
+                const qStat = questionStatsMap.get(ans.questionId)!;
+                qStat.sum += val;
+                qStat.count++;
+              }
+            });
+
+            if (surveyRatingCount > 0) {
+              validSurveysCount++;
+              const ticketAverage = surveyRatingSum / surveyRatingCount;
+
+              if (ticketAverage >= 4.0) {
+                satisfiedSurveysCount++;
+              }
             }
-            const qStat = questionStatsMap.get(ans.questionId)!;
-            qStat.sum += val;
-            qStat.count++;
           }
         });
 
-        if (surveyRatingCount > 0) {
-          validSurveysCount++;
-          const ticketAverage = surveyRatingSum / surveyRatingCount;
-
-          if (ticketAverage >= 4.0) {
-            satisfiedSurveysCount++;
-          }
+        if (totalRatingCount === 0 || validSurveysCount === 0) {
+          return {
+            averageScore: 0,
+            csatPercentage: 0,
+            totalSurveys,
+            questionBreakdown: [],
+          };
         }
-      }
-    });
 
-    if (totalRatingCount === 0 || validSurveysCount === 0) {
-      return {
-        averageScore: 0,
-        csatPercentage: 0,
-        totalSurveys,
-        questionBreakdown: [],
-      };
-    }
+        const averageScore = Number(
+          (totalRatingSum / totalRatingCount).toFixed(2),
+        );
+        const csatPercentage = Number(
+          ((satisfiedSurveysCount / validSurveysCount) * 100).toFixed(2),
+        );
 
-    const averageScore = Number((totalRatingSum / totalRatingCount).toFixed(2));
-    const csatPercentage = Number(
-      ((satisfiedSurveysCount / validSurveysCount) * 100).toFixed(2),
+        const questionBreakdown = Array.from(questionStatsMap.entries()).map(
+          ([id, stat]) => ({
+            questionId: id,
+            questionText: stat.text,
+            average: Number((stat.sum / stat.count).toFixed(2)),
+            totalResponses: stat.count,
+          }),
+        );
+
+        return {
+          averageScore,
+          csatPercentage,
+          totalSurveys,
+          questionBreakdown,
+        };
+      },
+      300,
     );
-
-    const questionBreakdown = Array.from(questionStatsMap.entries()).map(
-      ([id, stat]) => ({
-        questionId: id,
-        questionText: stat.text,
-        average: Number((stat.sum / stat.count).toFixed(2)),
-        totalResponses: stat.count,
-      }),
-    );
-
-    return {
-      averageScore,
-      csatPercentage,
-      totalSurveys,
-      questionBreakdown,
-    };
   }
 
   private createBaseFilteredTicketQuery(
@@ -1073,50 +1206,70 @@ export class DashboardService {
   async getTicketsByDepartmentMetrics(
     filters: DashboardFiltersDto,
   ): Promise<{ departmentName: string; count: number }[]> {
-    const query = this.createBaseFilteredTicketQuery(filters);
-    const rawDepartments = await query
-      .select('department.name', 'departmentName')
-      .addSelect('COUNT(ticket.id)', 'count')
-      .groupBy('department.id')
-      .addGroupBy('department.name')
-      .getRawMany<RawDepartmentRow>();
+    const cacheKey = this.cacheService.generateKey(
+      'dashboard:by_department',
+      filters as Record<string, any>,
+    );
+    return this.cacheService.wrap(
+      cacheKey,
+      async () => {
+        const query = this.createBaseFilteredTicketQuery(filters);
+        const rawDepartments = await query
+          .select('department.name', 'departmentName')
+          .addSelect('COUNT(ticket.id)', 'count')
+          .groupBy('department.id')
+          .addGroupBy('department.name')
+          .getRawMany<RawDepartmentRow>();
 
-    const allActiveDepartments = await this.departmentRepository.find({
-      where: { status: true },
-    });
+        const allActiveDepartments = await this.departmentRepository.find({
+          where: { status: true },
+        });
 
-    return allActiveDepartments.map((dept) => {
-      const found = rawDepartments.find(
-        (raw) => raw.departmentName === dept.name,
-      );
-      return {
-        departmentName: dept.name,
-        count: found ? Number(found.count) : 0,
-      };
-    });
+        return allActiveDepartments.map((dept) => {
+          const found = rawDepartments.find(
+            (raw) => raw.departmentName === dept.name,
+          );
+          return {
+            departmentName: dept.name,
+            count: found ? Number(found.count) : 0,
+          };
+        });
+      },
+      300,
+    );
   }
 
   async getTicketsByIssueTypeMetrics(
     filters: DashboardFiltersDto,
   ): Promise<{ issueTypeName: string; count: number }[]> {
-    const query = this.createBaseFilteredTicketQuery(filters);
-    const rawIssueTypes = await query
-      .select('issue_type.name', 'issueTypeName')
-      .addSelect('COUNT(ticket.id)', 'count')
-      .groupBy('issue_type.id')
-      .addGroupBy('issue_type.name')
-      .getRawMany<RawIssueTypeRow>();
+    const cacheKey = this.cacheService.generateKey(
+      'dashboard:by_issue_type',
+      filters as Record<string, any>,
+    );
+    return this.cacheService.wrap(
+      cacheKey,
+      async () => {
+        const query = this.createBaseFilteredTicketQuery(filters);
+        const rawIssueTypes = await query
+          .select('issue_type.name', 'issueTypeName')
+          .addSelect('COUNT(ticket.id)', 'count')
+          .groupBy('issue_type.id')
+          .addGroupBy('issue_type.name')
+          .getRawMany<RawIssueTypeRow>();
 
-    const allIssueTypes = await this.issueTypeRepository.find();
+        const allIssueTypes = await this.issueTypeRepository.find();
 
-    return allIssueTypes.map((type) => {
-      const found = rawIssueTypes.find(
-        (raw) => raw.issueTypeName === type.name,
-      );
-      return {
-        issueTypeName: type.name,
-        count: found ? Number(found.count) : 0,
-      };
-    });
+        return allIssueTypes.map((type) => {
+          const found = rawIssueTypes.find(
+            (raw) => raw.issueTypeName === type.name,
+          );
+          return {
+            issueTypeName: type.name,
+            count: found ? Number(found.count) : 0,
+          };
+        });
+      },
+      300,
+    );
   }
 }

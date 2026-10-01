@@ -173,4 +173,30 @@ export class RedisService implements OnModuleInit, OnModuleDestroy {
       return false;
     }
   }
+
+  async keys(pattern: string): Promise<string[]> {
+    if (!this.client || !this.isConnected) return [];
+    try {
+      return await this.client.keys(pattern);
+    } catch (error) {
+      this.logger.warn(
+        `Error al buscar claves en Redis (${pattern}): ${error}`,
+      );
+      return [];
+    }
+  }
+
+  async delByPattern(pattern: string): Promise<number> {
+    if (!this.client || !this.isConnected) return 0;
+    try {
+      const matchedKeys = await this.client.keys(pattern);
+      if (matchedKeys.length === 0) return 0;
+      return await this.client.del(...matchedKeys);
+    } catch (error) {
+      this.logger.warn(
+        `Error al eliminar claves por patrón en Redis (${pattern}): ${error}`,
+      );
+      return 0;
+    }
+  }
 }
