@@ -7,7 +7,7 @@ import { ComputingCenterManagerModule } from 'src/computing-center-manager/compu
 import { CommonModule } from 'src/common/common.module';
 import { ResponseSignatureModule } from 'src/response-signature/response-signature.module';
 import { TicketsModule } from 'src/tickets/tickets.module';
-import { ResponsePdfsModule } from 'src/response-pdfs/response-pdfs.module';
+import { PdfsModule } from 'src/pdfs/pdfs.module';
 
 @Module({
   imports: [
@@ -16,7 +16,7 @@ import { ResponsePdfsModule } from 'src/response-pdfs/response-pdfs.module';
     CommonModule,
     ResponseSignatureModule,
     forwardRef(() => TicketsModule),
-    ResponsePdfsModule,
+    PdfsModule,
   ],
   controllers: [ResponsesController],
   providers: [ResponsesService],

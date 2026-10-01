@@ -12,7 +12,7 @@ import { TicketHistoryService } from 'src/ticket-history/ticket-history.service'
 import { TicketsService } from './tickets.service';
 import { FolioCountersService } from 'src/folio-counters/folio-counters.service';
 import { ResponsesService } from '../../responses/responses.service';
-import { ResponsePdfsService } from '../../response-pdfs/response-pdfs.service';
+import { PdfsService } from 'src/pdfs/services/pdfs.service';
 import { Ticket } from '../entities/ticket.entity';
 import { Document } from 'src/documents/entities/document.entity';
 import { FinishTicketDto } from '../dto';
@@ -110,7 +110,7 @@ describe('FinishTicketService', () => {
         { provide: TicketsService, useValue: mockTicketsService },
         { provide: FolioCountersService, useValue: mockFolioCountersService },
         { provide: ResponsesService, useValue: mockResponsesService },
-        { provide: ResponsePdfsService, useValue: mockResponsePdfsService },
+        { provide: PdfsService, useValue: mockResponsePdfsService },
         { provide: I18nService, useValue: mockI18nService },
         { provide: AttendsService, useValue: { endAttention: jest.fn() } },
         {

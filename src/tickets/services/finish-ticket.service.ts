@@ -19,7 +19,7 @@ import { TicketsService } from './tickets.service';
 import { FolioCountersService } from 'src/folio-counters/folio-counters.service';
 import { ResponsesService } from '../../responses/responses.service';
 import { FinishTicketDto } from '../dto';
-import { ResponsePdfsService } from '../../response-pdfs/response-pdfs.service';
+import { PdfsService } from 'src/pdfs/services/pdfs.service';
 import { Document } from 'src/documents/entities/document.entity';
 import { I18nService } from 'nestjs-i18n';
 import { IPdfResult } from 'src/common/interfaces/interface';
@@ -39,7 +39,7 @@ export class FinishTicketService {
     private readonly folioCounterService: FolioCountersService,
     @Inject(forwardRef(() => ResponsesService))
     private readonly responsesService: ResponsesService,
-    private readonly responsePdfsService: ResponsePdfsService,
+    private readonly responsePdfsService: PdfsService,
     private readonly i18n: I18nService,
     private readonly attendService: AttendsService,
     private readonly technicalReportsService: TechnicalReportsService,

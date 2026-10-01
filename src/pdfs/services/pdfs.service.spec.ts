@@ -1,14 +1,18 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { ResponsePdfsService } from './response-pdfs.service';
-import { PrinterService } from './services/printer.service';
+import { PdfsService } from './pdfs.service';
+import { PrinterService } from './printer.service';
 import { FilesService } from 'src/files/files.service';
-import { getRequest, getResponse } from 'src/response-pdfs/templates';
+import { getRequest } from '../templates/request.template';
+import { getResponse } from '../templates/response.template';
 import { SignatureRole } from 'src/response-signature/entities/response-signature.entity';
-import { Ticket } from '../tickets/entities/ticket.entity';
+import { Ticket } from 'src/tickets/entities/ticket.entity';
 
 // Mock de templates
-jest.mock('src/response-pdfs/templates', () => ({
+jest.mock('../templates/request.template', () => ({
   getRequest: jest.fn().mockReturnValue({ definition: 'fake-request' }),
+}));
+
+jest.mock('../templates/response.template', () => ({
   getResponse: jest.fn().mockReturnValue({ definition: 'fake-response' }),
 }));
 
@@ -17,8 +21,8 @@ jest.mock('src/users/util/dateTransformToString', () => ({
   formatDatePretty: jest.fn().mockReturnValue('19 de febrero de 2026'),
 }));
 
-describe('ResponsePdfsService', () => {
-  let service: ResponsePdfsService;
+describe('PdfsService', () => {
+  let service: PdfsService;
   let printerService: jest.Mocked<PrinterService>;
   let filesService: jest.Mocked<FilesService>;
 
@@ -75,6 +79,8 @@ describe('ResponsePdfsService', () => {
     },
     coordinator: {
       name: 'Coordinador Test',
+      paternalSurname: 'Uno',
+      maternalSurname: 'Dos',
     },
     response: {
       work_done: 'Se cambió la fuente de poder',
@@ -109,7 +115,7 @@ describe('ResponsePdfsService', () => {
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [
-        ResponsePdfsService,
+        PdfsService,
         {
           provide: PrinterService,
           useValue: {
@@ -126,7 +132,7 @@ describe('ResponsePdfsService', () => {
       ],
     }).compile();
 
-    service = module.get<ResponsePdfsService>(ResponsePdfsService);
+    service = module.get<PdfsService>(PdfsService);
     printerService = module.get(PrinterService);
     filesService = module.get(FilesService);
 
@@ -147,7 +153,6 @@ describe('ResponsePdfsService', () => {
 
   describe('pdfRequest', () => {
     it('debe crear un PDF de solicitud con datos en duro', () => {
-      // FIX: Aseguramos que retorne un objeto literal para que `toBe` no falle
       const fakePdfKitDoc = { type: 'document' } as unknown as MockPdfDoc;
       printerService.createPdf.mockReturnValue(fakePdfKitDoc);
 
@@ -262,3 +267,4 @@ describe('ResponsePdfsService', () => {
     });
   });
 });
+

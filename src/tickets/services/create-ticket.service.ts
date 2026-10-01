@@ -19,7 +19,7 @@ import { CreateTicketDto } from '../dto';
 import { TicketsService } from './tickets.service';
 import { User } from 'src/users/entities/user.entity';
 import { UsersService } from '../../users/services/users.service';
-import { ResponsePdfsService } from '../../response-pdfs/response-pdfs.service';
+import { PdfsService } from 'src/pdfs/services/pdfs.service';
 import { Document } from 'src/documents/entities/document.entity';
 import { FolioCountersService } from 'src/folio-counters/folio-counters.service';
 import { Staff } from 'src/users/entities/staff.entity';
@@ -39,7 +39,7 @@ export class CreateTicketService {
     private readonly issueTypeService: IssueTypeService,
     private readonly ticketService: TicketsService,
     private readonly usersService: UsersService,
-    private readonly responsePdfsService: ResponsePdfsService,
+    private readonly responsePdfsService: PdfsService,
     private readonly folioCountersService: FolioCountersService,
     private readonly routeTicketService: RouteTicketService,
     private readonly i18n: I18nService,

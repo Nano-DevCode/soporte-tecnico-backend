@@ -7,7 +7,7 @@ import { DepartmentsService } from '../../departments/services/departments.servi
 import { I18nService } from 'nestjs-i18n';
 import { Repository, EntityManager } from 'typeorm';
 import { NotFoundException, ForbiddenException, Logger } from '@nestjs/common';
-import { ResponsePdfsService } from '../../response-pdfs/response-pdfs.service';
+import { PdfsService } from 'src/pdfs/services/pdfs.service';
 import { User } from 'src/users/entities/user.entity';
 import { FilterTicketsDto } from '../dto/filter-tickets.dto';
 import { ValidRole } from 'src/auth/interfaces/valid-roles';
@@ -106,7 +106,7 @@ describe('TicketsService', () => {
         { provide: IssueTypeService, useValue: mockIssueTypeService },
         { provide: DepartmentsService, useValue: mockDepartmentsService },
         { provide: I18nService, useValue: mockI18nService },
-        { provide: ResponsePdfsService, useValue: mockResponsePdfsService },
+        { provide: PdfsService, useValue: mockResponsePdfsService },
       ],
     }).compile();
 

@@ -19,7 +19,7 @@ import {
 import { TicketHistoryService } from 'src/ticket-history/ticket-history.service';
 import { UpdateTicketDto } from '../dto';
 import { TicketsService } from './tickets.service';
-import { ResponsePdfsService } from 'src/response-pdfs/response-pdfs.service';
+import { PdfsService } from 'src/pdfs/services/pdfs.service';
 import { Document } from 'src/documents/entities/document.entity';
 import { I18nService } from 'nestjs-i18n';
 import { IPdfResult } from 'src/common/interfaces/interface';
@@ -33,7 +33,7 @@ export class EditTicketService {
     private readonly eventEmitter: EventEmitter2,
     private readonly ticketHistory: TicketHistoryService,
     private readonly ticketService: TicketsService,
-    private readonly responsePdfsService: ResponsePdfsService,
+    private readonly responsePdfsService: PdfsService,
     private readonly i18n: I18nService,
   ) {}
 

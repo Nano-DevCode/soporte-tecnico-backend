@@ -21,7 +21,7 @@ import { User } from 'src/users/entities/user.entity';
 import { UsersService } from '../../users/services/users.service';
 import { SignatureRole } from 'src/response-signature/entities/response-signature.entity';
 import { ResponsesService } from '../../responses/responses.service';
-import { ResponsePdfsService } from '../../response-pdfs/response-pdfs.service';
+import { PdfsService } from 'src/pdfs/services/pdfs.service';
 import { Document } from 'src/documents/entities/document.entity';
 import { CloseTicketDto } from '../dto/close-ticket.dto';
 import { SurveyService } from '../../survey/survey.service';
@@ -41,7 +41,7 @@ export class CloseTicketService {
     private readonly usersService: UsersService,
     @Inject(forwardRef(() => ResponsesService))
     private readonly responsesService: ResponsesService,
-    private readonly responsePdfsService: ResponsePdfsService,
+    private readonly responsePdfsService: PdfsService,
     private readonly surveyService: SurveyService,
     private readonly i18n: I18nService,
   ) {}

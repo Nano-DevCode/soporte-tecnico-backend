@@ -13,7 +13,7 @@ import { TicketsService } from './tickets.service';
 import { ResponseSignatureService } from '../../response-signature/response-signature.service';
 import { UsersService } from '../../users/services/users.service';
 import { ResponsesService } from '../../responses/responses.service';
-import { ResponsePdfsService } from '../../response-pdfs/response-pdfs.service';
+import { PdfsService } from 'src/pdfs/services/pdfs.service';
 import { User } from 'src/users/entities/user.entity';
 import { Ticket } from '../entities/ticket.entity';
 import { ValidRole } from 'src/auth/interfaces/valid-roles';
@@ -109,7 +109,7 @@ describe('ArchiveTicketService', () => {
         },
         { provide: UsersService, useValue: mockUsersService },
         { provide: ResponsesService, useValue: mockResponsesService },
-        { provide: ResponsePdfsService, useValue: mockResponsePdfsService },
+        { provide: PdfsService, useValue: mockResponsePdfsService },
         { provide: I18nService, useValue: mockI18nService },
       ],
     }).compile();

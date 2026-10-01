@@ -13,7 +13,7 @@ import { TicketHistoryService } from 'src/ticket-history/ticket-history.service'
 import { IssueTypeService } from '../../issue_type/issue_type.service';
 import { TicketsService } from './tickets.service';
 import { UsersService } from '../../users/services/users.service';
-import { ResponsePdfsService } from '../../response-pdfs/response-pdfs.service';
+import { PdfsService } from 'src/pdfs/services/pdfs.service';
 import { FolioCountersService } from 'src/folio-counters/folio-counters.service';
 import { RouteTicketService } from './route-ticket.service';
 import { ValidRole } from 'src/auth/interfaces/valid-roles';
@@ -116,7 +116,7 @@ describe('CreateTicketService', () => {
         { provide: IssueTypeService, useValue: mockIssueTypeService },
         { provide: TicketsService, useValue: mockTicketsService },
         { provide: UsersService, useValue: mockUsersService },
-        { provide: ResponsePdfsService, useValue: mockResponsePdfsService },
+        { provide: PdfsService, useValue: mockResponsePdfsService },
         { provide: FolioCountersService, useValue: mockFolioCountersService },
         { provide: RouteTicketService, useValue: mockRouteTicketService },
         { provide: I18nService, useValue: mockI18nService },

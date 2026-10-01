@@ -30,7 +30,7 @@ import { ResponseSignatureModule } from 'src/response-signature/response-signatu
 import { CloseTicketService } from './services/close-ticket.service';
 import { ArchiveTicketService } from './services/archive-ticket.service';
 import { TagsModule } from 'src/tags/tags.module';
-import { ResponsePdfsModule } from 'src/response-pdfs/response-pdfs.module';
+import { PdfsModule } from 'src/pdfs/pdfs.module';
 import { ConsumableMovementsModule } from 'src/consumable-movements/consumable-movements.module';
 import { SurveyModule } from 'src/survey/survey.module';
 import { FaultValiditiesModule } from 'src/fault-validities/fault-validities.module';
@@ -55,7 +55,7 @@ import { TicketsSeedService } from './seed/services/tickets-seed.service';
     forwardRef(() => ResponsesModule),
     ResponseSignatureModule,
     TagsModule,
-    ResponsePdfsModule,
+    PdfsModule,
     forwardRef(() => ConsumableMovementsModule),
     SurveyModule,
     FaultValiditiesModule,

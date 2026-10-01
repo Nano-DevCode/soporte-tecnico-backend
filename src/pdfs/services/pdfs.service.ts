@@ -1,13 +1,15 @@
 import { Injectable } from '@nestjs/common';
 import { FilesService } from 'src/files/files.service';
-import { PrinterService } from './services/printer.service';
-import { getRequest, getResponse } from 'src/response-pdfs/templates';
-import { Ticket } from '../tickets/entities/ticket.entity';
+import { PrinterService } from './printer.service';
+import { getRequest } from '../templates/request.template';
+import { getResponse } from '../templates/response.template';
+import { Ticket } from 'src/tickets/entities/ticket.entity';
 import { SignatureRole } from 'src/response-signature/entities/response-signature.entity';
 import { formatDatePretty } from 'src/users/util/dateTransformToString';
 import { TicketStatus } from 'src/common/machine/TicketStateMachine.machine';
+import { BufferOptions, TDocumentDefinitions } from 'pdfmake/interfaces';
 
-interface PdfStream {
+export interface PdfStream {
   on(
     event: 'data',
     listener: (chunk: Buffer | Uint8Array | string) => void,
@@ -18,13 +20,13 @@ interface PdfStream {
 }
 
 @Injectable()
-export class ResponsePdfsService {
+export class PdfsService {
   constructor(
-    private readonly printerServices: PrinterService,
+    private readonly printerService: PrinterService,
     private readonly filesService: FilesService,
   ) {}
 
-  private async getPdfBuffer(pdfDoc: PdfStream): Promise<Buffer> {
+  async getPdfBuffer(pdfDoc: PdfStream): Promise<Buffer> {
     return new Promise((resolve, reject) => {
       const chunks: Buffer[] = [];
       pdfDoc.on('data', (chunk) => {
@@ -39,7 +41,22 @@ export class ResponsePdfsService {
     });
   }
 
-  pdfRequest() {
+  createPdf(
+    docDefinition: TDocumentDefinitions,
+    options: BufferOptions = {},
+  ): PDFKit.PDFDocument {
+    return this.printerService.createPdf(docDefinition, options);
+  }
+
+  async generateBuffer(
+    docDefinition: TDocumentDefinitions,
+    options: BufferOptions = {},
+  ): Promise<Buffer> {
+    const pdfDoc = this.createPdf(docDefinition, options) as unknown as PdfStream;
+    return this.getPdfBuffer(pdfDoc);
+  }
+
+  pdfRequest(): PDFKit.PDFDocument {
     const docDefinition = getRequest({
       folio: '1',
       ot_folio: 'OT-0001-SIS',
@@ -58,50 +75,42 @@ export class ResponsePdfsService {
       created_at: '2026-02-19',
     });
 
-    return this.printerServices.createPdf(docDefinition);
+    return this.printerService.createPdf(docDefinition);
   }
 
-  pdfResponse() {
+  pdfResponse(): PDFKit.PDFDocument {
     const docDefinition = getResponse({
       folio_interno: '1',
       folio_externo: '1',
       fecha: '2026-02-19',
       diagnosis: 'Se realizó mantenimiento correctivo al equipo de cómputo',
       work_done: 'Se realizó mantenimiento correctivo al equipo de cómputo',
-
-      // Datos del verificador con su firma electrónica
       nombreVerifico: 'Profa quecha',
       firmaVerifico:
-        'MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQDH7/j3Xb9... (aquí va el hash largo real de tu base de datos) ...Kj8zQwIDAQAB',
-
+        'MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQDH7/j3Xb9... Kj8zQwIDAQAB',
       tipoMantenimiento: { nombre: 'Interno' },
       tipoServicio: { nombre: 'Correctivo' },
-
-      // Datos de quien aprueba con su firma electrónica
       aprobo: {
         nombreCompleto: 'María García Martínez',
         firma:
-          'MIICWwIBAAKBgQDQx1MIICWwIBAAKBgQDQx1MIICWwIBAAKBgQDQx1MIICWwIBAAKBgQDQx1MIICWwIBAAKBgQDQx1MIICWwIBAAKBgQDQx1MIICWwIBAAKBgQDQx1MIICWwIBAAKBgQDQx1Pz0oOqwIDAQAB',
+          'MIICWwIBAAKBgQDQx1MIICWwIBAAKBgQDQx1MIICWwIBAAKBgQDQx1MIICWwIBAAKBgQDQx1MIICWwIBAAKBgQDQx1MIICWwIBAAKBgQDQx1MIICWwIBAAKBgQDQx1Pz0oOqwIDAQAB',
       },
-
       solicitud: {
         coordinationAtencion: 'Juan',
         user: {
           departamento: { nombre: 'Departamento de Sistemas' },
         },
       },
-
-      // NUEVO: Datos de Vinculación agregados para cumplir con la interfaz
       viculacion: {
         name: 'Roberto Sánchez',
         firma:
-          'MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEA',
+          'MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEA',
         fecha: '2026-02-20',
       },
       folio_ot: '',
     });
 
-    return this.printerServices.createPdf(docDefinition);
+    return this.printerService.createPdf(docDefinition);
   }
 
   async pdfRequestBucket(ticket: Ticket) {
@@ -130,22 +139,16 @@ export class ResponsePdfsService {
       }),
     });
 
-    // Generamos el documento y le decimos a TypeScript que cumple con la interfaz
-    const pdfDoc = this.printerServices.createPdf(docDefinition) as PdfStream;
-
-    // Convertimos el stream del PDF a Buffer
+    const pdfDoc = this.printerService.createPdf(docDefinition) as unknown as PdfStream;
     const pdfBuffer = await this.getPdfBuffer(pdfDoc);
 
-    // Subimos el Buffer generado directamente al bucket 'pdfs-request'
-    const uploadResult = await this.filesService.uploadBuffer(
+    return this.filesService.uploadBuffer(
       pdfBuffer,
       `solicitud-${ticket.folio}.pdf`,
       'application/pdf',
       'pdfs-request',
       ticket.folio,
     );
-
-    return uploadResult;
   }
 
   async pdfResponseBucket(ticket: Ticket) {
@@ -176,71 +179,67 @@ export class ResponsePdfsService {
       folio_interno: ticket.internal_folio,
       folio_externo: ticket.folio,
       folio_ot: ticket.ot_folio,
-      // fecha: ticket.created_at.toLocaleString('es-MX', {
-      //   year: 'numeric',
-      //   month: 'long',
-      //   day: 'numeric',
-      //   hour: '2-digit',
-      //   minute: '2-digit',
-      // }),
       fecha: formatDatePretty(fechaFinalizacion),
-      work_done: ticket.response.work_done,
-      diagnosis: ticket.response.diagnosis,
-      nombreVerifico: `${ticket.jefe_depto.name} ${ticket.jefe_depto.paternalSurname} ${ticket.jefe_depto.maternalSurname}`,
+      work_done: ticket.response?.work_done || '',
+      diagnosis: ticket.response?.diagnosis || '',
+      nombreVerifico: `${ticket.jefe_depto?.name || ''} ${ticket.jefe_depto?.paternalSurname || ''} ${ticket.jefe_depto?.maternalSurname || ''}`.trim(),
       firmaVerifico:
-        ticket.response.signatures.find(
+        ticket.response?.signatures?.find(
           (signature) => signature.role === SignatureRole.JEFE_DEPTO,
         )?.signature_hash ?? '',
       fechaVerifico: formatDatePretty(
-        ticket.response.signatures.find(
+        ticket.response?.signatures?.find(
           (signature) => signature.role === SignatureRole.JEFE_DEPTO,
         )?.signed_at,
       ),
-      tipoMantenimiento: { nombre: ticket.response.maintenance_type.name },
-      tipoServicio: { nombre: ticket.response.service_type.name },
+      tipoMantenimiento: { nombre: ticket.response?.maintenance_type?.name || '' },
+      tipoServicio: { nombre: ticket.response?.service_type?.name || '' },
       aprobo: {
-        nombreCompleto: `${ticket.response.computing_center_manager.names} ${ticket.response.computing_center_manager.first_last_name} ${ticket.response.computing_center_manager.second_last_name}`,
+        nombreCompleto: ticket.response?.computing_center_manager
+          ? `${ticket.response.computing_center_manager.names} ${ticket.response.computing_center_manager.first_last_name} ${ticket.response.computing_center_manager.second_last_name}`
+          : '',
         fecha: formatDatePretty(fechaFinalizacion),
         firma:
-          ticket.response.signatures.find(
+          ticket.response?.signatures?.find(
             (signature) => signature.role === SignatureRole.JEFE_CC,
           )?.signature_hash ?? '',
       },
       solicitud: {
-        coordinationAtencion: `${ticket.coordinator.name} ${ticket.coordinator.paternalSurname} ${ticket.coordinator.maternalSurname}`,
+        coordinationAtencion: ticket.coordinator
+          ? `${ticket.coordinator.name} ${ticket.coordinator.paternalSurname} ${ticket.coordinator.maternalSurname}`
+          : '',
         user: {
-          departamento: { nombre: ticket.jefe_depto.department.name },
+          departamento: { nombre: ticket.jefe_depto?.department?.name || '' },
         },
       },
       viculacion: {
         fecha: formatDatePretty(
-          ticket.response.signatures.find(
+          ticket.response?.signatures?.find(
             (signature) => signature.role === SignatureRole.PLANEACION,
           )?.signed_at,
         ),
         name: '',
         firma:
-          ticket.response.signatures.find(
+          ticket.response?.signatures?.find(
             (signature) => signature.role === SignatureRole.PLANEACION,
           )?.signature_hash ?? '',
       },
     });
 
-    const pdfDoc = this.printerServices.createPdf(docDefinition) as PdfStream;
-
-    // Convertimos el stream a Buffer para poder subirlo
+    const pdfDoc = this.printerService.createPdf(docDefinition) as unknown as PdfStream;
     const pdfBuffer = await this.getPdfBuffer(pdfDoc);
     const folio = ticket.folio;
 
-    // Subimos el Buffer generado directamente al bucket 'pdfs-response'
-    const uploadResult = await this.filesService.uploadBuffer(
+    return this.filesService.uploadBuffer(
       pdfBuffer,
       `respuesta-${folio}.pdf`,
       'application/pdf',
       'pdfs-response',
       folio.toString(),
     );
-
-    return uploadResult;
   }
 }
+
+// Alias para garantizar compatibilidad con consumidores existentes
+export { PdfsService as ResponsePdfsService };
+

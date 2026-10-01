@@ -41,7 +41,7 @@ import { RejectionReportsModule } from './rejection-reports/rejection-reports.mo
 import { OperatingsystemsModule } from './operatingsystems/operatingsystems.module';
 import { EquipmenttypesModule } from './equipmenttypes/equipmenttypes.module';
 import { EquipmentSeedModule } from './equipment-seed/equipment-seed.module';
-import { ResponsePdfsModule } from './response-pdfs/response-pdfs.module';
+import { PdfsModule } from './pdfs/pdfs.module';
 import { ThrottlerGuard, ThrottlerModule } from '@nestjs/throttler';
 import { APP_GUARD, APP_INTERCEPTOR } from '@nestjs/core';
 import { RequestIdMiddleware } from './common/middlewares/request-id.middleware';
@@ -221,7 +221,7 @@ import { AuditModule } from './audit/audit.module';
     EquipmenttypesModule,
     ComputerequipmenttypesModule,
     EquipmentSeedModule,
-    ResponsePdfsModule,
+    PdfsModule,
     CoordinationsModule,
     ComputerprocessorsModule,
 

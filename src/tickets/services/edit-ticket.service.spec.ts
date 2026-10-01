@@ -10,7 +10,7 @@ import { I18nService } from 'nestjs-i18n';
 import { EditTicketService } from './edit-ticket.service';
 import { TicketHistoryService } from 'src/ticket-history/ticket-history.service';
 import { TicketsService } from './tickets.service';
-import { ResponsePdfsService } from 'src/response-pdfs/response-pdfs.service';
+import { PdfsService } from 'src/pdfs/services/pdfs.service';
 import { Ticket } from '../entities/ticket.entity';
 import { Document } from 'src/documents/entities/document.entity';
 import { UpdateTicketDto } from '../dto';
@@ -87,7 +87,7 @@ describe('EditTicketService', () => {
         { provide: EventEmitter2, useValue: mockEventEmitter },
         { provide: TicketHistoryService, useValue: mockTicketHistoryService },
         { provide: TicketsService, useValue: mockTicketsService },
-        { provide: ResponsePdfsService, useValue: mockResponsePdfsService },
+        { provide: PdfsService, useValue: mockResponsePdfsService },
         { provide: I18nService, useValue: mockI18nService },
       ],
     }).compile();

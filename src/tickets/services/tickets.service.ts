@@ -27,7 +27,7 @@ import { MatrixRow } from 'src/excel/interfaces/report-config.interface';
 import { IssueTypeService } from '../../issue_type/issue_type.service';
 import { DepartmentsService } from '../../departments/services/departments.service';
 import { I18nService } from 'nestjs-i18n';
-import { ResponsePdfsService } from 'src/response-pdfs/response-pdfs.service';
+import { PdfsService } from 'src/pdfs/services/pdfs.service';
 import { RegeneratePdfDto, DocumentType } from '../dto/regenerate-pdf.dto';
 
 export type FormattedReportRow = {
@@ -44,7 +44,7 @@ export class TicketsService {
     private readonly issueTypeService: IssueTypeService,
     private readonly departmentsService: DepartmentsService,
     private readonly i18n: I18nService,
-    private readonly responsePdfsService: ResponsePdfsService,
+    private readonly responsePdfsService: PdfsService,
   ) {}
 
   private readonly logger = new Logger('TicketsService');

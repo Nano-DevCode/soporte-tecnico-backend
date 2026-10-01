@@ -129,7 +129,7 @@ El sistema se compone de más de 90 módulos simétricos organizados en dominios
 ### 🎫 4.1. Mesa de Ayuda y Ciclo de Vida del Ticket (`src/tickets`)
 - **Flujo Completo de Estados:** `PENDIENTE` $\rightarrow$ `ASIGNADO` $\rightarrow$ `EN PROCESO` $\rightarrow$ `PAUSADO` $\rightarrow$ `FINALIZADO` $\rightarrow$ `CERRADO` (o `RECHAZADO`).
 - **Separación SRP por Servicio:** Cada transición de estado cuenta con su servicio aislado (`create-ticket`, `assign-ticket`, `start-ticket`, `close-ticket`, `finish-ticket`, `intervene-ticket`, `reject-ticket`, `archive-ticket`).
-- **Firmas y Conformidad:** Módulo de firmas digitales en Canvas con almacenamiento en S3 y generación de actas de entrega en PDF (`src/response-pdfs`).
+- **Firmas y Conformidad:** Módulo de firmas digitales en Canvas con almacenamiento en S3 y generación de actas de entrega en PDF (`src/pdfs`).
 - **Reportes:** Exportación analítica en Excel (`src/excel`) y reportes de tiempo de atención (`src/reports`).
 
 ### ⏱️ 4.2. Acuerdos de Nivel de Servicio (`src/sla`)

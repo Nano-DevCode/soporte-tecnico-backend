@@ -9,15 +9,15 @@ import {
   ApiUnauthorizedResponse,
   ApiForbiddenResponse,
 } from '@nestjs/swagger';
-import { ResponsePdfsService } from './response-pdfs.service';
+import { PdfsService } from '../services/pdfs.service';
 import { Auth } from 'src/auth/decorators/auth.decorator';
 import { ValidRole } from 'src/auth/interfaces/valid-roles';
 
-@ApiTags('Response PDFs')
+@ApiTags('PDFs')
 @ApiCookieAuth()
-@Controller('response-pdfs')
-export class ResponsePdfsController {
-  constructor(private readonly responsePdfsService: ResponsePdfsService) {}
+@Controller(['pdfs', 'response-pdfs'])
+export class PdfsController {
+  constructor(private readonly pdfsService: PdfsService) {}
 
   @Get('request')
   @Auth(
@@ -40,7 +40,7 @@ export class ResponsePdfsController {
     description: 'Acceso denegado. Permisos insuficientes.',
   })
   pdfRequest(@Res() response: Response): void {
-    const pdfDoc = this.responsePdfsService.pdfRequest();
+    const pdfDoc = this.pdfsService.pdfRequest();
     response.setHeader('Content-Type', 'application/pdf');
     response.setHeader(
       'Content-Disposition',
@@ -72,7 +72,7 @@ export class ResponsePdfsController {
     description: 'Acceso denegado. Permisos insuficientes.',
   })
   pdfResponse(@Res() response: Response): void {
-    const pdfDoc = this.responsePdfsService.pdfResponse();
+    const pdfDoc = this.pdfsService.pdfResponse();
     response.setHeader('Content-Type', 'application/pdf');
     response.setHeader(
       'Content-Disposition',
@@ -82,3 +82,7 @@ export class ResponsePdfsController {
     pdfDoc.end();
   }
 }
+
+// Alias para mantener compatibilidad con consumidores existentes
+export { PdfsController as ResponsePdfsController };
+

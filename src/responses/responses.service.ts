@@ -13,7 +13,7 @@ import { ResponseSignatureService } from 'src/response-signature/response-signat
 import { SignatureRole } from 'src/response-signature/entities/response-signature.entity';
 import { UpdateResponseDto } from './dto/update-response.dto';
 import { TicketsService } from 'src/tickets/services';
-import { ResponsePdfsService } from 'src/response-pdfs/response-pdfs.service';
+import { PdfsService } from 'src/pdfs/services/pdfs.service';
 import { Document } from 'src/documents/entities/document.entity';
 
 @Injectable()
@@ -26,7 +26,7 @@ export class ResponsesService {
     private readonly dataSource: DataSource,
     @Inject(forwardRef(() => TicketsService))
     private readonly ticketsService: TicketsService,
-    private readonly responsePdfsService: ResponsePdfsService,
+    private readonly responsePdfsService: PdfsService,
   ) {}
 
   async create(
