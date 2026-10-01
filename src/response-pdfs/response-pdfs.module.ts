@@ -1,13 +1,13 @@
 import { Module } from '@nestjs/common';
 import { ResponsePdfsService } from './response-pdfs.service';
 import { ResponsePdfsController } from './response-pdfs.controller';
-import { PrinterModule } from 'src/printer/printer.module';
+import { PrinterService } from './services/printer.service';
 import { FilesModule } from 'src/files/files.module';
 
 @Module({
   controllers: [ResponsePdfsController],
-  providers: [ResponsePdfsService],
-  imports: [PrinterModule, FilesModule],
-  exports: [ResponsePdfsService],
+  providers: [ResponsePdfsService, PrinterService],
+  imports: [FilesModule],
+  exports: [ResponsePdfsService, PrinterService],
 })
 export class ResponsePdfsModule {}

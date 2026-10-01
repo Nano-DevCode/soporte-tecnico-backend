@@ -5,7 +5,6 @@ import PdfPrinter from 'pdfmake';
 import { TDocumentDefinitions, BufferOptions } from 'pdfmake/interfaces';
 import { PrinterService } from './printer.service';
 
-// Mockeamos toda la librería pdfmake para que no busque fuentes reales en el disco
 jest.mock('pdfmake');
 
 describe('PrinterService', () => {
@@ -13,15 +12,12 @@ describe('PrinterService', () => {
   let mockCreatePdfKitDocument: jest.Mock;
 
   beforeEach(() => {
-    // Simulamos la función interna de PdfPrinter que genera el documento
     mockCreatePdfKitDocument = jest.fn().mockReturnValue('fake-pdf-document');
 
-    // Simulamos el constructor de PdfPrinter
     (PdfPrinter as unknown as jest.Mock).mockImplementation(() => ({
       createPdfKitDocument: mockCreatePdfKitDocument,
     }));
 
-    // Mock del ConfigService
     mockConfigService = {
       get: jest.fn(),
     };
@@ -29,7 +25,6 @@ describe('PrinterService', () => {
     jest.clearAllMocks();
   });
 
-  // Función auxiliar para compilar el módulo simulando diferentes entornos (producción/desarrollo)
   const compileServiceWithEnvironment = async (
     environment: string,
   ): Promise<PrinterService> => {
@@ -51,9 +46,6 @@ describe('PrinterService', () => {
     return module.get<PrinterService>(PrinterService);
   };
 
-  /* ========================================================================
-     INICIALIZACIÓN Y CARGA DE FUENTES
-  ======================================================================== */
   describe('Inicialización de rutas de fuentes', () => {
     it('debe configurar las rutas hacia "src/assets/fonts" si el entorno NO es producción', async () => {
       await compileServiceWithEnvironment('development');
@@ -77,7 +69,6 @@ describe('PrinterService', () => {
         },
       };
 
-      // Validamos que se haya instanciado PdfPrinter con las rutas de desarrollo
       expect(PdfPrinter).toHaveBeenCalledWith(expectedFonts);
     });
 
@@ -103,14 +94,10 @@ describe('PrinterService', () => {
         },
       };
 
-      // Validamos que se haya instanciado PdfPrinter con las rutas de producción (dist)
       expect(PdfPrinter).toHaveBeenCalledWith(expectedFonts);
     });
   });
 
-  /* ========================================================================
-     CREACIÓN DE DOCUMENTOS (createPdf)
-  ======================================================================== */
   describe('createPdf', () => {
     let service: PrinterService;
 
@@ -135,10 +122,8 @@ describe('PrinterService', () => {
     });
 
     it('debe enviar un objeto vacío {} como opciones si no se proveen', () => {
-      // Llamamos al método sin el segundo parámetro
       service.createPdf(docDefinition);
 
-      // Verificamos que TypeScript/ES6 asigne el valor por defecto "{}"
       expect(mockCreatePdfKitDocument).toHaveBeenCalledWith(docDefinition, {});
     });
   });

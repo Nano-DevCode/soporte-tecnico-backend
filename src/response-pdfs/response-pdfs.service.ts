@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { FilesService } from 'src/files/files.service';
-import { PrinterService } from 'src/printer/printer.service';
+import { PrinterService } from './services/printer.service';
 import { getRequest, getResponse } from 'src/response-pdfs/templates';
 import { Ticket } from '../tickets/entities/ticket.entity';
 import { SignatureRole } from 'src/response-signature/entities/response-signature.entity';

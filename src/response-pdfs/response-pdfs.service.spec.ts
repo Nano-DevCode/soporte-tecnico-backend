@@ -1,6 +1,6 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { ResponsePdfsService } from './response-pdfs.service';
-import { PrinterService } from 'src/printer/printer.service';
+import { PrinterService } from './services/printer.service';
 import { FilesService } from 'src/files/files.service';
 import { getRequest, getResponse } from 'src/response-pdfs/templates';
 import { SignatureRole } from 'src/response-signature/entities/response-signature.entity';

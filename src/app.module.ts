@@ -42,7 +42,6 @@ import { OperatingsystemsModule } from './operatingsystems/operatingsystems.modu
 import { EquipmenttypesModule } from './equipmenttypes/equipmenttypes.module';
 import { EquipmentSeedModule } from './equipment-seed/equipment-seed.module';
 import { ResponsePdfsModule } from './response-pdfs/response-pdfs.module';
-import { PrinterModule } from './printer/printer.module';
 import { ThrottlerGuard, ThrottlerModule } from '@nestjs/throttler';
 import { APP_GUARD, APP_INTERCEPTOR } from '@nestjs/core';
 import { RequestIdMiddleware } from './common/middlewares/request-id.middleware';
@@ -223,7 +222,6 @@ import { AuditModule } from './audit/audit.module';
     ComputerequipmenttypesModule,
     EquipmentSeedModule,
     ResponsePdfsModule,
-    PrinterModule,
     CoordinationsModule,
     ComputerprocessorsModule,
 

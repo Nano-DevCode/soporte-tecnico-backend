@@ -54,7 +54,7 @@ services:
           memory: 1G
 
   minio:
-    image: quay.io/minio/minio:RELEASE.2025-04-22T22-12-26Z
+    image: elestio/minio:latest
     container_name: minio_server
     restart: always
     ports:
@@ -71,7 +71,7 @@ services:
     networks:
       - global_net
     healthcheck:
-      test: ["CMD", "mc", "ready", "local"]
+      test: ["CMD", "/usr/bin/mc", "ready", "local"]
       interval: 30s
       timeout: 10s
       retries: 3
@@ -88,7 +88,7 @@ services:
           memory: 2G
 
   minio_init:
-    image: minio/mc:RELEASE.2025-04-16T18-13-26Z
+    image: elestio/minio:latest
     restart: "no"
     depends_on:
       minio:
