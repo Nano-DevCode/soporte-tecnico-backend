@@ -35,6 +35,9 @@ import { ConsumableMovementsModule } from 'src/consumable-movements/consumable-m
 import { SurveyModule } from 'src/survey/survey.module';
 import { FaultValiditiesModule } from 'src/fault-validities/fault-validities.module';
 
+import { TicketsSeedController } from './seed/controllers/tickets-seed.controller';
+import { TicketsSeedService } from './seed/services/tickets-seed.service';
+
 @Module({
   imports: [
     TypeOrmModule.forFeature([Ticket]),
@@ -57,7 +60,7 @@ import { FaultValiditiesModule } from 'src/fault-validities/fault-validities.mod
     SurveyModule,
     FaultValiditiesModule,
   ],
-  controllers: [TicketsController],
+  controllers: [TicketsController, TicketsSeedController],
   providers: [
     TicketsService,
     CreateTicketService,
@@ -71,7 +74,8 @@ import { FaultValiditiesModule } from 'src/fault-validities/fault-validities.mod
     FinishTicketService,
     CloseTicketService,
     ArchiveTicketService,
+    TicketsSeedService,
   ],
-  exports: [TicketsService, TypeOrmModule],
+  exports: [TicketsService, TicketsSeedService, TypeOrmModule],
 })
 export class TicketsModule {}

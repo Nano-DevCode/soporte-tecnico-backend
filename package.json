@@ -27,7 +27,8 @@
     "migration:run": "pnpm typeorm migration:run -d src/config/typeorm.config.ts",
     "migration:revert": "pnpm typeorm migration:revert -d src/config/typeorm.config.ts",
     "migration:run:prod": "node ./node_modules/typeorm/cli.js migration:run -d dist/config/typeorm.config.js",
-    "migration:status": "node ./node_modules/typeorm/cli.js migration:show -d dist/config/typeorm.config.js"
+    "migration:status": "node ./node_modules/typeorm/cli.js migration:show -d dist/config/typeorm.config.js",
+    "seed:all": "ts-node -r tsconfig-paths/register src/database/seeds/run-all-seeds.ts"
   },
   "dependencies": {
     "@aws-sdk/client-s3": "^3.1072.0",
