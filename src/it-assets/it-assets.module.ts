@@ -10,10 +10,12 @@ import { ItAssetsStatusModule } from './status/it-assets-status.module';
 import { ItAssetsTypesModule } from './types/it-assets-types.module';
 import { ItAssetsInvoicesModule } from './invoices/it-assets-invoices.module';
 import { ItAssetsMovementsModule } from './movements/it-assets-movements.module';
+import { ItAssetsSeedService } from './seed/services/it-assets-seed.service';
+import { ItAssetsSeedController } from './seed/controllers/it-assets-seed.controller';
 
 @Module({
-  controllers: [ItAssetsController],
-  providers: [ItAssetsService],
+  controllers: [ItAssetsController, ItAssetsSeedController],
+  providers: [ItAssetsService, ItAssetsSeedService],
   imports: [
     TypeOrmModule.forFeature([ItAsset]),
     FilesModule,
@@ -26,6 +28,7 @@ import { ItAssetsMovementsModule } from './movements/it-assets-movements.module'
   ],
   exports: [
     ItAssetsService,
+    ItAssetsSeedService,
     ItAssetsBrandsModule,
     ItAssetsModelsModule,
     ItAssetsStatusModule,

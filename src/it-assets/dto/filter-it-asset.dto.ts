@@ -64,26 +64,26 @@ export class FilterItAssetBrandDto {
   @IsUUID('4', { message: i18nValidationMessage('validation.isUuid') })
   @IsNotEmpty({ message: i18nValidationMessage('validation.isNotEmpty') })
   @MaxLength(500, { message: i18nValidationMessage('validation.maxLength') })
-  invoiceId!: string;
+  invoiceId?: string;
 
   @ApiPropertyOptional({ description: 'Filtrar por UUID del Tipo de Activo' })
   @IsOptional()
   @IsUUID('4', { message: i18nValidationMessage('validation.isUuid') })
   @IsNotEmpty({ message: i18nValidationMessage('validation.isNotEmpty') })
   @MaxLength(500, { message: i18nValidationMessage('validation.maxLength') })
-  typeId!: string;
+  typeId?: string;
 
   @ApiPropertyOptional({ description: 'Filtrar por UUID del Modelo' })
   @IsOptional()
   @IsUUID('4', { message: i18nValidationMessage('validation.isUuid') })
   @IsNotEmpty({ message: i18nValidationMessage('validation.isNotEmpty') })
   @MaxLength(500, { message: i18nValidationMessage('validation.maxLength') })
-  modelId!: string;
+  modelId?: string;
 
   @ApiPropertyOptional({ description: 'Filtrar por UUID de la Marca' })
   @IsOptional()
   @IsUUID('4', { message: i18nValidationMessage('validation.isUuid') })
   @IsNotEmpty({ message: i18nValidationMessage('validation.isNotEmpty') })
   @MaxLength(500, { message: i18nValidationMessage('validation.maxLength') })
-  brandId!: string;
+  brandId?: string;
 }
