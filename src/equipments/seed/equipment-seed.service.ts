@@ -64,7 +64,6 @@ export class EquipmentSeedService {
     private readonly computerProcessorsService: ComputerprocessorsService,
     private readonly typenetworksService: TypenetworksService,
     private readonly departmentsService: DepartmentsService,
-    @Inject(forwardRef(() => EquipmentCrudService))
     private readonly equipmentCrudService: EquipmentCrudService,
     private readonly dataSource: DataSource,
   ) {}

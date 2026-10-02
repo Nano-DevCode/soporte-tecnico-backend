@@ -1,7 +1,5 @@
 import {
   ConflictException,
-  forwardRef,
-  Inject,
   Injectable,
   Logger,
 } from '@nestjs/common';
@@ -19,6 +17,7 @@ import { ConsumablesCrudService } from '../services/consumables-crud.service';
 import { BatchesproductsService } from '../batches/batchesproducts.service';
 
 import { Consumable } from '../entities/consumable.entity';
+import { Batchesproduct } from '../batches/entities/batchesproduct.entity';
 import { BrandConsumable } from '../brands/entities/brand-consumable.entity';
 import { Typeconsumable } from '../types/entities/typeconsumable.entity';
 import { UnitMeasurement } from '../units/entities/unit-measurement.entity';
@@ -37,30 +36,34 @@ export class ConsumableSeedService {
     private readonly consumableUbicationsService: ConsumableUbicationsService,
     private readonly movementTypesService: MovementTypesService,
     private readonly movementAplicationsService: MovementAplicationsService,
-    @Inject(forwardRef(() => ConsumablesCrudService))
     private readonly consumablesCrudService: ConsumablesCrudService,
-    @Inject(forwardRef(() => BatchesproductsService))
     private readonly batchesproductsService: BatchesproductsService,
     private readonly dataSource: DataSource,
   ) {}
 
   async RunSeed() {
     const existingCount = await this.consumableRepository.count();
-    if (existingCount > 0) {
+    const batchRepo = this.dataSource.getRepository(Batchesproduct);
+    const existingBatches = await batchRepo.count();
+
+    if (existingCount > 0 && existingBatches > 0) {
       throw new ConflictException(
         'El seed de consumibles ya fue ejecutado anteriormente.',
       );
     }
 
-    this.logger.log('Iniciando seed de catálogos de consumibles...');
-    await this.seedCatalogs();
+    if (existingCount === 0) {
+      this.logger.log('Iniciando seed de catálogos de consumibles...');
+      await this.seedCatalogs();
 
-    this.logger.log('Iniciando seed de artículos consumibles...');
-    const createdConsumables = await this.seedConsumables();
+      this.logger.log('Iniciando seed de artículos consumibles...');
+      await this.seedConsumables();
+    }
 
-    if (createdConsumables.length > 0) {
+    if (existingBatches === 0) {
       this.logger.log('Iniciando seed de lote inicial de inventario...');
-      await this.seedInitialBatch(createdConsumables);
+      const allConsumables = await this.consumableRepository.find();
+      await this.seedInitialBatch(allConsumables);
     }
 
     this.logger.log('Seed de consumibles y almacén completado exitosamente.');
@@ -186,3 +189,4 @@ export class ConsumableSeedService {
     }
   }
 }
+

@@ -49,13 +49,17 @@ export class BatchesproductsService {
 
     const appEntrance = await this.dataSource
       .getRepository(MovementAplication)
-      .findOneBy({ id: 1 });
+      .findOneBy([{ id: 1 }, { acronym: 'ALMACEN' }]);
     if (!appEntrance) {
       throw new NotFoundException(
         this.i18n.t('errors.movementAplications.notFound', { args: { id: 1 } }),
       );
     }
     const prefix = this.cleanString(appEntrance.acronym).toUpperCase();
+
+    const entranceType = await this.dataSource
+      .getRepository(MovementType)
+      .findOneBy([{ name: 'Entrada' }, { id: 1 }]);
 
     const defaultDepartment = await this.dataSource
       .getRepository(Department)
@@ -127,7 +131,7 @@ export class BatchesproductsService {
 
         const movement = queryRunner.manager.create(ConsumableMovement, {
           id_batches_product: savedBatch,
-          id_movement_type: { id: 1 } as MovementType,
+          id_movement_type: { id: entranceType?.id ?? 1 } as MovementType,
           id_movement_aplication: appEntrance,
           id_departament_consumable: defaultDepartment,
           code_movement_aplication,

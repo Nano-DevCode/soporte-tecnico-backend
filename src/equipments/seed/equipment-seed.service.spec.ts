@@ -181,3 +181,4 @@ describe('EquipmentSeedService', () => {
     expect(mockEquipmentCrudService.create).toHaveBeenCalled();
   });
 });
+

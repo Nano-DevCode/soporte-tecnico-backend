@@ -58,6 +58,7 @@ import { BrandConsumablesModule } from './consumables/brands/brand-consumables.m
 import { ConsumableUbicationsModule } from './consumables/ubications/consumable_ubications.module';
 import path from 'path';
 import { ConsumableSeedModule } from './consumables/seed/consumable-seed.module';
+import { EquipmentSeedModule } from './equipments/seed/equipment-seed.module';
 import { FaultValiditiesModule } from './technical-reports/fault-validities/fault-validities.module';
 import { DashboardModule } from './dashboard/dashboard.module';
 import { ToolsBrandsModule } from './tools/brands/tools-brands.module';
@@ -164,6 +165,7 @@ import { AuditModule } from './audit/audit.module';
     AttendsModule,
     ComputingCenterManagerModule,
     EquipmentsModule,
+    EquipmentSeedModule,
     DepartmentsModule,
 
     // Manu Dependencias // Modulos del sistema

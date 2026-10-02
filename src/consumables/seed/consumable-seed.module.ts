@@ -22,11 +22,12 @@ import { Batchesproduct } from '../batches/entities/batchesproduct.entity';
     ConsumableUbicationsModule,
     MovementTypesModule,
     MovementAplicationsModule,
-    forwardRef(() => ConsumablesModule),
-    forwardRef(() => BatchesproductsModule),
+    ConsumablesModule,
+    BatchesproductsModule,
   ],
   providers: [ConsumableSeedService],
   controllers: [ConsumableSeedController],
   exports: [ConsumableSeedService],
 })
 export class ConsumableSeedModule {}
+

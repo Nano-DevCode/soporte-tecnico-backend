@@ -14,7 +14,6 @@ import { ResponsibleequipmentsModule } from './responsibles/responsibleequipment
 import { ComputersModule } from './hardware/computers/computers.module';
 import { PrintersModule } from './hardware/printers/printers.module';
 import { NetworksModule } from './hardware/networks/networks.module';
-import { EquipmentSeedModule } from './seed/equipment-seed.module';
 import { DepartmentsModule } from 'src/departments/departments.module';
 
 @Module({
@@ -27,7 +26,6 @@ import { DepartmentsModule } from 'src/departments/departments.module';
     ComputersModule,
     PrintersModule,
     NetworksModule,
-    EquipmentSeedModule,
     DepartmentsModule,
   ],
   controllers: [EquipmentsController],
@@ -50,7 +48,6 @@ import { DepartmentsModule } from 'src/departments/departments.module';
     ComputersModule,
     PrintersModule,
     NetworksModule,
-    EquipmentSeedModule,
   ],
 })
 export class EquipmentsModule {}

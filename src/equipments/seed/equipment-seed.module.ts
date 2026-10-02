@@ -34,7 +34,7 @@ import { Responsibleequipment } from '../responsibles/entities/responsibleequipm
     ModelsModule,
     ResponsibleequipmentsModule,
     DepartmentsModule,
-    forwardRef(() => EquipmentsModule),
+    EquipmentsModule,
   ],
   providers: [EquipmentSeedService],
   controllers: [EquipmentSeedController],

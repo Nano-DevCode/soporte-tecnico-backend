@@ -16,7 +16,6 @@ import { ConsumableUbicationsModule } from './ubications/consumable_ubications.m
 import { ConsumableMovementsModule } from './movements/consumable-movements.module';
 import { MovementTypesModule } from './movements/types/movement_types.module';
 import { MovementAplicationsModule } from './movements/applications/movement_aplications.module';
-import { ConsumableSeedModule } from './seed/consumable-seed.module';
 import { FilesModule } from 'src/files/files.module';
 import { ConsumablesCrudService } from './services/consumables-crud.service';
 
@@ -39,7 +38,6 @@ import { ConsumablesCrudService } from './services/consumables-crud.service';
     forwardRef(() => ConsumableMovementsModule),
     MovementTypesModule,
     MovementAplicationsModule,
-    ConsumableSeedModule,
   ],
   controllers: [ConsumablesController],
   providers: [ConsumablesService, ConsumablesCrudService],
@@ -51,11 +49,8 @@ import { ConsumablesCrudService } from './services/consumables-crud.service';
     UnitMeasurementModule,
     BrandConsumablesModule,
     ConsumableUbicationsModule,
-    BatchesproductsModule,
-    ConsumableMovementsModule,
     MovementTypesModule,
     MovementAplicationsModule,
-    ConsumableSeedModule,
   ],
 })
 export class ConsumablesModule {}

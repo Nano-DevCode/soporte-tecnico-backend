@@ -15,6 +15,7 @@ import { Batchesproduct } from './entities/batchesproduct.entity';
 import { Consumable } from 'src/consumables/entities/consumable.entity';
 import { ConsumableMovement } from 'src/consumables/movements/entities/consumable-movement.entity';
 import { MovementAplication } from 'src/consumables/movements/applications/entities/movement_aplication.entity';
+import { MovementType } from 'src/consumables/movements/types/entities/movement_type.entity';
 import { Department } from 'src/departments/entities/department.entity';
 import { CreateBatchesproductDto } from './dto/create-batchesproduct.dto';
 
@@ -89,6 +90,11 @@ describe('BatchesproductsService - create', () => {
     const mockGetRepository = jest.fn((entity) => {
       if (entity === MovementAplication) {
         return { findOneBy: jest.fn().mockResolvedValue(mockAppEntrance) };
+      }
+      if (entity === MovementType) {
+        return {
+          findOneBy: jest.fn().mockResolvedValue({ id: 1, name: 'Entrada' }),
+        };
       }
       if (entity === Department) {
         return {
@@ -279,6 +285,11 @@ describe('BatchesproductsService - create', () => {
         if (entity === MovementAplication) {
           return {
             findOneBy: jest.fn().mockResolvedValue(mockAppEntrance),
+          } as unknown as ReturnType<DataSource['getRepository']>;
+        }
+        if (entity === MovementType) {
+          return {
+            findOneBy: jest.fn().mockResolvedValue({ id: 1, name: 'Entrada' }),
           } as unknown as ReturnType<DataSource['getRepository']>;
         }
         if (entity === Department) {

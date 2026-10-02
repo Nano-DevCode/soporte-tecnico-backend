@@ -20,6 +20,7 @@ describe('ConsumableSeedService', () => {
   const mockConsumableRepository = {
     count: jest.fn(),
     findOne: jest.fn(),
+    find: jest.fn().mockResolvedValue([{ id: 'c-uuid-1', description: 'test' }]),
   };
 
   const mockBrandConsumablesService = {
@@ -55,6 +56,7 @@ describe('ConsumableSeedService', () => {
   };
 
   const mockCatalogRepo = {
+    count: jest.fn().mockResolvedValue(0),
     find: jest.fn().mockImplementation(() =>
       Promise.resolve([
         { id: 'b-hp', name: 'HP' },
@@ -148,6 +150,7 @@ describe('ConsumableSeedService', () => {
 
   it('debe lanzar ConflictException si ya existen consumibles', async () => {
     mockConsumableRepository.count.mockResolvedValueOnce(3);
+    mockCatalogRepo.count.mockResolvedValueOnce(1);
 
     await expect(service.RunSeed()).rejects.toThrow(ConflictException);
     expect(mockConsumableRepository.count).toHaveBeenCalled();
@@ -178,3 +181,4 @@ describe('ConsumableSeedService', () => {
     );
   });
 });
+
