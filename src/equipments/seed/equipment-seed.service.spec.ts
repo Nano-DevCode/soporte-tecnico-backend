@@ -1,4 +1,8 @@
 import { Test, TestingModule } from '@nestjs/testing';
+import { getRepositoryToken } from '@nestjs/typeorm';
+import { ConflictException } from '@nestjs/common';
+import { DataSource } from 'typeorm';
+
 import { EquipmentSeedService } from './equipment-seed.service';
 import { BrandsService } from '../brands/brands.service';
 import { PrintingtypesService } from '../hardware/printers/printing-types/printingtypes.service';
@@ -9,51 +13,99 @@ import { StoragetypesService } from '../hardware/computers/storage-types/storage
 import { OperatingsystemsService } from '../hardware/computers/operating-systems/operatingsystems.service';
 import { ComputerprocessorsService } from '../hardware/computers/processors/computerprocessors.service';
 import { TypenetworksService } from '../hardware/networks/types/typenetworks.service';
+import { DepartmentsService } from 'src/departments/services/departments.service';
+import { EquipmentCrudService } from '../services/equipment-crud.service';
+
+import { Equipment } from '../entities/equipment.entity';
+import { Model } from '../models/entities/model.entity';
+import { Responsibleequipment } from '../responsibles/entities/responsibleequipment.entity';
 
 describe('EquipmentSeedService', () => {
   let service: EquipmentSeedService;
 
+  const mockEquipmentRepository = {
+    count: jest.fn(),
+    findOne: jest.fn(),
+  };
+
+  const mockModelRepository = {
+    find: jest.fn(),
+    findOne: jest.fn(),
+    create: jest.fn((dto) => dto),
+    save: jest.fn((entity) => Promise.resolve({ id: 'model-uuid', ...entity })),
+  };
+
+  const mockResponsibleRepository = {
+    find: jest.fn(),
+    findOne: jest.fn(),
+    create: jest.fn((dto) => dto),
+    save: jest.fn((entity) => Promise.resolve({ id: 'resp-uuid', ...entity })),
+  };
+
   const mockBrandsService = {
-    deleteAllBrands: jest.fn(),
-    createSeedBrands: jest.fn(),
+    createSeedBrands: jest.fn().mockResolvedValue({ id: 'brand-uuid' }),
   };
   const mockPrintingtypesService = {
-    deleteAllPrintingtypes: jest.fn(),
-    createSeedPrintintypes: jest.fn(),
+    createSeedPrintintypes: jest.fn().mockResolvedValue({ id: 'pt-uuid' }),
   };
   const mockPrinterfunctiontypesService = {
-    deleteAllPrinterfunctiontypes: jest.fn(),
-    createSeedPrinterfunctiontypes: jest.fn(),
+    createSeedPrinterfunctiontypes: jest.fn().mockResolvedValue({ id: 'pft-uuid' }),
   };
   const mockEquipmentsTypesService = {
-    deleteAllEquipmentsTypes: jest.fn(),
-    createSeedEquipmentsTypes: jest.fn(),
+    createSeedEquipmentsTypes: jest.fn().mockResolvedValue({ id: 1 }),
   };
   const mockComputerequipmenttypesService = {
-    deleteAllComputerEquipmentTypes: jest.fn(),
-    createSeedComputerEquipmentTypes: jest.fn(),
+    createSeedComputerEquipmentTypes: jest.fn().mockResolvedValue({ id: 'cet-uuid' }),
   };
   const mockStoragetypesService = {
-    deleteAllStorageTypes: jest.fn(),
-    createSeedStorageTypes: jest.fn(),
+    createSeedStorageTypes: jest.fn().mockResolvedValue({ id: 'st-uuid' }),
   };
   const mockOperatingsystemsService = {
-    deleteAllOperatingSystems: jest.fn(),
-    createSeedOperatingSystems: jest.fn(),
+    createSeedOperatingSystems: jest.fn().mockResolvedValue({ id: 'os-uuid' }),
   };
   const mockComputerprocessorsService = {
-    deleteAllComputerProcessor: jest.fn(),
-    createSeedComputerProcessor: jest.fn(),
+    createSeedComputerProcessor: jest.fn().mockResolvedValue({ id: 'proc-uuid' }),
   };
   const mockTypenetworksService = {
-    deleteAllTypeNetworks: jest.fn(),
-    createSeedTypeNetworks: jest.fn(),
+    createSeedTypeNetworks: jest.fn().mockResolvedValue({ id: 'tn-uuid' }),
+  };
+
+  const mockDepartmentsService = {
+    findAll: jest.fn().mockResolvedValue([
+      { id: 'dept-uuid-sc', name: 'Departamento de Sistemas y Computación', acronym: 'SC' },
+      { id: 'dept-uuid-cc', name: 'Departamento de Centro de Cómputo', acronym: 'CC' },
+    ]),
+  };
+
+  const mockEquipmentCrudService = {
+    create: jest.fn().mockResolvedValue({ id: 'equipment-uuid' }),
+  };
+
+  const mockGenericRepo = {
+    find: jest.fn().mockResolvedValue([]),
+    findOne: jest.fn().mockResolvedValue({ id: 'generic-uuid', name: 'test' }),
+  };
+
+  const mockDataSource = {
+    getRepository: jest.fn().mockReturnValue(mockGenericRepo),
   };
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [
         EquipmentSeedService,
+        {
+          provide: getRepositoryToken(Equipment),
+          useValue: mockEquipmentRepository,
+        },
+        {
+          provide: getRepositoryToken(Model),
+          useValue: mockModelRepository,
+        },
+        {
+          provide: getRepositoryToken(Responsibleequipment),
+          useValue: mockResponsibleRepository,
+        },
         { provide: BrandsService, useValue: mockBrandsService },
         { provide: PrintingtypesService, useValue: mockPrintingtypesService },
         {
@@ -78,6 +130,9 @@ describe('EquipmentSeedService', () => {
           useValue: mockComputerprocessorsService,
         },
         { provide: TypenetworksService, useValue: mockTypenetworksService },
+        { provide: DepartmentsService, useValue: mockDepartmentsService },
+        { provide: EquipmentCrudService, useValue: mockEquipmentCrudService },
+        { provide: DataSource, useValue: mockDataSource },
       ],
     }).compile();
 
@@ -89,47 +144,40 @@ describe('EquipmentSeedService', () => {
     expect(service).toBeDefined();
   });
 
-  it('RunSeed debe borrar catalogos anteriores e insertar la semilla', async () => {
-    await service.RunSeed();
+  it('debe lanzar ConflictException si ya existen equipos registrados', async () => {
+    mockEquipmentRepository.count.mockResolvedValueOnce(5);
 
-    expect(mockBrandsService.deleteAllBrands).toHaveBeenCalled();
-    expect(mockPrintingtypesService.deleteAllPrintingtypes).toHaveBeenCalled();
-    expect(
-      mockPrinterfunctiontypesService.deleteAllPrinterfunctiontypes,
-    ).toHaveBeenCalled();
-    expect(
-      mockEquipmentsTypesService.deleteAllEquipmentsTypes,
-    ).toHaveBeenCalled();
-    expect(
-      mockComputerequipmenttypesService.deleteAllComputerEquipmentTypes,
-    ).toHaveBeenCalled();
-    expect(mockStoragetypesService.deleteAllStorageTypes).toHaveBeenCalled();
-    expect(
-      mockOperatingsystemsService.deleteAllOperatingSystems,
-    ).toHaveBeenCalled();
-    expect(
-      mockComputerprocessorsService.deleteAllComputerProcessor,
-    ).toHaveBeenCalled();
-    expect(mockTypenetworksService.deleteAllTypeNetworks).toHaveBeenCalled();
+    await expect(service.RunSeed()).rejects.toThrow(ConflictException);
+    expect(mockEquipmentRepository.count).toHaveBeenCalled();
+  });
 
+  it('RunSeed debe insertar catálogos, modelos, responsables y equipos cuando no hay registros', async () => {
+    mockEquipmentRepository.count.mockResolvedValueOnce(0);
+    mockModelRepository.find.mockResolvedValue([
+      { id: 'mod-1', name: 'OptiPlex 7090', id_brand: { id: 'b-1', name: 'Dell' } },
+    ]);
+    mockResponsibleRepository.find.mockResolvedValue([
+      { id: 'resp-1', mail: 'carlos.mendoza@itoaxaca.edu.mx' },
+    ]);
+    mockGenericRepo.find.mockImplementation(() =>
+      Promise.resolve([
+        { id: 1, name: 'Computadora' },
+        { id: 2, name: 'Red' },
+        { id: 3, name: 'Impresora' },
+        { id: 'desktop-id', name: 'Desktop' },
+        { id: 'ssd-id', name: 'SSD NVMe' },
+        { id: 'win11-id', name: 'Windows 11' },
+        { id: 'proc-id', model: 'Core i7-10700' },
+        { id: 'laser-id', name: 'Laser' },
+        { id: 'multi-id', name: 'Multifuncional' },
+        { id: 'switch-id', name: 'Switch' },
+      ]),
+    );
+
+    const result = await service.RunSeed();
+
+    expect(result).toEqual({ message: 'Seed de equipos ejecutado correctamente' });
     expect(mockBrandsService.createSeedBrands).toHaveBeenCalled();
-    expect(mockPrintingtypesService.createSeedPrintintypes).toHaveBeenCalled();
-    expect(
-      mockPrinterfunctiontypesService.createSeedPrinterfunctiontypes,
-    ).toHaveBeenCalled();
-    expect(
-      mockEquipmentsTypesService.createSeedEquipmentsTypes,
-    ).toHaveBeenCalled();
-    expect(
-      mockComputerequipmenttypesService.createSeedComputerEquipmentTypes,
-    ).toHaveBeenCalled();
-    expect(mockStoragetypesService.createSeedStorageTypes).toHaveBeenCalled();
-    expect(
-      mockOperatingsystemsService.createSeedOperatingSystems,
-    ).toHaveBeenCalled();
-    expect(
-      mockComputerprocessorsService.createSeedComputerProcessor,
-    ).toHaveBeenCalled();
-    expect(mockTypenetworksService.createSeedTypeNetworks).toHaveBeenCalled();
+    expect(mockEquipmentCrudService.create).toHaveBeenCalled();
   });
 });

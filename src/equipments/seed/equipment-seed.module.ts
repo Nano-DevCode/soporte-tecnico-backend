@@ -1,4 +1,5 @@
-import { Module } from '@nestjs/common';
+import { forwardRef, Module } from '@nestjs/common';
+import { TypeOrmModule } from '@nestjs/typeorm';
 import { EquipmentSeedService } from './equipment-seed.service';
 import { EquipmentSeedController } from './equipment-seed.controller';
 import { BrandsModule } from '../brands/brands.module';
@@ -10,9 +11,17 @@ import { StoragetypesModule } from '../hardware/computers/storage-types/storaget
 import { OperatingsystemsModule } from '../hardware/computers/operating-systems/operatingsystems.module';
 import { ComputerprocessorsModule } from '../hardware/computers/processors/computerprocessors.module';
 import { TypenetworksModule } from '../hardware/networks/types/typenetworks.module';
+import { ModelsModule } from '../models/models.module';
+import { ResponsibleequipmentsModule } from '../responsibles/responsibleequipments.module';
+import { DepartmentsModule } from 'src/departments/departments.module';
+import { EquipmentsModule } from '../equipments.module';
+import { Equipment } from '../entities/equipment.entity';
+import { Model } from '../models/entities/model.entity';
+import { Responsibleequipment } from '../responsibles/entities/responsibleequipment.entity';
 
 @Module({
   imports: [
+    TypeOrmModule.forFeature([Equipment, Model, Responsibleequipment]),
     BrandsModule,
     PrintingtypesModule,
     PrinterfunctiontypesModule,
@@ -22,6 +31,10 @@ import { TypenetworksModule } from '../hardware/networks/types/typenetworks.modu
     OperatingsystemsModule,
     ComputerprocessorsModule,
     TypenetworksModule,
+    ModelsModule,
+    ResponsibleequipmentsModule,
+    DepartmentsModule,
+    forwardRef(() => EquipmentsModule),
   ],
   providers: [EquipmentSeedService],
   controllers: [EquipmentSeedController],

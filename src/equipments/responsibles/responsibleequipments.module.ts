@@ -7,5 +7,6 @@ import { Responsibleequipment } from './entities/responsibleequipment.entity';
   controllers: [ResponsibleequipmentsController],
   providers: [ResponsibleequipmentsService],
   imports: [TypeOrmModule.forFeature([Responsibleequipment])],
+  exports: [ResponsibleequipmentsService, TypeOrmModule],
 })
 export class ResponsibleequipmentsModule {}
