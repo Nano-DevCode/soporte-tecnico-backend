@@ -7,9 +7,7 @@ import { SchoolPeriodsModule } from './school-periods/school-periods.module';
 import { TagsModule } from './tags/tags.module';
 import { IssueTypeModule } from './issue_type/issue_type.module';
 import { TicketHistoryModule } from './ticket-history/ticket-history.module';
-import { ReportsModule } from './reports/reports.module';
 import { DocumentsModule } from './documents/documents.module';
-import { TypeDocumentsModule } from './type-documents/type-documents.module';
 import { CatalogSeedModule } from './catalog-seed/catalog-seed.module';
 import { EquipmentsModule } from './equipments/equipments.module';
 import { DepartmentsModule } from './departments/departments.module';
@@ -24,8 +22,6 @@ import { AuthModule } from './auth/auth.module';
 import { ResponsesModule } from './responses/responses.module';
 import { MaintenanceTypeModule } from './maintenance-type/maintenance-type.module';
 import { ServiceTypeModule } from './service-type/service-type.module';
-import { PauseReportsModule } from './pause-reports/pause-reports.module';
-import { RejectionReportsModule } from './rejection-reports/rejection-reports.module';
 import { PdfsModule } from './pdfs/pdfs.module';
 import { ThrottlerGuard, ThrottlerModule } from '@nestjs/throttler';
 import { APP_GUARD, APP_INTERCEPTOR } from '@nestjs/core';
@@ -155,11 +151,7 @@ import { AuditModule } from './audit/audit.module';
     TagsModule,
     IssueTypeModule,
     TicketHistoryModule,
-    ReportsModule,
     DocumentsModule,
-    TypeDocumentsModule,
-    PauseReportsModule,
-    RejectionReportsModule,
     ResponsesModule,
     MaintenanceTypeModule,
     ServiceTypeModule,

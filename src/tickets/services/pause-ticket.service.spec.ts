@@ -7,7 +7,7 @@ import { PauseTicketService } from './pause-ticket.service';
 import { TicketHistoryService } from 'src/ticket-history/ticket-history.service';
 import { TicketsService } from './tickets.service';
 import { FolioCountersService } from 'src/folio-counters/folio-counters.service';
-import { PauseReportsService } from 'src/pause-reports/pause-reports.service';
+import { PauseReportsService } from 'src/technical-reports/pause-reports/pause-reports.service';
 import { Ticket } from '../entities/ticket.entity';
 import { PauseTicketDto } from '../dto/pause-ticket.dto';
 

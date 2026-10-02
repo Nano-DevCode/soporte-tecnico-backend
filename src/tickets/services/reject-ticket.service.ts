@@ -9,7 +9,7 @@ import {
 } from 'src/common/machine/TicketStateMachine.machine';
 import { TicketHistoryService } from 'src/ticket-history/ticket-history.service';
 import { TicketsService } from './tickets.service';
-import { RejectionReportsService } from 'src/rejection-reports/rejection-reports.service';
+import { RejectionReportsService } from 'src/technical-reports/rejection-reports/rejection-reports.service';
 import { RejectTicketDto } from '../dto/reject-ticket.dto';
 import { I18nService } from 'nestjs-i18n';
 

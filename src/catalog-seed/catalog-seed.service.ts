@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { SEED_DATA } from './data/data';
 import { IssueTypeService } from 'src/issue_type/issue_type.service';
 import { TicketHistoryService } from 'src/ticket-history/ticket-history.service';
-import { TypeDocumentsService } from 'src/type-documents/type-documents.service';
+import { TypeDocumentsService } from 'src/documents/types/type-documents.service';
 import { MaintenanceTypeService } from '../maintenance-type/maintenance-type.service';
 import { ServiceTypeService } from '../service-type/service-type.service';
 import { FaultValiditiesService } from '../technical-reports/fault-validities/fault-validities.service';

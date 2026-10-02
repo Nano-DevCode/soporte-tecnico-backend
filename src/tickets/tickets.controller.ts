@@ -34,7 +34,7 @@ import { RejectTicketService } from './services/reject-ticket.service';
 import { InterveneTicketDto } from './dto/intervene-ticket.dto';
 import { CloseTicketService } from './services/close-ticket.service';
 import { ArchiveTicketService } from './services/archive-ticket.service';
-import { RejectionReportsService } from 'src/rejection-reports/rejection-reports.service';
+import { RejectionReportsService } from 'src/technical-reports/rejection-reports/rejection-reports.service';
 import { TechnicalReportsService } from 'src/technical-reports/technical-reports.service';
 import { FilterTicketsDto } from './dto/filter-tickets.dto';
 import { FilterTicketsForSelectDto } from './dto/filter-tickets-for-select';

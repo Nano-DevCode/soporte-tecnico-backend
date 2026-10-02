@@ -1,6 +1,6 @@
 import { Document } from 'src/documents/entities/document.entity';
 import { IssueType } from 'src/issue_type/entities/issue_type.entity';
-import { RejectionReport } from 'src/rejection-reports/entities/rejection-report.entity';
+import { RejectionReport } from 'src/technical-reports/rejection-reports/entities/rejection-report.entity';
 import { SchoolPeriod } from 'src/school-periods/entities/school-period.entity';
 import { Tag } from 'src/tags/entities/tag.entity';
 import { TicketHistory } from 'src/ticket-history/entities/ticket-history.entity';
@@ -21,7 +21,7 @@ import {
   UpdateDateColumn,
   VersionColumn,
 } from 'typeorm';
-import { PauseReport } from 'src/pause-reports/entities/pause-report.entity';
+import { PauseReport } from 'src/technical-reports/pause-reports/entities/pause-report.entity';
 import { Attend } from 'src/attends/entities/attend.entity';
 import { Staff } from 'src/users/entities/staff.entity';
 import { TechnicalReport } from 'src/technical-reports/entities/technical-report.entity';

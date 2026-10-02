@@ -3,7 +3,7 @@ import {
   ApiProperty,
   ApiPropertyOptional,
 } from '@nestjs/swagger';
-import { Document } from 'src/documents/entities/document.entity';
+import { Document } from '../../entities/document.entity';
 import {
   Column,
   CreateDateColumn,

@@ -13,7 +13,7 @@ import { TicketsService } from './services/tickets.service';
 import { RejectTicketService } from './services/reject-ticket.service';
 import { CloseTicketService } from './services/close-ticket.service';
 import { ArchiveTicketService } from './services/archive-ticket.service';
-import { RejectionReportsService } from 'src/rejection-reports/rejection-reports.service';
+import { RejectionReportsService } from 'src/technical-reports/rejection-reports/rejection-reports.service';
 import { TechnicalReportsService } from 'src/technical-reports/technical-reports.service';
 import { ResponsesService } from '../responses/responses.service';
 import { IdempotencyInterceptor } from 'src/common/interceptors/idempotency.interceptor';

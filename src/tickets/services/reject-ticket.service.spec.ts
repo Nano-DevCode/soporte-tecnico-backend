@@ -8,7 +8,7 @@ import {
 import { EventEmitter2 } from '@nestjs/event-emitter';
 import { TicketHistoryService } from 'src/ticket-history/ticket-history.service';
 import { TicketsService } from './tickets.service';
-import { RejectionReportsService } from 'src/rejection-reports/rejection-reports.service';
+import { RejectionReportsService } from 'src/technical-reports/rejection-reports/rejection-reports.service';
 import { I18nService } from 'nestjs-i18n';
 import { ConflictException, Logger } from '@nestjs/common';
 import { Ticket } from '../entities/ticket.entity';

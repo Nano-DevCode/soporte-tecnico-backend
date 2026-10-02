@@ -1,6 +1,6 @@
 import { ApiHideProperty, ApiProperty } from '@nestjs/swagger';
 import { Ticket } from 'src/tickets/entities/ticket.entity';
-import { TypeDocument } from 'src/type-documents/entities/type-document.entity';
+import { TypeDocument } from '../types/entities/type-document.entity';
 import {
   Column,
   CreateDateColumn,
