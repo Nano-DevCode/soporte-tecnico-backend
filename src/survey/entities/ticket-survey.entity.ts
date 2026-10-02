@@ -29,7 +29,7 @@ export class TicketSurvey {
     description: 'Ticket al cual está asociada esta encuesta.',
     type: () => Ticket,
   })
-  @OneToOne(() => Ticket)
+  @OneToOne(() => Ticket, (ticket) => ticket.survey)
   @JoinColumn({ name: 'ticket_id' })
   ticket: Ticket;
 

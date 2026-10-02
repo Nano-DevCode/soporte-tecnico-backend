@@ -38,7 +38,7 @@ export class TicketSla {
     description: 'Ticket asociado al registro de SLA.',
     type: () => Ticket,
   })
-  @OneToOne(() => Ticket, {
+  @OneToOne(() => Ticket, (ticket) => ticket.sla, {
     onDelete: 'CASCADE',
   })
   @JoinColumn({ name: 'ticketId' })

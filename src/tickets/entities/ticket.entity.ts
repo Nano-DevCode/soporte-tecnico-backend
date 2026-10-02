@@ -3,7 +3,9 @@ import { IssueType } from 'src/issue_type/entities/issue_type.entity';
 import { RejectionReport } from 'src/rejection-reports/entities/rejection-report.entity';
 import { SchoolPeriod } from 'src/school-periods/entities/school-period.entity';
 import { Tag } from 'src/tags/entities/tag.entity';
-import { TicketHistory } from 'src/ticket-history/entities';
+import { TicketHistory } from 'src/ticket-history/entities/ticket-history.entity';
+import { TicketSla } from 'src/sla/entities/ticket-sla.entity';
+import { TicketSurvey } from 'src/survey/entities/ticket-survey.entity';
 import { Response } from 'src/responses/entities/response.entity';
 import {
   Column,
@@ -283,7 +285,7 @@ export class Ticket {
 
   @ApiProperty({
     description: 'Movimiento de consumibles asociado.',
-    type: () => ConsumableMovement,
+    type: () => [ConsumableMovement],
   })
   @OneToMany(
     () => ConsumableMovement,
@@ -292,5 +294,23 @@ export class Ticket {
       onDelete: 'RESTRICT',
     },
   )
-  consumable_movement: ConsumableMovement;
+  consumable_movement: ConsumableMovement[];
+
+  @ApiPropertyOptional({
+    description: 'Registro de métricas y monitoreo SLA asociado al ticket.',
+    type: () => TicketSla,
+  })
+  @OneToOne(() => TicketSla, (sla) => sla.ticket, {
+    nullable: true,
+  })
+  sla?: TicketSla;
+
+  @ApiPropertyOptional({
+    description: 'Encuesta de satisfacción de servicio asociada al ticket.',
+    type: () => TicketSurvey,
+  })
+  @OneToOne(() => TicketSurvey, (survey) => survey.ticket, {
+    nullable: true,
+  })
+  survey?: TicketSurvey;
 }
