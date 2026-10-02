@@ -11,7 +11,7 @@ import { TicketHistoryService } from 'src/ticket-history/ticket-history.service'
 import { TicketsService } from './tickets.service';
 import { FolioCountersService } from 'src/folio-counters/folio-counters.service';
 import { PauseReportsService } from 'src/pause-reports/pause-reports.service';
-import { PauseTicketDto } from '../dto';
+import { PauseTicketDto } from '../dto/pause-ticket.dto';
 import { I18nService } from 'nestjs-i18n';
 
 @Injectable()

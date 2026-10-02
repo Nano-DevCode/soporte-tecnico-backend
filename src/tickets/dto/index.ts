@@ -1,9 +1,0 @@
-export { FinishTicketDto } from './finish-ticket.dto';
-export { PauseTicketDto } from './pause-ticket.dto';
-export { InterveneTicketDto } from './intervene-ticket.dto';
-export { RejectTicketDto } from './reject-ticket.dto';
-export { AssignTechnicsDto } from './assign-technics.dto';
-export { CreateTicketDto } from './create-ticket.dto';
-export { UpdateTicketDto } from './update-ticket.dto';
-export { RouteTicketDto } from './route-ticket.dto';
-export { UpdateTicketInternalFolioDto } from './update-ticket-internal-folio.dto';

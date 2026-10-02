@@ -11,26 +11,22 @@ import {
   UseInterceptors,
 } from '@nestjs/common';
 import { DbexceptionFilter } from 'src/common/filters/dbexception/dbexception.filter';
-import {
-  AssignTechnicsDto,
-  CreateTicketDto,
-  FinishTicketDto,
-  RejectTicketDto,
-  RouteTicketDto,
-  UpdateTicketDto,
-  UpdateTicketInternalFolioDto,
-} from './dto';
-import {
-  AssignTicketService,
-  CreateTicketService,
-  EditTicketService,
-  FinishTicketService,
-  InterveneTicketService,
-  PauseTicketService,
-  RouteTicketService,
-  StartTicketService,
-  TicketsService,
-} from './services';
+import { AssignTechnicsDto } from './dto/assign-technics.dto';
+import { CreateTicketDto } from './dto/create-ticket.dto';
+import { FinishTicketDto } from './dto/finish-ticket.dto';
+import { RejectTicketDto } from './dto/reject-ticket.dto';
+import { RouteTicketDto } from './dto/route-ticket.dto';
+import { UpdateTicketDto } from './dto/update-ticket.dto';
+import { UpdateTicketInternalFolioDto } from './dto/update-ticket-internal-folio.dto';
+import { AssignTicketService } from './services/assign-ticket.service';
+import { CreateTicketService } from './services/create-ticket.service';
+import { EditTicketService } from './services/edit-ticket.service';
+import { FinishTicketService } from './services/finish-ticket.service';
+import { InterveneTicketService } from './services/intervene-ticket.service';
+import { PauseTicketService } from './services/pause-ticket.service';
+import { RouteTicketService } from './services/route-ticket.service';
+import { StartTicketService } from './services/start-ticket.service';
+import { TicketsService } from './services/tickets.service';
 import { Auth } from 'src/auth/decorators/auth.decorator';
 import { GetUser } from 'src/auth/decorators/get-user.decorator';
 import { User } from 'src/users/entities/user.entity';

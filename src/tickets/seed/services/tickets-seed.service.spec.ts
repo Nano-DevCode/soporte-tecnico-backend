@@ -73,9 +73,16 @@ describe('TicketsSeedService', () => {
       return Promise.resolve([]);
     });
 
-    mockQueryRunner.manager.create.mockImplementation((entity: any, data: any) => data);
-    mockQueryRunner.manager.save.mockImplementation((entity: any, data: any) => Promise.resolve({ id: 'uuid', ...data }));
-    mockQueryRunner.manager.findOne.mockResolvedValue({ id: 'period-uuid', name: '20261' });
+    mockQueryRunner.manager.create.mockImplementation(
+      (entity: any, data: any) => data,
+    );
+    mockQueryRunner.manager.save.mockImplementation((entity: any, data: any) =>
+      Promise.resolve({ id: 'uuid', ...data }),
+    );
+    mockQueryRunner.manager.findOne.mockResolvedValue({
+      id: 'period-uuid',
+      name: '20261',
+    });
 
     await expect(service.runSeed()).rejects.toThrow(BadRequestException);
     expect(mockQueryRunner.rollbackTransaction).toHaveBeenCalled();
@@ -101,15 +108,21 @@ describe('TicketsSeedService', () => {
 
     mockQueryRunner.manager.findOne.mockImplementation((entity: any) => {
       if (entity === SchoolPeriod) {
-        return Promise.resolve({ id: 'period-uuid', name: '20261', is_active: true });
+        return Promise.resolve({
+          id: 'period-uuid',
+          name: '20261',
+          is_active: true,
+        });
       }
       return Promise.resolve(null);
     });
 
-    mockQueryRunner.manager.create.mockImplementation((entity: any, data: any) => ({
-      ...data,
-      id: 'generated-uuid',
-    }));
+    mockQueryRunner.manager.create.mockImplementation(
+      (entity: any, data: any) => ({
+        ...data,
+        id: 'generated-uuid',
+      }),
+    );
 
     mockQueryRunner.manager.save.mockImplementation((entity: any, data: any) =>
       Promise.resolve({
@@ -127,4 +140,3 @@ describe('TicketsSeedService', () => {
     expect(mockQueryRunner.release).toHaveBeenCalled();
   });
 });
-

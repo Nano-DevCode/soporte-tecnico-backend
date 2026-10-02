@@ -8,7 +8,7 @@ import {
   transition,
 } from 'src/common/machine/TicketStateMachine.machine';
 import { TicketHistoryService } from 'src/ticket-history/ticket-history.service';
-import { AssignTechnicsDto } from '../dto';
+import { AssignTechnicsDto } from '../dto/assign-technics.dto';
 import { AttendsService } from 'src/attends/attends.service';
 import { TicketsService } from './tickets.service';
 import { StaffService } from 'src/users/services/staff.service';

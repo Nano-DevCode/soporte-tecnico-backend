@@ -42,4 +42,3 @@ export class TicketsSeedController {
     return this.ticketsSeedService.runSeed();
   }
 }
-

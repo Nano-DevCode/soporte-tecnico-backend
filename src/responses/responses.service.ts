@@ -12,7 +12,7 @@ import { ComputingCenterManagerService } from 'src/computing-center-manager/comp
 import { ResponseSignatureService } from 'src/response-signature/response-signature.service';
 import { SignatureRole } from 'src/response-signature/entities/response-signature.entity';
 import { UpdateResponseDto } from './dto/update-response.dto';
-import { TicketsService } from 'src/tickets/services';
+import { TicketsService } from 'src/tickets/services/tickets.service';
 import { PdfsService } from 'src/pdfs/services/pdfs.service';
 import { Document } from 'src/documents/entities/document.entity';
 

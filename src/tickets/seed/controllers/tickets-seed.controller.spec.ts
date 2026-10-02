@@ -52,4 +52,3 @@ describe('TicketsSeedController', () => {
     expect(result).toEqual(expectedResponse);
   });
 });
-

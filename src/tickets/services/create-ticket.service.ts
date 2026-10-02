@@ -15,7 +15,7 @@ import {
 } from 'src/common/machine/TicketStateMachine.machine';
 import { TicketHistoryService } from 'src/ticket-history/ticket-history.service';
 import { IssueTypeService } from '../../issue_type/issue_type.service';
-import { CreateTicketDto } from '../dto';
+import { CreateTicketDto } from '../dto/create-ticket.dto';
 import { TicketsService } from './tickets.service';
 import { User } from 'src/users/entities/user.entity';
 import { UsersService } from '../../users/services/users.service';

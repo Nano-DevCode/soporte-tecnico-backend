@@ -143,4 +143,3 @@ export const SEED_TICKETS: SeedTicketItem[] = [
     tagNames: ['Administrativo'],
   },
 ];
-

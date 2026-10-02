@@ -146,9 +146,7 @@ export class TicketsSeedService {
     }
   }
 
-  private async ensureStatuses(
-    queryRunner: any,
-  ): Promise<Map<string, Status>> {
+  private async ensureStatuses(queryRunner: any): Promise<Map<string, Status>> {
     const statusMap = new Map<string, Status>();
     const existing = await queryRunner.manager.find(Status);
 
@@ -256,7 +254,9 @@ export class TicketsSeedService {
         (s: any) =>
           s.user?.role?.name === 'coordinador' ||
           s.user?.role?.name === 'superAdmin',
-      ) || allStaff[1] || allStaff[0];
+      ) ||
+      allStaff[1] ||
+      allStaff[0];
 
     const tecnico =
       allStaff.find((s: any) => s.user?.role?.name === 'tecnico') ||
@@ -266,4 +266,3 @@ export class TicketsSeedService {
     return { jefeDepto, coordinador, tecnico };
   }
 }
-

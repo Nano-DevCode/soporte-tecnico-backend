@@ -18,7 +18,7 @@ import { TicketHistoryService } from 'src/ticket-history/ticket-history.service'
 import { TicketsService } from './tickets.service';
 import { FolioCountersService } from 'src/folio-counters/folio-counters.service';
 import { ResponsesService } from '../../responses/responses.service';
-import { FinishTicketDto } from '../dto';
+import { FinishTicketDto } from '../dto/finish-ticket.dto';
 import { PdfsService } from 'src/pdfs/services/pdfs.service';
 import { Document } from 'src/documents/entities/document.entity';
 import { I18nService } from 'nestjs-i18n';

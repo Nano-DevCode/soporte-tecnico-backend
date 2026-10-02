@@ -1,17 +1,15 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { I18nService } from 'nestjs-i18n';
 import { TicketsController } from './tickets.controller';
-import {
-  AssignTicketService,
-  CreateTicketService,
-  EditTicketService,
-  FinishTicketService,
-  InterveneTicketService,
-  PauseTicketService,
-  RouteTicketService,
-  StartTicketService,
-  TicketsService,
-} from './services';
+import { AssignTicketService } from './services/assign-ticket.service';
+import { CreateTicketService } from './services/create-ticket.service';
+import { EditTicketService } from './services/edit-ticket.service';
+import { FinishTicketService } from './services/finish-ticket.service';
+import { InterveneTicketService } from './services/intervene-ticket.service';
+import { PauseTicketService } from './services/pause-ticket.service';
+import { RouteTicketService } from './services/route-ticket.service';
+import { StartTicketService } from './services/start-ticket.service';
+import { TicketsService } from './services/tickets.service';
 import { RejectTicketService } from './services/reject-ticket.service';
 import { CloseTicketService } from './services/close-ticket.service';
 import { ArchiveTicketService } from './services/archive-ticket.service';

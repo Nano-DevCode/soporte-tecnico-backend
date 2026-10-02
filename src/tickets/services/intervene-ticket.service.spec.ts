@@ -14,7 +14,7 @@ import { TagsService } from 'src/tags/tags.service';
 import { I18nService } from 'nestjs-i18n';
 import { ConflictException, Logger } from '@nestjs/common';
 import { Ticket } from '../entities/ticket.entity';
-import { InterveneTicketDto } from '../dto';
+import { InterveneTicketDto } from '../dto/intervene-ticket.dto';
 import { Tag } from 'src/tags/entities/tag.entity';
 import { TicketHistory } from 'src/ticket-history/entities/ticket-history.entity';
 import { Status } from 'src/ticket-history/entities';

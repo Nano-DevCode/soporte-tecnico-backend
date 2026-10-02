@@ -17,7 +17,7 @@ import {
   transition,
 } from 'src/common/machine/TicketStateMachine.machine';
 import { TicketHistoryService } from 'src/ticket-history/ticket-history.service';
-import { UpdateTicketDto } from '../dto';
+import { UpdateTicketDto } from '../dto/update-ticket.dto';
 import { TicketsService } from './tickets.service';
 import { PdfsService } from 'src/pdfs/services/pdfs.service';
 import { Document } from 'src/documents/entities/document.entity';

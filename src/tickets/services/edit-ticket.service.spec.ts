@@ -13,7 +13,7 @@ import { TicketsService } from './tickets.service';
 import { PdfsService } from 'src/pdfs/services/pdfs.service';
 import { Ticket } from '../entities/ticket.entity';
 import { Document } from 'src/documents/entities/document.entity';
-import { UpdateTicketDto } from '../dto';
+import { UpdateTicketDto } from '../dto/update-ticket.dto';
 
 jest.mock('src/common/machine/TicketStateMachine.machine', () => {
   const original = jest.requireActual<
