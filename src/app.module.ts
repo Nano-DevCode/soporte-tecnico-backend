@@ -12,19 +12,7 @@ import { DocumentsModule } from './documents/documents.module';
 import { TypeDocumentsModule } from './type-documents/type-documents.module';
 import { CatalogSeedModule } from './catalog-seed/catalog-seed.module';
 import { EquipmentsModule } from './equipments/equipments.module';
-import { BrandsModule } from './brands/brands.module';
-import { ModelsModule } from './models/models.module';
-import { PrintersModule } from './printers/printers.module';
-import { PrinterfunctiontypesModule } from './printerfunctiontypes/printerfunctiontypes.module';
-import { PrintingtypesModule } from './printingtypes/printingtypes.module';
-import { ComputersModule } from './computers/computers.module';
-import { StoragetypesModule } from './storagetypes/storagetypes.module';
-import { ComputerequipmenttypesModule } from './computerequipmenttypes/computerequipmenttypes.module';
-import { TypenetworksModule } from './typenetworks/typenetworks.module';
-import { NetworksModule } from './networks/networks.module';
 import { DepartmentsModule } from './departments/departments.module';
-import { ResponsibleequipmentsModule } from './responsibleequipments/responsibleequipments.module';
-import { EquipmentticketsModule } from './equipmenttickets/equipmenttickets.module';
 import { BullModule } from '@nestjs/bull';
 import { RolesModule } from './auth/roles/roles.module';
 import { CommonModule } from './common/common.module';
@@ -38,16 +26,12 @@ import { MaintenanceTypeModule } from './maintenance-type/maintenance-type.modul
 import { ServiceTypeModule } from './service-type/service-type.module';
 import { PauseReportsModule } from './pause-reports/pause-reports.module';
 import { RejectionReportsModule } from './rejection-reports/rejection-reports.module';
-import { OperatingsystemsModule } from './operatingsystems/operatingsystems.module';
-import { EquipmenttypesModule } from './equipmenttypes/equipmenttypes.module';
-import { EquipmentSeedModule } from './equipment-seed/equipment-seed.module';
 import { PdfsModule } from './pdfs/pdfs.module';
 import { ThrottlerGuard, ThrottlerModule } from '@nestjs/throttler';
 import { APP_GUARD, APP_INTERCEPTOR } from '@nestjs/core';
 import { RequestIdMiddleware } from './common/middlewares/request-id.middleware';
 import { LoggingInterceptor } from './common/interceptors/logging.interceptor';
 import { CoordinationsModule } from './coordinations/coordinations.module';
-import { ComputerprocessorsModule } from './computerprocessors/computerprocessors.module';
 import { PruebasocketsModule } from './pruebasockets/pruebasockets.module';
 import { EventEmitterModule } from '@nestjs/event-emitter';
 import { GeneralWebsocketModule } from './general-websocket/general-websocket.module';
@@ -187,27 +171,10 @@ import { AuditModule } from './audit/audit.module';
     PruebasocketsModule,
     AttendsModule,
     ComputingCenterManagerModule,
-    // -------------
-    BrandsModule,
-
-    ModelsModule,
     EquipmentsModule,
-
-    PrintingtypesModule,
-    PrinterfunctiontypesModule,
-    PrintersModule,
-
-    ComputerequipmenttypesModule,
-    StoragetypesModule,
-    ComputersModule,
-
-    TypenetworksModule,
-    NetworksModule,
     DepartmentsModule,
-    ResponsibleequipmentsModule,
-    EquipmentticketsModule,
 
-    //Manu Dependencias // Modulos del sistema
+    // Manu Dependencias // Modulos del sistema
     RolesModule,
     CommonModule,
     UsersModule,
@@ -216,14 +183,8 @@ import { AuditModule } from './audit/audit.module';
     FilesModule,
     AuthModule,
 
-    //// utlimo mio jaz
-    OperatingsystemsModule,
-    EquipmenttypesModule,
-    ComputerequipmenttypesModule,
-    EquipmentSeedModule,
     PdfsModule,
     CoordinationsModule,
-    ComputerprocessorsModule,
 
     ToolsModule,
     ExcelModule,

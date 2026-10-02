@@ -37,3 +37,4 @@ export class ConsumablesService {
     return this.crudService.remove(id);
   }
 }
+

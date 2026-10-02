@@ -11,9 +11,9 @@ import {
 } from 'class-validator';
 import { Type } from 'class-transformer';
 import { i18nValidationMessage } from 'nestjs-i18n';
-import { CreateComputerDto } from 'src/computers/dto/create-computer.dto';
-import { CreatePrinterDto } from 'src/printers/dto/create-printer.dto';
-import { CreateNetworkDto } from 'src/networks/dto/create-network.dto';
+import { CreateComputerDto } from '../hardware/computers/dto/create-computer.dto';
+import { CreatePrinterDto } from '../hardware/printers/dto/create-printer.dto';
+import { CreateNetworkDto } from '../hardware/networks/dto/create-network.dto';
 
 export class CreateEquipmentDto {
   @ApiProperty({

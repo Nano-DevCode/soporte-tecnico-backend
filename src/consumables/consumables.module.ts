@@ -59,3 +59,4 @@ import { ConsumablesCrudService } from './services/consumables-crud.service';
   ],
 })
 export class ConsumablesModule {}
+

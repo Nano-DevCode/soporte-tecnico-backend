@@ -173,3 +173,4 @@ export class Consumable {
   })
   updated_at: Date;
 }
+

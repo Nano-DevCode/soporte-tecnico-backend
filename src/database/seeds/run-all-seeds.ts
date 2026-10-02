@@ -6,7 +6,7 @@ import { CoordinationSeedService } from 'src/coordinations/seed/coordination-see
 import { DepartmentSeedService } from 'src/departments/seed/department-seed.service';
 import { UserSeedService } from 'src/users/seed/user-seed.service';
 import { CatalogSeedService } from 'src/catalog-seed/catalog-seed.service';
-import { EquipmentSeedService } from 'src/equipment-seed/equipment-seed.service';
+import { EquipmentSeedService } from 'src/equipments/seed/equipment-seed.service';
 import { FeatureFlagsSeedService } from 'src/feature-flags-seed/feature-flags-seed.service';
 import { ConsumableSeedService } from 'src/consumables/seed/consumable-seed.service';
 import { ItAssetsSeedService } from 'src/it-assets/seed/services/it-assets-seed.service';

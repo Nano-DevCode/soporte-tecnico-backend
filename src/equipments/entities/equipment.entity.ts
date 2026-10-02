@@ -11,21 +11,17 @@ import {
   Index,
 } from 'typeorm';
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
-import { Model } from '../../models/entities/model.entity';
-import { Printer } from 'src/printers/entities/printer.entity';
-import { Computer } from 'src/computers/entities/computer.entity';
-import { Network } from 'src/networks/entities/network.entity';
-import { Responsibleequipment } from 'src/responsibleequipments/entities/responsibleequipment.entity';
-import { Equipmenttype } from 'src/equipmenttypes/entities/equipmenttype.entity';
+import { Model } from '../models/entities/model.entity';
+import { Printer } from '../hardware/printers/entities/printer.entity';
+import { Computer } from '../hardware/computers/entities/computer.entity';
+import { Network } from '../hardware/networks/entities/network.entity';
+import { Responsibleequipment } from '../responsibles/entities/responsibleequipment.entity';
+import { Equipmenttype } from '../types/entities/equipmenttype.entity';
 import { Department } from 'src/departments/entities/department.entity';
 import { TechnicalReport } from 'src/technical-reports/entities/technical-report.entity';
 
 @Entity()
 export class Equipment {
-  static id() {
-    throw new Error('Method not implemented.');
-  }
-
   @ApiProperty({
     description: 'Identificador único del activo de hardware global (UUID)',
     example: '8a4b81b4-96c2-4d11-8231-1823746de110',
