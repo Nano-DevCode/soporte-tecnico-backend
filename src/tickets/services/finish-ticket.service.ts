@@ -25,7 +25,7 @@ import { I18nService } from 'nestjs-i18n';
 import { IPdfResult } from 'src/common/interfaces/interface';
 import { AttendsService } from '../../attends/attends.service';
 import { TechnicalReportsService } from '../../technical-reports/technical-reports.service';
-import { FaultValiditiesService } from 'src/fault-validities/fault-validities.service';
+import { FaultValiditiesService } from 'src/technical-reports/fault-validities/fault-validities.service';
 
 @Injectable()
 export class FinishTicketService {

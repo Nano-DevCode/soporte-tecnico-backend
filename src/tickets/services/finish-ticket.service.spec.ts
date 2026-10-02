@@ -18,7 +18,7 @@ import { Document } from 'src/documents/entities/document.entity';
 import { FinishTicketDto } from '../dto/finish-ticket.dto';
 import { AttendsService } from 'src/attends/attends.service';
 import { TechnicalReportsService } from '../../technical-reports/technical-reports.service';
-import { FaultValiditiesService } from 'src/fault-validities/fault-validities.service';
+import { FaultValiditiesService } from 'src/technical-reports/fault-validities/fault-validities.service';
 
 jest.mock('src/common/machine/TicketStateMachine.machine', () => {
   const original = jest.requireActual<

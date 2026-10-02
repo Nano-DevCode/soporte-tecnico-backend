@@ -1,5 +1,5 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
-import { TechnicalReport } from 'src/technical-reports/entities/technical-report.entity';
+import { TechnicalReport } from '../../entities/technical-report.entity';
 import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
 
 @Entity()

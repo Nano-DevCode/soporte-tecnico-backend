@@ -5,7 +5,7 @@ import { TicketHistoryService } from 'src/ticket-history/ticket-history.service'
 import { TypeDocumentsService } from 'src/type-documents/type-documents.service';
 import { MaintenanceTypeService } from '../maintenance-type/maintenance-type.service';
 import { ServiceTypeService } from '../service-type/service-type.service';
-import { FaultValiditiesService } from '../fault-validities/fault-validities.service';
+import { FaultValiditiesService } from '../technical-reports/fault-validities/fault-validities.service';
 
 @Injectable()
 export class CatalogSeedService {

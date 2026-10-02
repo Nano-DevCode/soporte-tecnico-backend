@@ -1,7 +1,7 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import { Consumable } from 'src/consumables/entities/consumable.entity';
 import { Equipment } from 'src/equipments/entities/equipment.entity';
-import { FaultValidity } from 'src/fault-validities/entities/fault-validity.entity';
+import { FaultValidity } from '../fault-validities/entities/fault-validity.entity';
 import { Ticket } from 'src/tickets/entities/ticket.entity';
 import {
   Column,

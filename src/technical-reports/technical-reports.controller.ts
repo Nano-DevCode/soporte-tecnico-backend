@@ -70,6 +70,22 @@ export class TechnicalReportsController {
       paginationWithPageDto,
     );
   }
+
+  @Get('ticket/:ticketId')
+  @Auth()
+  @ApiOperation({
+    summary: 'Obtener todos los informes técnicos asociados a un ticket',
+  })
+  @ApiParam({ name: 'ticketId', description: 'UUID del ticket' })
+  @ApiOkResponse({
+    description: 'Lista de informes técnicos asociados al ticket.',
+  })
+  @ApiNotFoundResponse({ description: 'Ticket no encontrado.' })
+  @ApiUnauthorizedResponse({ description: 'No autenticado.' })
+  findAllByTicketId(@Param('ticketId', ParseUUIDPipe) ticketId: string) {
+    return this.technicalReportsService.findAllByTicketId(ticketId);
+  }
+
   @Auth()
   @ApiOperation({ summary: 'Obtener un informe técnico por ID' })
   @ApiParam({ name: 'id', description: 'UUID del informe técnico' })

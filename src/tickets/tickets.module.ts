@@ -35,7 +35,7 @@ import { TagsModule } from 'src/tags/tags.module';
 import { PdfsModule } from 'src/pdfs/pdfs.module';
 import { ConsumableMovementsModule } from 'src/consumable-movements/consumable-movements.module';
 import { SurveyModule } from 'src/survey/survey.module';
-import { FaultValiditiesModule } from 'src/fault-validities/fault-validities.module';
+import { FaultValiditiesModule } from 'src/technical-reports/fault-validities/fault-validities.module';
 
 import { TicketsSeedController } from './seed/controllers/tickets-seed.controller';
 import { TicketsSeedService } from './seed/services/tickets-seed.service';

@@ -78,7 +78,7 @@ import { BrandConsumablesModule } from './brand-consumables/brand-consumables.mo
 import { ConsumableUbicationsModule } from './consumable_ubications/consumable_ubications.module';
 import path from 'path';
 import { ConsumableSeedModule } from './consumable-seed/consumable-seed.module';
-import { FaultValiditiesModule } from './fault-validities/fault-validities.module';
+import { FaultValiditiesModule } from './technical-reports/fault-validities/fault-validities.module';
 import { DashboardModule } from './dashboard/dashboard.module';
 import { ToolsBrandsModule } from './tools/brands/tools-brands.module';
 import { ToolsModelsModule } from './tools/models/tools-models.module';

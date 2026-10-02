@@ -8,6 +8,6 @@ import { FaultValidity } from './entities/fault-validity.entity';
   imports: [TypeOrmModule.forFeature([FaultValidity])],
   controllers: [FaultValiditiesController],
   providers: [FaultValiditiesService],
-  exports: [FaultValiditiesService],
+  exports: [FaultValiditiesService, TypeOrmModule],
 })
 export class FaultValiditiesModule {}
