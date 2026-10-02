@@ -10,7 +10,7 @@ import {
 } from 'typeorm';
 import { Staff } from 'src/users/entities/staff.entity';
 import { Equipment } from 'src/equipments/entities/equipment.entity';
-import { ConsumableMovement } from 'src/consumable-movements/entities/consumable-movement.entity';
+import { ConsumableMovement } from 'src/consumables/movements/entities/consumable-movement.entity';
 
 @Entity()
 export class Department {

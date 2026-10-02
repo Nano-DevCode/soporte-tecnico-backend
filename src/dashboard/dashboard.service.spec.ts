@@ -3,7 +3,7 @@ import { getRepositoryToken } from '@nestjs/typeorm';
 import { DashboardService } from './dashboard.service';
 import { Ticket } from 'src/tickets/entities/ticket.entity';
 import { Equipment } from 'src/equipments/entities/equipment.entity';
-import { ConsumableMovement } from 'src/consumable-movements/entities/consumable-movement.entity';
+import { ConsumableMovement } from 'src/consumables/movements/entities/consumable-movement.entity';
 import { TicketSurvey } from 'src/survey/entities/ticket-survey.entity';
 import { Department } from 'src/departments/entities/department.entity';
 import { IssueType } from 'src/issue_type/entities/issue_type.entity';

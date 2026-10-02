@@ -1,8 +1,8 @@
-import { Batchesproduct } from 'src/batchesproducts/entities/batchesproduct.entity';
-import { BrandConsumable } from 'src/brand-consumables/entities/brand-consumable.entity';
-import { ConsumableUbication } from 'src/consumable_ubications/entities/consumable_ubication.entity';
-import { Typeconsumable } from 'src/typeconsumables/entities/typeconsumable.entity';
-import { UnitMeasurement } from 'src/unit-measurement/entities/unit-measurement.entity';
+import { Batchesproduct } from '../batches/entities/batchesproduct.entity';
+import { BrandConsumable } from '../brands/entities/brand-consumable.entity';
+import { ConsumableUbication } from '../ubications/entities/consumable_ubication.entity';
+import { Typeconsumable } from '../types/entities/typeconsumable.entity';
+import { UnitMeasurement } from '../units/entities/unit-measurement.entity';
 import {
   Column,
   CreateDateColumn,
@@ -54,7 +54,7 @@ export class Consumable {
       'Cantidad estimada de ciclos o usos promedio que ofrece el consumible',
     example: 1600,
   })
-  @Column()
+  @Column('int', { default: 1 })
   number_uses: number;
 
   @ApiPropertyOptional({
@@ -80,6 +80,14 @@ export class Consumable {
   })
   @Column('numeric', { nullable: true })
   stockMax: number;
+
+  @ApiPropertyOptional({
+    description:
+      'Existencia o stock real actual disponible del consumible calculado a partir de los lotes',
+    example: 10,
+    readOnly: true,
+  })
+  available_stock?: number;
 
   @ApiProperty({
     description: 'Ubicación de almacenamiento vinculada',

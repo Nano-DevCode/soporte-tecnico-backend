@@ -5,7 +5,7 @@ import { Ticket } from 'src/tickets/entities/ticket.entity';
 import { TicketStatus } from 'src/common/machine/TicketStateMachine.machine';
 import { DashboardFiltersDto } from './dto/dashboard-filters.dto';
 import { Equipment } from 'src/equipments/entities/equipment.entity';
-import { ConsumableMovement } from 'src/consumable-movements/entities/consumable-movement.entity';
+import { ConsumableMovement } from 'src/consumables/movements/entities/consumable-movement.entity';
 import { TicketHistoryService } from '../ticket-history/ticket-history.service';
 import { TicketSurvey } from 'src/survey/entities/ticket-survey.entity';
 import {

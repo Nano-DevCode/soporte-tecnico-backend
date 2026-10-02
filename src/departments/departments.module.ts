@@ -6,8 +6,8 @@ import { DepartmentSeedController } from './seed/department-seed.controller';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { Department } from './entities/department.entity';
 import { AuthModule } from 'src/auth/auth.module';
-import { ConsumableMovementsModule } from 'src/consumable-movements/consumable-movements.module';
-import { BatchesproductsModule } from 'src/batchesproducts/batchesproducts.module';
+import { ConsumableMovementsModule } from 'src/consumables/movements/consumable-movements.module';
+import { BatchesproductsModule } from 'src/consumables/batches/batchesproducts.module';
 import { CommonModule } from 'src/common/common.module';
 
 @Module({

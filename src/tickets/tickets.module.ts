@@ -33,7 +33,7 @@ import { ResponsesModule } from 'src/responses/responses.module';
 import { ResponseSignatureModule } from 'src/response-signature/response-signature.module';
 import { TagsModule } from 'src/tags/tags.module';
 import { PdfsModule } from 'src/pdfs/pdfs.module';
-import { ConsumableMovementsModule } from 'src/consumable-movements/consumable-movements.module';
+import { ConsumableMovementsModule } from 'src/consumables/movements/consumable-movements.module';
 import { SurveyModule } from 'src/survey/survey.module';
 import { FaultValiditiesModule } from 'src/technical-reports/fault-validities/fault-validities.module';
 

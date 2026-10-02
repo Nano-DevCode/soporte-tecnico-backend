@@ -8,7 +8,7 @@ import { UserSeedService } from 'src/users/seed/user-seed.service';
 import { CatalogSeedService } from 'src/catalog-seed/catalog-seed.service';
 import { EquipmentSeedService } from 'src/equipment-seed/equipment-seed.service';
 import { FeatureFlagsSeedService } from 'src/feature-flags-seed/feature-flags-seed.service';
-import { ConsumableSeedService } from 'src/consumable-seed/consumable-seed.service';
+import { ConsumableSeedService } from 'src/consumables/seed/consumable-seed.service';
 import { ItAssetsSeedService } from 'src/it-assets/seed/services/it-assets-seed.service';
 import { ToolsSeedService } from 'src/tools/seed/services/tools-seed.service';
 import { TicketsSeedService } from 'src/tickets/seed/services/tickets-seed.service';
@@ -25,12 +25,19 @@ async function bootstrap() {
     logger.log(`---> [SEED] Iniciando: ${name}...`);
     try {
       const result = await fn();
-      logger.log(`✓ [SEED] ${name} completado con éxito. Resultado: ${JSON.stringify(result ?? 'OK')}`);
+      logger.log(
+        `✓ [SEED] ${name} completado con éxito. Resultado: ${JSON.stringify(result ?? 'OK')}`,
+      );
     } catch (error: any) {
       if (error?.status === 409 || error?.name === 'ConflictException') {
-        logger.warn(`⚠ [SEED] ${name} omitido: Ya se encontraba ejecutado previamente.`);
+        logger.warn(
+          `⚠ [SEED] ${name} omitido: Ya se encontraba ejecutado previamente.`,
+        );
       } else {
-        logger.error(`✗ [SEED] Error ejecutando ${name}:`, error?.message || error);
+        logger.error(
+          `✗ [SEED] Error ejecutando ${name}:`,
+          error?.message || error,
+        );
         throw error;
       }
     }
@@ -56,7 +63,9 @@ async function bootstrap() {
     // 5. Catálogos generales (estados, tipos de problema, tipos de documento, tipos de mant., validez de fallas)
     const catalogSeed = app.get(CatalogSeedService);
     await runStep('Catálogos Generales', () => catalogSeed.runSeed());
-    await runStep('Validez de Fallas', () => catalogSeed.runSeedFaultValidities());
+    await runStep('Validez de Fallas', () =>
+      catalogSeed.runSeedFaultValidities(),
+    );
 
     // 6. Equipos de cómputo y periféricos
     const equipSeed = app.get(EquipmentSeedService);
