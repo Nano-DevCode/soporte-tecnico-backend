@@ -182,7 +182,7 @@ export class AuthController {
     };
   }
 
-  @Get('check-status')
+  @Get(['check-status', 'check-auth-status'])
   @Auth()
   @ApiCookieAuth()
   @ApiOperation({ summary: 'Verificar el estado de autenticación del usuario' })
