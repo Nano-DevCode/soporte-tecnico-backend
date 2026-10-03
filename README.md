@@ -8,7 +8,7 @@
   <img src="https://img.shields.io/badge/Redis-8.x-DC382D?style=for-the-badge&logo=redis&logoColor=white" alt="Redis" />
   <img src="https://img.shields.io/badge/BullMQ-Queues-orange?style=for-the-badge&logo=bull&logoColor=white" alt="BullMQ" />
   <img src="https://img.shields.io/badge/Docker-Multi--Stage-2496ED?style=for-the-badge&logo=docker&logoColor=white" alt="Docker" />
-  <img src="https://img.shields.io/badge/Tests-705%20Passing-success?style=for-the-badge&logo=jest&logoColor=white" alt="Tests" />
+  <img src="https://img.shields.io/badge/Tests-998%20Passing-success?style=for-the-badge&logo=jest&logoColor=white" alt="Tests" />
   <img src="https://img.shields.io/badge/Security-HttpOnly%20JWT%20%7C%20RBAC-blue?style=for-the-badge&logo=auth0&logoColor=white" alt="Security" />
 </p>
 
@@ -47,38 +47,79 @@ Diseñada con **Clean Architecture**, **Domain-Driven Design (DDD)** y el **Prin
 > *A continuación se presentan las evidencias operativas y arquitectónicas del sistema:*
 
 ### 2.1. Documentación Interactiva Swagger / OpenAPI
-![Swagger API Documentation](./docs/images/01-swagger-ui.png)
-*Explorador interactivo de endpoints con esquemas DTO tipados, códigos de respuesta HTTP y autenticación por cookies.*
+Explorador interactivo de endpoints con esquemas DTO tipados, códigos de respuesta HTTP y autenticación por cookies:
+
+<p align="center">
+  <img src="./docs/images/1.1.png" alt="Endpoints de Tickets" width="100%" />
+</p>
+<p align="center"><em>Vista general de endpoints del módulo de Tickets y flujos de estado.</em></p>
+
+<p align="center">
+  <img src="./docs/images/1.2.png" alt="Endpoints de Autenticación" width="100%" />
+</p>
+<p align="center"><em>Módulo de Autenticación, rotación de Refresh Tokens y control de sesiones.</em></p>
+
+<p align="center">
+  <img src="./docs/images/1.3.png" alt="Parámetros de Filtrado y Paginación" width="100%" />
+</p>
+<p align="center"><em>Esquema de parámetros para filtrado granular, búsqueda por texto y paginación de usuarios.</em></p>
+
+<p align="center">
+  <img src="./docs/images/1.4.png" alt="DTOs y Validación de Payloads" width="100%" />
+</p>
+<p align="center"><em>Contratos DTO y esquemas de validación con class-validator y respuestas tipadas.</em></p>
 
 ---
 
 ### 2.2. Suite de Pruebas Unitarias Automatizadas (Jest)
-![Jest Unit Tests 100% Green](./docs/images/02-jest-tests.png)
-*92 suites de prueba y 705+ tests unitarios pasando al 100% en verde con tipado estricto (0 uso de `any`).*
+Ejecución de la suite completa de pruebas unitarias con Jest: **143 suites y 998 tests pasando al 100% en verde**:
+
+<p align="center">
+  <img src="./docs/images/2.1.png" alt="Jest Tests Core Modules" width="100%" />
+</p>
+<p align="center"><em>Ejecución de pruebas unitarias: Módulos Core (Tickets, SLA, IT-Assets).</em></p>
+
+<p align="center">
+  <img src="./docs/images/2.2.png" alt="Jest Tests Domain Modules" width="100%" />
+</p>
+<p align="center"><em>Pruebas de Servicios y Controladores (Equipos, Consumibles, Herramientas, Auth y Seeders).</em></p>
+
+<p align="center">
+  <img src="./docs/images/2.3.png" alt="Jest Tests 100% Passed Summary" width="100%" />
+</p>
+<p align="center"><em>Resultado consolidado: 143 suites pasadas, 998 tests completados exitosamente en 24.69 s sin errores.</em></p>
 
 ---
 
 ### 2.3. Diagrama Entidad-Relación de la Base de Datos (PostgreSQL 17)
-![Database ERD Schema](./docs/images/03-database-erd.png)
-*Modelado en 3ra Forma Normal (3NF), índices compuestos, columnas calculadas `tsvector` y llaves foráneas con eliminación restringida/en cascada controlada.*
+<p align="center">
+  <img src="./docs/images/03-database-erd.png" alt="Database ERD Schema" width="100%" />
+</p>
+*Diagrama relacional exhaustivo generado con SchemaSpy: modelado en 3ra Forma Normal (3NF), índices compuestos, columnas calculadas `tsvector` y llaves foráneas con eliminación restringida/en cascada controlada.*
 
 ---
 
 ### 2.4. Orquestación de Contenedores en Docker (Stack Completo)
-![Docker Compose Running](./docs/images/04-docker-stack.png)
-*Entorno contenerizado multi-nodo: PostgreSQL, Redis, MinIO S3, Nginx Reverse Proxy, Migrator desacoplado y Backend Distroless.*
+<p align="center">
+  <img src="./docs/images/4.1.png" alt="Docker Desktop Containers" width="100%" />
+</p>
+*Entorno contenerizado multi-nodo activo en Docker Desktop: PostgreSQL 17 (`soportetecnicodb`), Redis 8 (`redis_server`), MinIO S3 (`minio_server`), Nginx Reverse Proxy (`nginx_proxy`), Backup automático (`postgres_autobackup`), Migrador desacoplado (`nestjs_migrator`) y Backend NestJS (`nestjs_backend`).*
 
 ---
 
 ### 2.5. Almacenamiento de Objetos en MinIO S3
-![MinIO S3 Buckets](./docs/images/05-minio-storage.png)
-*Gestión de archivos binarios, firmas digitales y fotos de activos convertidas automáticamente a formato `.webp` con Sharp tras validación de magic bytes.*
+<p align="center">
+  <img src="./docs/images/5.1.png" alt="MinIO Object Storage Buckets" width="100%" />
+</p>
+*Consola web de MinIO S3: buckets organizados (`tools-images`, `images-tickets`, `avatars`, `pdfs`) y almacenamiento de fotografías procesadas y convertidas automáticamente a formato `.webp` con Sharp tras validación de magic bytes.*
 
 ---
 
 ### 2.6. Integraciones Asíncronas y Bot de Telegram
-![Telegram Bot & Async Workers](./docs/images/06-telegram-bot.png)
-*Canal interactivo para técnicos y coordinadores impulsado por workers de BullMQ y Redis con reintentos exponenciales.*
+<p align="center">
+  <img src="./docs/images/06-telegram-bot.png" alt="Telegram Bot Interactivo" width="100%" />
+</p>
+*Canal interactivo para técnicos y coordinadores en Telegram Desktop: recepción de alertas en tiempo real, cambio de estados con botones inline y orquestación con workers de BullMQ y Redis.*
 
 ---
 
@@ -226,7 +267,7 @@ pnpm lint
 pnpm build
 ```
 
-- **92 Suites de Prueba Unitarias:** Cobertura de controladores, servicios de dominio, suscriptores de eventos y guards.
+- **143 Suites de Prueba Unitarias:** Cobertura de controladores, servicios de dominio, suscriptores de eventos y guards.
 - **Mocks Aislados:** Simulación de `Repository`, `DataSource`, `I18nService`, `Reflector` y `ConfigService`.
 - **Tipado Estricto:** Prohibido el uso de `any` en código de producción y en tests.
 
@@ -307,7 +348,7 @@ El diseño, arquitectura, desarrollo técnico e implementación de este sistema 
 
 | Desarrollador / Colaborador | Perfil & Contacto | Aportes Principales en Git |
 | :--- | :--- | :--- |
-| **Nano-DevCode** | [GitHub](https://github.com/Nano-DevCode)<br>📧 `mayka708.ms@gmail.com`<br>🎓 `21160787@itoaxaca.edu.mx` | **Lead Backend Developer & Arquitectura de Software**<br>• Arquitectura Core NestJS 11 / TypeScript 5.7+ / Clean Architecture<br>• Módulos de SLA, Auditoría, Cache Redis 8, WebSocket Adapter y Throttler<br>• Refactorización modular SRP, pipeline de pruebas unitarias (705+ tests en Jest) y contenedorización Distroless<br>*(152 commits registrados)* |
+| **Nano-DevCode** | [GitHub](https://github.com/Nano-DevCode)<br>📧 `mayka708.ms@gmail.com`<br>🎓 `21160787@itoaxaca.edu.mx` | **Lead Backend Developer & Arquitectura de Software**<br>• Arquitectura Core NestJS 11 / TypeScript 5.7+ / Clean Architecture<br>• Módulos de SLA, Auditoría, Cache Redis 8, WebSocket Adapter y Throttler<br>• Refactorización modular SRP, pipeline de pruebas unitarias (998 tests en Jest) y contenedorización Distroless<br>*(152 commits registrados)* |
 | **AlexDro360** | [GitHub](https://github.com/AlexDro360)<br>📧 `21160666@itoaxaca.edu.mx` | **Core Contributor & Backend Developer**<br>• Ciclo de vida y gestión de tickets, reportes de soporte y periodos escolares<br>• Integración de Telegram Bot, procesamiento asíncrono de Gmail y webhooks<br>• Módulos de catálogos, equipos de cómputo y flujos operativos<br>*(108 commits registrados)* |
 | **JazminMartinezC** | [GitHub](https://github.com/JazminMartinezC)<br>📧 `21160705@itoaxaca.edu.mx` | **Core Contributor & Backend Developer**<br>• Módulos de activos TI (marcas, modelos, tipos, estados, facturas y movimientos)<br>• Control de consumibles, lotes de productos y pañol de herramientas<br>• Definición de DTOs, validaciones `class-validator` y esquemas Swagger<br>*(69 commits registrados)* |
 

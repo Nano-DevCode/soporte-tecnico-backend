@@ -189,7 +189,7 @@ export class ToolsController {
     ValidRole.jefecc,
     ValidRole.superAdmin,
   )
-  @UseInterceptors(FileInterceptor('image'))
+  @UseInterceptors(FileInterceptor('file'))
   @ApiOperation({
     summary: 'Actualizar los datos de una herramienta y/o reemplazar su imagen',
   })
@@ -206,7 +206,7 @@ export class ToolsController {
         { $ref: getSchemaPath(UpdateToolDto) },
         {
           properties: {
-            image: {
+            file: {
               type: 'string',
               format: 'binary',
               description: 'Nueva imagen de la herramienta (opcional)',
