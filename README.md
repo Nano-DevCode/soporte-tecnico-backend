@@ -342,15 +342,15 @@ Configuradas mediante `ConfigModule` y validadas al arrancar mediante esquema es
 
 ---
 
-## 10. 👥 Equipo de Desarrollo y Colaboradores
+## 10. 👥 Equipo de Desarrollo
 
 El diseño, arquitectura, desarrollo técnico e implementación de este sistema fue realizado por el siguiente equipo:
 
-| Desarrollador / Colaborador | Perfil & Contacto | Aportes Principales en Git |
+| Desarrollador / Colaborador | Rol | Perfil & Contacto |
 | :--- | :--- | :--- |
-| **Nano-DevCode** | [GitHub](https://github.com/Nano-DevCode)<br>📧 `mayka708.ms@gmail.com`<br>🎓 `21160787@itoaxaca.edu.mx` | **Lead Backend Developer & Arquitectura de Software**<br>• Arquitectura Core NestJS 11 / TypeScript 5.7+ / Clean Architecture<br>• Módulos de SLA, Auditoría, Cache Redis 8, WebSocket Adapter y Throttler<br>• Refactorización modular SRP, pipeline de pruebas unitarias (998 tests en Jest) y contenedorización Distroless<br>*(152 commits registrados)* |
-| **AlexDro360** | [GitHub](https://github.com/AlexDro360)<br>📧 `21160666@itoaxaca.edu.mx` | **Core Contributor & Backend Developer**<br>• Ciclo de vida y gestión de tickets, reportes de soporte y periodos escolares<br>• Integración de Telegram Bot, procesamiento asíncrono de Gmail y webhooks<br>• Módulos de catálogos, equipos de cómputo y flujos operativos<br>*(108 commits registrados)* |
-| **JazminMartinezC** | [GitHub](https://github.com/JazminMartinezC)<br>📧 `21160705@itoaxaca.edu.mx` | **Core Contributor & Backend Developer**<br>• Módulos de activos TI (marcas, modelos, tipos, estados, facturas y movimientos)<br>• Control de consumibles, lotes de productos y pañol de herramientas<br>• Definición de DTOs, validaciones `class-validator` y esquemas Swagger<br>*(69 commits registrados)* |
+| **Nano-DevCode** | Lead Backend Developer & Arquitectura de Software | [GitHub](https://github.com/Nano-DevCode)<br>📧 `mayka708.ms@gmail.com`<br>🎓 `21160787@itoaxaca.edu.mx` |
+| **AlexDro360** | Backend Developer | [GitHub](https://github.com/AlexDro360)<br>🎓 `21160666@itoaxaca.edu.mx` |
+| **JazminMartinezC** | Backend Developer | [GitHub](https://github.com/JazminMartinezC)<br>🎓 `21160705@itoaxaca.edu.mx` |
 
 ---
 
